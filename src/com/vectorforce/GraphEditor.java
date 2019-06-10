@@ -1,7 +1,10 @@
 package com.vectorforce;
 
-public class GraphEditor {
-    public static void main(String[] args){
+import com.vectorforce.View.MainWindow;
 
+public class GraphEditor {
+
+    public static void main(String[] args){
+        MainWindow mainWindow = new MainWindow();
     }
 }
