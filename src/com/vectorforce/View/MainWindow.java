@@ -1,17 +1,20 @@
 package com.vectorforce.View;
 
+import com.vectorforce.Controller.Controller;
+import com.vectorforce.Model.Vertex;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 
 public class MainWindow {
     private Display display;
     private Shell shell;
+
+    private GraphicComponent graphicComponent;
+
+    private Controller controller;
 
     private void initMenuBar() {
         Menu menuBar = new Menu(shell, SWT.BAR);
@@ -51,13 +54,43 @@ public class MainWindow {
         shell.setMenuBar(menuBar);
     }
 
+    // Initialization methods
+    private void initGraphicComponent(){
+        graphicComponent = new GraphicComponent(shell, SWT.NONE, controller);
+    }
+
+    private void initToolBar(){
+        ToolBar toolBar = new ToolBar(shell, SWT.BORDER|SWT.VERTICAL);
+        for (int i = 0; i < 4; i++) {
+            ToolItem item = new ToolItem(toolBar, 0);
+            item.setText("Item " + i);
+        }
+//        toolBar.pack();
+    }
+
+    // Create new graph
+    public void createGraph(){
+        controller.addGraph();
+    }
+
+    // Methods with default settings for testing the app !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    private void defaultSettings(){
+        createGraph();
+    }
+
     public MainWindow() {
         display = new Display();
         shell = new Shell(display);
         shell.setText("Графовый редактор");
-        shell.setLayout(new GridLayout(1, true));
+        shell.setLayout(new GridLayout(5, false));
 
+        controller = new Controller();
         initMenuBar();
+        initGraphicComponent();
+        initToolBar();
+
+        // Default settings
+        defaultSettings();
 
         shell.open();
 
