@@ -11,15 +11,21 @@ public class Vertex {
     private int y;
     private int radius = 25;
     private Color color;
+    private Color selectColor;
+    private Color deselectColor;
     private LinkedList<Arc> ingoingArcs;
     private LinkedList<Arc> outgoingArcs;
+    private boolean isSelected;
 
     public Vertex(int x, int y){
         this.x = x - CORRECTING_SHIFT;
         this.y = y - CORRECTING_SHIFT;
         this.color = new Color(null, 0, 0, 0);
+        this.selectColor = new Color(null, 0, 255, 0);
+        this.deselectColor = color;
         ingoingArcs = new LinkedList<>();
         outgoingArcs = new LinkedList<>();
+        isSelected = false;
     }
 
     public void addIngoingArc(Arc arc){
@@ -41,6 +47,29 @@ public class Vertex {
     // Setters
     public void setColor(Color color){
         this.color = color;
+        this.deselectColor = color;
+    }
+
+    public void select(boolean select){
+        this.isSelected = select;
+        if(select == true){
+            color = selectColor;
+        } else {
+            color = deselectColor;
+        }
+    }
+
+    // Setters
+    public void setX(int x){
+        this.x = x;
+    }
+
+    public void setY(int y){
+        this.y = y;
+    }
+
+    public void setRadius(int radius){
+        this.radius = radius;
     }
 
     // Getters
@@ -54,6 +83,14 @@ public class Vertex {
 
     public int getRadius(){
         return radius;
+    }
+
+    public boolean isSelected(){
+        return isSelected;
+    }
+
+    public Color getColor(){
+        return color;
     }
 
 }

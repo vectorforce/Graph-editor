@@ -2,6 +2,7 @@ package com.vectorforce.Controller;
 
 import com.vectorforce.Model.Arc;
 import com.vectorforce.Model.Graph;
+import com.vectorforce.Model.OperationType;
 import com.vectorforce.Model.Vertex;
 
 import java.util.LinkedList;
@@ -9,10 +10,12 @@ import java.util.LinkedList;
 public class Controller {
     private LinkedList<Graph> graphs;
     private int indexCurrentGraph;
+    private OperationType operationType;
 
     public Controller(){
         indexCurrentGraph = 0;
         graphs = new LinkedList<>();
+        operationType = new OperationType();
     }
 
     public void addGraph(){
@@ -41,6 +44,10 @@ public class Controller {
         graphs.get(indexCurrentGraph).deleteArc(arc);
     }
 
+    public void removeSelection(){
+        graphs.get(indexCurrentGraph).removeSelection();
+    }
+
     // Drawing methods
 
 
@@ -49,8 +56,24 @@ public class Controller {
         this.indexCurrentGraph = indexCurrentGraph;
     }
 
+    public void setStatus(OperationType.operationType status){
+        operationType.setStatus(status);
+    }
+
     // Getters
     public int getIndexCurrentGraph(){
         return indexCurrentGraph;
+    }
+
+    public OperationType.operationType getStatus() {
+        return operationType.getStatus();
+    }
+
+    public LinkedList<Vertex> getVerteces(){
+        return graphs.get(indexCurrentGraph).getVerteces();
+    }
+
+    public LinkedList<Arc> getArcs(){
+        return graphs.get(indexCurrentGraph).getArcs();
     }
 }

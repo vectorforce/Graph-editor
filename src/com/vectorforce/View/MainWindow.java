@@ -1,6 +1,7 @@
 package com.vectorforce.View;
 
 import com.vectorforce.Controller.Controller;
+import com.vectorforce.Model.OperationType;
 import com.vectorforce.Model.Vertex;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -60,12 +61,29 @@ public class MainWindow {
     }
 
     private void initToolBar(){
-        ToolBar toolBar = new ToolBar(shell, SWT.BORDER|SWT.VERTICAL);
-        for (int i = 0; i < 4; i++) {
-            ToolItem item = new ToolItem(toolBar, 0);
-            item.setText("Item " + i);
-        }
+        ToolBar toolBar = new ToolBar(shell, SWT.VERTICAL);
+        ToolItem itemCursor = new ToolItem(toolBar, SWT.PUSH);
+        itemCursor.setText("Cursor");
+        ToolItem itemArc = new ToolItem(toolBar, SWT.PUSH);
+        itemArc.setText("Arc");
 //        toolBar.pack();
+
+        // Item listeners
+        itemCursor.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                controller.setStatus(OperationType.operationType.CURSOR);
+                itemCursor.setSelection(true);
+            }
+        });
+
+        itemArc.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                controller.setStatus(OperationType.operationType.ARC);
+                itemArc.setSelection(true);
+            }
+        });
     }
 
     // Create new graph

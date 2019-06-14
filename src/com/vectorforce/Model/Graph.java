@@ -28,6 +28,9 @@ public class Graph {
                 verteces.remove(index);
             }
         }
+        // Delete all adjacent arcs
+        arcs.remove(vertex.getIngoingArcs());
+        arcs.remove(vertex.getOutgoingArcs());
         graphCheck();
     }
 
@@ -45,6 +48,15 @@ public class Graph {
         graphCheck();
     }
 
+    public void removeSelection(){
+        for(Vertex currentVertex : getVerteces()){
+            currentVertex.select(false);
+        }
+        for(Arc currentArc : getArcs()){
+            currentArc.select(false);
+        }
+    }
+    // Method for update information of graph
     private void graphCheck(){
         int counterOriented = 0;
         int counterNonOriented = 0;
