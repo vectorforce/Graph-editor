@@ -35,6 +35,10 @@ public class Arc {
         }
     }
 
+    public void setColor(Color color){
+        this.color = color;
+    }
+
     // Getters
     public boolean isOriented(){
         return isOriented;

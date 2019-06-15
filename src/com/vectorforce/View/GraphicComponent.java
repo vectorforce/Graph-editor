@@ -2,12 +2,14 @@ package com.vectorforce.View;
 
 import com.vectorforce.Controller.Controller;
 import com.vectorforce.Model.Arc;
+import com.vectorforce.Model.GraphicObject;
 import com.vectorforce.Model.OperationType;
 import com.vectorforce.Model.Vertex;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
@@ -23,6 +25,9 @@ public class GraphicComponent extends Canvas {
     // Context menu for right click
     private Menu popupMenuVertex;
     private Menu popupMenuArc;
+    // Variables for change selected objects
+    private GraphicObject selectedObject;
+    private Color colorSelectedObject;
 
     // Constructor
     public GraphicComponent(Composite parent, int style, Controller controller){
@@ -31,6 +36,8 @@ public class GraphicComponent extends Canvas {
         this.controller = controller;
 
         backgroundColor = new Color(null, 255, 255, 255);
+        colorSelectedObject = null;
+        selectedObject = new GraphicObject();
         setBackground(backgroundColor);
         setLayoutData(new GridData(GridData.FILL_BOTH));
         moveCheck = false;
@@ -48,7 +55,7 @@ public class GraphicComponent extends Canvas {
         this.setMenu(popupMenuVertex);
     }
 
-    // Method for select the objects
+    // Method for select the objects on graphic component
     private void selectObject(MouseEvent e){
         // Check the objects in area of mouse click
         controller.removeSelection();
@@ -74,6 +81,15 @@ public class GraphicComponent extends Canvas {
         }
     }
 
+    // Method for update parameters of selected object
+    private void updateSelectedObject(){
+        if(selectedObject.getObject() instanceof Vertex){
+            ((Vertex) selectedObject.getObject()).setColor(colorSelectedObject);
+        } else if(selectedObject.getObject() instanceof Arc){
+            ((Arc) selectedObject.getObject()).setColor(colorSelectedObject);
+        }
+    }
+
     // Adding listeners
     private void addListeners() {
 
@@ -83,27 +99,17 @@ public class GraphicComponent extends Canvas {
             @Override
             public void handleEvent(Event e)
             {
-                boolean isSelected = false;
                 Point location = toControl(e.x, e.y);
                 if(location.x > getBounds().width){
                     e.doit = false;
                 }
-                for(Vertex currentVertex : controller.getVerteces()){
-                    if(currentVertex.isSelected() == true){
-                        setPopupMenu(popupMenuVertex);
-                        return;
-                    }
-                }
-                if(isSelected == false){
-                    for(Arc currentArc : controller.getArcs()){
-                        if(currentArc.isSelected() == true){
-                            setPopupMenu(popupMenuArc);
-                            return;
-                        }
-                    }
-                }
-                if(isSelected == false){
+                setSelectedObject();
+                if(selectedObject.getObject() == null){
                     e.doit = false;
+                } else if(selectedObject.getObject() instanceof Vertex){
+                    setPopupMenu(popupMenuVertex);
+                } else if(selectedObject.getObject() instanceof Arc){
+                    setPopupMenu(popupMenuArc);
                 }
             }
         });
@@ -177,6 +183,7 @@ public class GraphicComponent extends Canvas {
         });
 
     }
+
     // Draw methods
     public void drawVertex(Vertex vertex){
         addPaintListener(new PaintListener() {
@@ -195,7 +202,23 @@ public class GraphicComponent extends Canvas {
             }
         });
     }
+
     // Setters
+    private void setSelectedObject(){
+        for(Vertex currentVertex : controller.getVerteces()){
+            if(currentVertex.isSelected() == true){
+                selectedObject.setObject(currentVertex);
+                return;
+            }
+        }
+        for(Arc currentArc : controller.getArcs()){
+            if(currentArc.isSelected() == true){
+                selectedObject.setObject(currentArc);
+                return;
+            }
+        }
+    }
+
     private void setPopupMenu(Menu popMenu){
         this.setMenu(popMenu);
     }
@@ -206,7 +229,7 @@ public class GraphicComponent extends Canvas {
         MenuItem itemChooseType = new MenuItem(menu, SWT.NONE);
         itemChooseType.setText("Выбрать тип");
         MenuItem itemChangeColor = new MenuItem(menu, SWT.NONE);
-        itemChangeColor.setText("Изменить цвет");
+        itemChangeColor.setText("Выбрать цвет");
         MenuItem itemDelete = new MenuItem(menu, SWT.NONE);
         itemDelete.setText("Удалить");
 
@@ -215,9 +238,13 @@ public class GraphicComponent extends Canvas {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 ColorDialog colorDialog = new ColorDialog(getShell());
-//                colorDialog.setRGB(colorLabel.getBackground().getRGB());
                 colorDialog.setText("Выберите цвет");
-                colorDialog.open();
+                RGB rgb = colorDialog.open();
+                if(rgb != null){
+                    colorSelectedObject = new Color(null, rgb);
+                    updateSelectedObject();
+                }
+                redraw();
             }
         });
 
