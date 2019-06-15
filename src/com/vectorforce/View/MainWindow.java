@@ -6,6 +6,7 @@ import com.vectorforce.Model.Vertex;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
@@ -57,7 +58,7 @@ public class MainWindow {
 
     // Initialization methods
     private void initGraphicComponent(){
-        graphicComponent = new GraphicComponent(shell, SWT.NONE, controller);
+        graphicComponent = new GraphicComponent(shell, SWT.NONE | SWT.DOUBLE_BUFFERED, controller);
     }
 
     private void initToolBar(){
@@ -73,7 +74,10 @@ public class MainWindow {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 controller.setStatus(OperationType.operationType.CURSOR);
-                itemCursor.setSelection(true);
+//                itemCursor.setSelection(true);
+                controller.removeSelection();
+                graphicComponent.redraw();
+                graphicComponent.setCursor(new Cursor(display, SWT.CURSOR_ARROW));
             }
         });
 
@@ -81,7 +85,10 @@ public class MainWindow {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 controller.setStatus(OperationType.operationType.ARC);
-                itemArc.setSelection(true);
+//                itemArc.setSelection(true);
+                controller.removeSelection();
+                graphicComponent.redraw();
+                graphicComponent.setCursor(new Cursor(display, SWT.CURSOR_UPARROW));
             }
         });
     }

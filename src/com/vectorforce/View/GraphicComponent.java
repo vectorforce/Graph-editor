@@ -22,6 +22,8 @@ public class GraphicComponent extends Canvas {
     private int startX;
     private int startY;
     private boolean moveCheck;
+    private boolean startDrawArc;
+    private Vertex fromVertex;
     // Context menu for right click
     private Menu popupMenuVertex;
     private Menu popupMenuArc;
@@ -30,7 +32,7 @@ public class GraphicComponent extends Canvas {
     private Color colorSelectedObject;
 
     // Constructor
-    public GraphicComponent(Composite parent, int style, Controller controller){
+    public GraphicComponent(Composite parent, int style, Controller controller) {
         super(parent, style);
 
         this.controller = controller;
@@ -41,12 +43,14 @@ public class GraphicComponent extends Canvas {
         setBackground(backgroundColor);
         setLayoutData(new GridData(GridData.FILL_BOTH));
         moveCheck = false;
+        startDrawArc = false;
+        fromVertex = null;
         initPopupMenu();
 
         addListeners();
     }
 
-    private void initPopupMenu(){
+    private void initPopupMenu() {
         popupMenuVertex = new Menu(this);
         popupMenuArc = new Menu(this);
         // Adding items to menu
@@ -56,13 +60,13 @@ public class GraphicComponent extends Canvas {
     }
 
     // Method for select the objects on graphic component
-    private void selectObject(MouseEvent e){
+    private void selectObject(MouseEvent e) {
         // Check the objects in area of mouse click
         controller.removeSelection();
-        for(int index = 0; index < controller.getVerteces().size(); index++){
-            Vertex currentVertex = controller.getVerteces().get(index);
-            if((e.x > currentVertex.getX()) && (e.x < currentVertex.getX() + currentVertex.getRadius()) ){
-                if((e.y > currentVertex.getY()) && (e.y < currentVertex.getY() + currentVertex.getRadius())){
+        // Check on vertex
+        for (Vertex currentVertex : controller.getVerteces()) {
+            if ((e.x > currentVertex.getX()) && (e.x < currentVertex.getX() + currentVertex.getRadius())) {
+                if ((e.y > currentVertex.getY()) && (e.y < currentVertex.getY() + currentVertex.getRadius())) {
                     currentVertex.select(true);
                     moveCheck = true;
                     startX = e.x;
@@ -72,54 +76,73 @@ public class GraphicComponent extends Canvas {
         }
         // Cycle for select only one vertex
         boolean isSelectedVertex = false;
-        for(Vertex currentVertex : controller.getVerteces()){
-            if(currentVertex.isSelected() == true && isSelectedVertex == false){
+        for (Vertex currentVertex : controller.getVerteces()) {
+            if (currentVertex.isSelected() == true && isSelectedVertex == false) {
                 isSelectedVertex = true;
-            } else if(currentVertex.isSelected() == true && isSelectedVertex == true){
+            } else if (currentVertex.isSelected() == true && isSelectedVertex == true) {
                 currentVertex.select(false);
             }
         }
+        setSelectedObject();
+        // Check on arc
+        if(selectedObject.getObject() != null){
+            return;
+        }
+        for(Arc currentArc : controller.getArcs()){
+            if(currentArc.getHitBox().contains(e.x, e.y)){
+                currentArc.select(true);
+            }
+        }
+        // Cycle for select only one arc
+        boolean isSelectedArc = false;
+        for(Arc currentArc : controller.getArcs()){
+            if(currentArc.isSelected() == true && isSelectedArc == false){
+                isSelectedArc = true;
+            } else if(currentArc.isSelected() == true && isSelectedArc == true){
+                currentArc.select(false);
+            }
+        }
+        setSelectedObject();
     }
 
-    // Method for update parameters of selected object
-    private void updateSelectedObject(){
-        if(selectedObject.getObject() instanceof Vertex){
+    // Method for update parameters of selected object after change
+    private void updateSelectedObject() {
+        if (selectedObject.getObject() == null) {
+            return;
+        }
+        if (selectedObject.getObject() instanceof Vertex) {
             ((Vertex) selectedObject.getObject()).setColor(colorSelectedObject);
-        } else if(selectedObject.getObject() instanceof Arc){
+        } else if (selectedObject.getObject() instanceof Arc) {
             ((Arc) selectedObject.getObject()).setColor(colorSelectedObject);
         }
     }
 
     // Adding listeners
     private void addListeners() {
-
         // Call context menu
-        this.addListener(SWT.MenuDetect, new Listener()
-        {
+        this.addListener(SWT.MenuDetect, new Listener() {
             @Override
-            public void handleEvent(Event e)
-            {
+            public void handleEvent(Event e) {
                 Point location = toControl(e.x, e.y);
-                if(location.x > getBounds().width){
+                if (location.x > getBounds().width) {
                     e.doit = false;
                 }
                 setSelectedObject();
-                if(selectedObject.getObject() == null){
+                if (selectedObject.getObject() == null) {
                     e.doit = false;
-                } else if(selectedObject.getObject() instanceof Vertex){
+                } else if (selectedObject.getObject() instanceof Vertex) {
                     setPopupMenu(popupMenuVertex);
-                } else if(selectedObject.getObject() instanceof Arc){
+                } else if (selectedObject.getObject() instanceof Arc) {
                     setPopupMenu(popupMenuArc);
                 }
             }
         });
-
         // Listeners for mouse click
         this.addMouseListener(new MouseListener() {
             @Override
             public void mouseDoubleClick(MouseEvent e) {
-                if(e.button == 1){
-                    if(controller.getStatus().equals(OperationType.operationType.CURSOR)){
+                if (e.button == 1) {
+                    if (controller.getStatus().equals(OperationType.operationType.CURSOR)) {
                         Vertex vertex = new Vertex(e.x, e.y);
                         controller.addVertex(vertex);
                         drawVertex(vertex);
@@ -130,8 +153,8 @@ public class GraphicComponent extends Canvas {
 
             @Override
             public void mouseDown(MouseEvent e) {
-                if(e.button == 1){ // Left button click
-                    switch(controller.getStatus()){
+                if (e.button == 1) { // Left button click
+                    switch (controller.getStatus()) {
                         case CURSOR:
                             selectObject(e);
                             redraw();
@@ -139,10 +162,28 @@ public class GraphicComponent extends Canvas {
 
                         case ARC:
                             controller.removeSelection();
+                            selectObject(e);
+                            if (selectedObject.getObject() instanceof Vertex) {
+                                if (startDrawArc == false) {
+                                    fromVertex = ((Vertex) selectedObject.getObject());
+                                    startDrawArc = true;
+                                } else {
+                                    // Check on connection between these verteces
+                                    Arc arc = new Arc(fromVertex, ((Vertex) selectedObject.getObject()));
+                                    controller.addArc(arc);
+                                    drawArc(arc);
+                                    startDrawArc = false;
+                                }
+                            } else if (selectedObject.getObject() == null) {
+                                if (fromVertex != null) {
+                                    fromVertex = null;
+                                    startDrawArc = false;
+                                }
+                            }
                             redraw();
                             break;
                     }
-                } else if(e.button == 3){ // Right button click
+                } else if (e.button == 3) { // Right button click
                     selectObject(e);
                     moveCheck = false;
                     redraw();
@@ -152,8 +193,16 @@ public class GraphicComponent extends Canvas {
             @Override
             public void mouseUp(MouseEvent e) {
                 // Stop of moving
-                if(e.button == 1){
-                    moveCheck = false;
+                switch (controller.getStatus()) {
+                    case CURSOR:
+                        if (e.button == 1) {
+                            moveCheck = false;
+                        }
+                        break;
+
+                    case ARC:
+
+                        break;
                 }
             }
         });
@@ -161,23 +210,33 @@ public class GraphicComponent extends Canvas {
         this.addMouseMoveListener(new MouseMoveListener() {
             @Override
             public void mouseMove(MouseEvent e) {
-                // Check moving flag on mouse pressed
-                if(moveCheck == true){
-                    if(e.x == startX && e.y == startY){
-                        return;
-                    } else if(e.x != -1 && e.y != -1){
-                        Vertex selectedVertex = null;
-                        for(Vertex currentVertex : controller.getVerteces()){
-                            if(currentVertex.isSelected() == true){
-                                selectedVertex = currentVertex;
+                switch (controller.getStatus()) {
+                    case CURSOR:
+                        // Check moving flag on mouse pressed
+                        if (moveCheck == true) {
+                            if (e.x == startX && e.y == startY) {
+                                return;
+                            } else if (e.x != -1 && e.y != -1) {
+                                Vertex selectedVertex = null;
+                                for (Vertex currentVertex : controller.getVerteces()) {
+                                    if (currentVertex.isSelected() == true) {
+                                        selectedVertex = currentVertex;
+                                    }
+                                }
+                                if (selectedVertex != null) {
+                                    selectedVertex.setX(e.x - CORRECTING_SHIFT);
+                                    selectedVertex.setY(e.y - CORRECTING_SHIFT);
+                                    redraw();
+                                }
                             }
                         }
-                        if(selectedVertex != null){
-                            selectedVertex.setX(e.x - CORRECTING_SHIFT);
-                            selectedVertex.setY(e.y - CORRECTING_SHIFT);
-                            redraw();
+                        break;
+
+                    case ARC:
+                        if (startDrawArc == true) {
+
                         }
-                    }
+                        break;
                 }
             }
         });
@@ -185,9 +244,10 @@ public class GraphicComponent extends Canvas {
     }
 
     // Draw methods
-    public void drawVertex(Vertex vertex){
+    public void drawVertex(Vertex vertex) {
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
+                // Draw default node
                 e.gc.setLineWidth(5);
                 e.gc.setForeground(vertex.getColor());
                 e.gc.drawOval(vertex.getX(), vertex.getY(), vertex.getRadius(), vertex.getRadius());
@@ -195,35 +255,39 @@ public class GraphicComponent extends Canvas {
         });
     }
 
-    public void drawArc(Arc arc){
+    public void drawArc(Arc arc) {
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
+                // Draw default arc
                 e.gc.setLineWidth(5);
+                e.gc.setForeground(arc.getColor());
+                e.gc.drawLine(arc.getFromVertex().getX(), arc.getFromVertex().getY(), arc.getToVertex().getX(), arc.getToVertex().getY());
             }
         });
     }
 
     // Setters
-    private void setSelectedObject(){
-        for(Vertex currentVertex : controller.getVerteces()){
-            if(currentVertex.isSelected() == true){
+    private void setSelectedObject() {
+        for (Vertex currentVertex : controller.getVerteces()) {
+            if (currentVertex.isSelected() == true) {
                 selectedObject.setObject(currentVertex);
                 return;
             }
         }
-        for(Arc currentArc : controller.getArcs()){
-            if(currentArc.isSelected() == true){
+        for (Arc currentArc : controller.getArcs()) {
+            if (currentArc.isSelected() == true) {
                 selectedObject.setObject(currentArc);
                 return;
             }
         }
+        selectedObject.setObject(null);
     }
 
-    private void setPopupMenu(Menu popMenu){
+    private void setPopupMenu(Menu popMenu) {
         this.setMenu(popMenu);
     }
 
-    private void setBasicMenuItems(Menu menu){
+    private void setBasicMenuItems(Menu menu) {
         MenuItem itemAddText = new MenuItem(menu, SWT.NONE);
         itemAddText.setText("Идентифицировать");
         MenuItem itemChooseType = new MenuItem(menu, SWT.NONE);
@@ -240,7 +304,7 @@ public class GraphicComponent extends Canvas {
                 ColorDialog colorDialog = new ColorDialog(getShell());
                 colorDialog.setText("Выберите цвет");
                 RGB rgb = colorDialog.open();
-                if(rgb != null){
+                if (rgb != null) {
                     colorSelectedObject = new Color(null, rgb);
                     updateSelectedObject();
                 }
