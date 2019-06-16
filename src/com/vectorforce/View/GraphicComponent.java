@@ -8,6 +8,7 @@ import com.vectorforce.Model.Vertex;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -64,7 +65,7 @@ public class GraphicComponent extends Canvas {
         // Check the objects in area of mouse click
         controller.removeSelection();
         // Check on vertex
-        for (Vertex currentVertex : controller.getVerteces()) {
+        for (Vertex currentVertex : controller.getGragh().getVerteces()) {
             if ((e.x > currentVertex.getX()) && (e.x < currentVertex.getX() + currentVertex.getRadius())) {
                 if ((e.y > currentVertex.getY()) && (e.y < currentVertex.getY() + currentVertex.getRadius())) {
                     currentVertex.select(true);
@@ -76,7 +77,7 @@ public class GraphicComponent extends Canvas {
         }
         // Cycle for select only one vertex
         boolean isSelectedVertex = false;
-        for (Vertex currentVertex : controller.getVerteces()) {
+        for (Vertex currentVertex : controller.getGragh().getVerteces()) {
             if (currentVertex.isSelected() == true && isSelectedVertex == false) {
                 isSelectedVertex = true;
             } else if (currentVertex.isSelected() == true && isSelectedVertex == true) {
@@ -85,20 +86,20 @@ public class GraphicComponent extends Canvas {
         }
         setSelectedObject();
         // Check on arc
-        if(selectedObject.getObject() != null){
+        if (selectedObject.getObject() != null) {
             return;
         }
-        for(Arc currentArc : controller.getArcs()){
-            if(currentArc.getHitBox().contains(e.x, e.y)){
+        for (Arc currentArc : controller.getGragh().getArcs()) {
+            if (currentArc.getHitBox().contains(e.x, e.y)) {
                 currentArc.select(true);
             }
         }
         // Cycle for select only one arc
         boolean isSelectedArc = false;
-        for(Arc currentArc : controller.getArcs()){
-            if(currentArc.isSelected() == true && isSelectedArc == false){
+        for (Arc currentArc : controller.getGragh().getArcs()) {
+            if (currentArc.isSelected() == true && isSelectedArc == false) {
                 isSelectedArc = true;
-            } else if(currentArc.isSelected() == true && isSelectedArc == true){
+            } else if (currentArc.isSelected() == true && isSelectedArc == true) {
                 currentArc.select(false);
             }
         }
@@ -167,17 +168,32 @@ public class GraphicComponent extends Canvas {
                                 if (startDrawArc == false) {
                                     fromVertex = ((Vertex) selectedObject.getObject());
                                     startDrawArc = true;
+                                    setCursor(SWT.CURSOR_UPARROW);
+
                                 } else {
-                                    // Check on connection between these verteces
+                                    startDrawArc = false;
+                                    setCursor(SWT.CURSOR_ARROW);
+                                    // Check on arc between these verteces
+                                    if (controller.getGragh().isOriented() == false) {
+                                        for (Arc currentArc : controller.getGragh().getArcs()) {
+                                            if (currentArc.getFromVertex() == fromVertex
+                                                    && currentArc.getToVertex() == ((Vertex) selectedObject.getObject())) {
+                                                return;
+                                            } else if (currentArc.getFromVertex() == ((Vertex) selectedObject.getObject())
+                                                    && currentArc.getToVertex() == fromVertex) {
+                                                return;
+                                            }
+                                        }
+                                    }
                                     Arc arc = new Arc(fromVertex, ((Vertex) selectedObject.getObject()));
                                     controller.addArc(arc);
                                     drawArc(arc);
-                                    startDrawArc = false;
                                 }
                             } else if (selectedObject.getObject() == null) {
                                 if (fromVertex != null) {
                                     fromVertex = null;
                                     startDrawArc = false;
+                                    setCursor(SWT.CURSOR_ARROW);
                                 }
                             }
                             redraw();
@@ -218,7 +234,7 @@ public class GraphicComponent extends Canvas {
                                 return;
                             } else if (e.x != -1 && e.y != -1) {
                                 Vertex selectedVertex = null;
-                                for (Vertex currentVertex : controller.getVerteces()) {
+                                for (Vertex currentVertex : controller.getGragh().getVerteces()) {
                                     if (currentVertex.isSelected() == true) {
                                         selectedVertex = currentVertex;
                                     }
@@ -248,6 +264,9 @@ public class GraphicComponent extends Canvas {
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
                 // Draw default node
+                if(controller.getGragh().getVerteces().contains(vertex) == false){ // ???CHECK THIS MOMENT
+                    return;
+                }
                 e.gc.setLineWidth(5);
                 e.gc.setForeground(vertex.getColor());
                 e.gc.drawOval(vertex.getX(), vertex.getY(), vertex.getRadius(), vertex.getRadius());
@@ -259,6 +278,9 @@ public class GraphicComponent extends Canvas {
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
                 // Draw default arc
+                if(controller.getGragh().getArcs().contains(arc) == false){
+                    return;
+                }
                 e.gc.setLineWidth(5);
                 e.gc.setForeground(arc.getColor());
                 e.gc.drawLine(arc.getFromVertex().getX(), arc.getFromVertex().getY(), arc.getToVertex().getX(), arc.getToVertex().getY());
@@ -268,19 +290,23 @@ public class GraphicComponent extends Canvas {
 
     // Setters
     private void setSelectedObject() {
-        for (Vertex currentVertex : controller.getVerteces()) {
+        for (Vertex currentVertex : controller.getGragh().getVerteces()) {
             if (currentVertex.isSelected() == true) {
                 selectedObject.setObject(currentVertex);
                 return;
             }
         }
-        for (Arc currentArc : controller.getArcs()) {
+        for (Arc currentArc : controller.getGragh().getArcs()) {
             if (currentArc.isSelected() == true) {
                 selectedObject.setObject(currentArc);
                 return;
             }
         }
         selectedObject.setObject(null);
+    }
+
+    private void setCursor(int style) {
+        this.setCursor(new Cursor(getDisplay(), style));
     }
 
     private void setPopupMenu(Menu popMenu) {
@@ -315,7 +341,12 @@ public class GraphicComponent extends Canvas {
         itemDelete.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-
+                if (selectedObject.getObject() instanceof Vertex) {
+                    controller.getGragh().deleteVertex((Vertex) selectedObject.getObject());
+                } else if (selectedObject.getObject() instanceof Arc) {
+                    controller.getGragh().deleteArc((Arc) selectedObject.getObject());
+                }
+                redraw();
             }
         });
     }

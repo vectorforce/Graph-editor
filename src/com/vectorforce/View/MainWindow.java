@@ -2,7 +2,6 @@ package com.vectorforce.View;
 
 import com.vectorforce.Controller.Controller;
 import com.vectorforce.Model.OperationType;
-import com.vectorforce.Model.Vertex;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -88,7 +87,7 @@ public class MainWindow {
 //                itemArc.setSelection(true);
                 controller.removeSelection();
                 graphicComponent.redraw();
-                graphicComponent.setCursor(new Cursor(display, SWT.CURSOR_UPARROW));
+                graphicComponent.setCursor(new Cursor(display, SWT.CURSOR_ARROW));
             }
         });
     }

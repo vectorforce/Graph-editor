@@ -61,6 +61,10 @@ public class Controller {
     }
 
     // Getters
+    public Graph getGragh(){
+        return graphs.get(indexCurrentGraph);
+    }
+
     public int getIndexCurrentGraph(){
         return indexCurrentGraph;
     }
@@ -69,11 +73,11 @@ public class Controller {
         return operationType.getStatus();
     }
 
-    public LinkedList<Vertex> getVerteces(){
-        return graphs.get(indexCurrentGraph).getVerteces();
-    }
-
-    public LinkedList<Arc> getArcs(){
-        return graphs.get(indexCurrentGraph).getArcs();
-    }
+//    public LinkedList<Vertex> getVerteces(){
+//        return graphs.get(indexCurrentGraph).getVerteces();
+//    }
+//
+//    public LinkedList<Arc> getArcs(){
+//        return graphs.get(indexCurrentGraph).getArcs();
+//    }
 }

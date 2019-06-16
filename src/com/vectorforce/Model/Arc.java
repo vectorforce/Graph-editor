@@ -23,6 +23,11 @@ public class Arc {
         initHitBox();
         isOriented = false;
         isSelected = false;
+        // Connect verteces with arc
+        fromVertex.addOutgoingArc(this);
+        fromVertex.addIngoingArc(this);
+        toVertex.addOutgoingArc(this);
+        toVertex.addIngoingArc(this);
     }
     // Calculate rectangle for hitBox
     private void initHitBox(){
@@ -51,6 +56,19 @@ public class Arc {
         } else {
             color = deselectColor;
         }
+    }
+
+    public void setOriented(boolean isOriented){
+        if(isOriented == true){
+            fromVertex.getIngoingArcs().remove(this);
+            toVertex.getOutgoingArcs().remove(this);
+        } else{
+            if(this.isOriented == true){
+                fromVertex.addIngoingArc(this);
+                toVertex.addOutgoingArc(this);
+            }
+        }
+        this.isOriented = isOriented;
     }
 
     public void setColor(Color color) {
