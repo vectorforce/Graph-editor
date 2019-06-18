@@ -2,7 +2,7 @@ package com.vectorforce.Controller;
 
 import com.vectorforce.Model.Arc;
 import com.vectorforce.Model.Graph;
-import com.vectorforce.Model.OperationType;
+import com.vectorforce.Controller.Operations.OperationType;
 import com.vectorforce.Model.Vertex;
 
 import java.util.LinkedList;

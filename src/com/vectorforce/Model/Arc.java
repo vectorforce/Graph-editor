@@ -73,6 +73,7 @@ public class Arc {
 
     public void setColor(Color color) {
         this.color = color;
+        deselectColor = color;
     }
 
     // Getters

@@ -1,7 +1,8 @@
 package com.vectorforce.View;
 
 import com.vectorforce.Controller.Controller;
-import com.vectorforce.Model.OperationType;
+import com.vectorforce.Controller.Operations.OperationType;
+import com.vectorforce.View.Graphics.GraphicComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;

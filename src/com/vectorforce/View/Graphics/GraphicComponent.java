@@ -1,9 +1,8 @@
-package com.vectorforce.View;
+package com.vectorforce.View.Graphics;
 
 import com.vectorforce.Controller.Controller;
 import com.vectorforce.Model.Arc;
-import com.vectorforce.Model.GraphicObject;
-import com.vectorforce.Model.OperationType;
+import com.vectorforce.Controller.Operations.OperationType;
 import com.vectorforce.Model.Vertex;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -346,6 +345,7 @@ public class GraphicComponent extends Canvas {
                 } else if (selectedObject.getObject() instanceof Arc) {
                     controller.getGragh().deleteArc((Arc) selectedObject.getObject());
                 }
+                selectedObject.setObject(null);
                 redraw();
             }
         });
