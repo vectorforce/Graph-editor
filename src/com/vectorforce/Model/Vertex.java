@@ -5,11 +5,9 @@ import org.eclipse.swt.graphics.Color;
 import java.util.LinkedList;
 
 public class Vertex {
-    private int CORRECTING_SHIFT = 12; // For the exact location of the node relative to the cursor
-
     private int x;
     private int y;
-    private int radius = 25;
+    private int diameter = 25;
     private Color color;
     private Color selectColor;
     private Color deselectColor;
@@ -18,8 +16,8 @@ public class Vertex {
     private boolean isSelected;
 
     public Vertex(int x, int y){
-        this.x = x - CORRECTING_SHIFT;
-        this.y = y - CORRECTING_SHIFT;
+        this.x = x - diameter / 2;
+        this.y = y - diameter / 2;
         this.color = new Color(null, 0, 0, 0);
         this.selectColor = new Color(null, 0, 255, 0);
         this.deselectColor = color;
@@ -68,8 +66,8 @@ public class Vertex {
         this.y = y;
     }
 
-    public void setRadius(int radius){
-        this.radius = radius;
+    public void setDiameter(int diameter){
+        this.diameter = diameter;
     }
 
     // Getters
@@ -81,8 +79,8 @@ public class Vertex {
         return y;
     }
 
-    public int getRadius(){
-        return radius;
+    public int getDiameter(){
+        return diameter;
     }
 
     public boolean isSelected(){

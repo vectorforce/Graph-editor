@@ -3,14 +3,14 @@ package com.vectorforce.View.Graphics;
 import org.eclipse.swt.graphics.Rectangle;
 
 // Rectangle hitBox
-public class HitBox {
+public class SelectionBox {
     private int x1;
     private int y1;
     private int x2;
     private int y2;
     private Rectangle rectangle;
 
-    public HitBox(){
+    public SelectionBox(){
         x1 = 0;
         y1 = 0;
         x2 = 0;
@@ -18,7 +18,7 @@ public class HitBox {
         rectangle = new Rectangle(x1, y1, Math.abs(x2 - x1), Math.abs(y2 - y1));
     }
 
-    public HitBox(int x1, int y1, int x2, int y2){
+    public SelectionBox(int x1, int y1, int x2, int y2){
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;

@@ -1,4 +1,4 @@
-package com.vectorforce.Controller.Operations;
+package com.vectorforce.Controller.Common;
 
 public class OperationType {
     public enum operationType {CURSOR, ARC}

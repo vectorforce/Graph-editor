@@ -2,23 +2,20 @@ package com.vectorforce.View.Graphics;
 
 import com.vectorforce.Controller.Controller;
 import com.vectorforce.Model.Arc;
-import com.vectorforce.Controller.Operations.OperationType;
+import com.vectorforce.Controller.Common.OperationType;
 import com.vectorforce.Model.Vertex;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
 public class GraphicComponent extends Canvas {
     // Data for graphic component
+    private int lineWidth;
     private Color backgroundColor;
     private Controller controller;
     // Data for moving objects
-    private int CORRECTING_SHIFT = 12;
     private int startX;
     private int startY;
     private boolean moveCheck;
@@ -37,6 +34,7 @@ public class GraphicComponent extends Canvas {
 
         this.controller = controller;
 
+        lineWidth = 5;
         backgroundColor = new Color(null, 255, 255, 255);
         colorSelectedObject = null;
         selectedObject = new GraphicObject();
@@ -65,8 +63,8 @@ public class GraphicComponent extends Canvas {
         controller.removeSelection();
         // Check on vertex
         for (Vertex currentVertex : controller.getGragh().getVerteces()) {
-            if ((e.x > currentVertex.getX()) && (e.x < currentVertex.getX() + currentVertex.getRadius())) {
-                if ((e.y > currentVertex.getY()) && (e.y < currentVertex.getY() + currentVertex.getRadius())) {
+            if ((e.x > currentVertex.getX()) && (e.x < currentVertex.getX() + currentVertex.getDiameter())) {
+                if ((e.y > currentVertex.getY()) && (e.y < currentVertex.getY() + currentVertex.getDiameter())) {
                     currentVertex.select(true);
                     moveCheck = true;
                     startX = e.x;
@@ -239,8 +237,8 @@ public class GraphicComponent extends Canvas {
                                     }
                                 }
                                 if (selectedVertex != null) {
-                                    selectedVertex.setX(e.x - CORRECTING_SHIFT);
-                                    selectedVertex.setY(e.y - CORRECTING_SHIFT);
+                                    selectedVertex.setX(e.x - (selectedVertex.getDiameter() / 2));
+                                    selectedVertex.setY(e.y - (selectedVertex.getDiameter() / 2));
                                     redraw();
                                 }
                             }
@@ -263,12 +261,12 @@ public class GraphicComponent extends Canvas {
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
                 // Draw default node
-                if(controller.getGragh().getVerteces().contains(vertex) == false){ // ???CHECK THIS MOMENT
+                if (controller.getGragh().getVerteces().contains(vertex) == false) { // ???CHECK THIS MOMENT
                     return;
                 }
-                e.gc.setLineWidth(5);
+                e.gc.setLineWidth(lineWidth);
                 e.gc.setForeground(vertex.getColor());
-                e.gc.drawOval(vertex.getX(), vertex.getY(), vertex.getRadius(), vertex.getRadius());
+                e.gc.drawOval(vertex.getX(), vertex.getY(), vertex.getDiameter(), vertex.getDiameter());
             }
         });
     }
@@ -277,12 +275,35 @@ public class GraphicComponent extends Canvas {
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
                 // Draw default arc
-                if(controller.getGragh().getArcs().contains(arc) == false){
+                if (controller.getGragh().getArcs().contains(arc) == false) {
                     return;
                 }
-                e.gc.setLineWidth(5);
+                e.gc.setLineWidth(lineWidth);
+                int correctingShift = lineWidth - 2;
                 e.gc.setForeground(arc.getColor());
-                e.gc.drawLine(arc.getFromVertex().getX(), arc.getFromVertex().getY(), arc.getToVertex().getX(), arc.getToVertex().getY());
+                // Getting center coordinates
+                int x1 = arc.getFromVertex().getX() + arc.getToVertex().getDiameter() / 2;
+                int y1 = arc.getFromVertex().getY() + arc.getToVertex().getDiameter() / 2;
+                int x2 = arc.getToVertex().getX() + arc.getToVertex().getDiameter() / 2;
+                int y2 = arc.getToVertex().getY() + arc.getToVertex().getDiameter() / 2;
+                // Calculating triangle legs
+                int difX = x2 - x1;
+                int difY = y2 - y1;
+                // Calculating rotation angle for the fromVertex
+                double rotationAngleDegrees = Math.toDegrees(Math.atan2(difY,difX));
+                double rotationAngleRadians = rotationAngleDegrees * Math.PI / 180;
+                x1 += (int)((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleRadians));
+                y1 += (int)((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleRadians));
+                // Calculating rotation angle for the toVertex
+                rotationAngleDegrees -= 180;
+                rotationAngleRadians = rotationAngleDegrees * Math.PI / 180;
+                x2 += (int)((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleRadians));
+                y2 += (int)((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleRadians));
+                arc.setX1(x1);
+                arc.setY1(y1);
+                arc.setX2(x2);
+                arc.setY2(y2);
+                e.gc.drawLine(x1, y1, x2, y2);
             }
         });
     }

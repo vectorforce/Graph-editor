@@ -1,7 +1,7 @@
 package com.vectorforce.View;
 
 import com.vectorforce.Controller.Controller;
-import com.vectorforce.Controller.Operations.OperationType;
+import com.vectorforce.Controller.Common.OperationType;
 import com.vectorforce.View.Graphics.GraphicComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -17,6 +17,31 @@ public class MainWindow {
     private GraphicComponent graphicComponent;
 
     private Controller controller;
+
+    public MainWindow() {
+        display = new Display();
+        shell = new Shell(display);
+        shell.setText("Графовый редактор");
+        shell.setLayout(new GridLayout(5, false));
+
+        controller = new Controller();
+        initMenuBar();
+        initToolBarFile();
+        initGraphicComponent();
+        initToolBarEdit();
+
+        // Default settings
+        defaultSettings();
+
+        shell.open();
+
+        while (!shell.isDisposed()) {
+            if (display.readAndDispatch()) {
+                display.sleep();
+            }
+        }
+        display.dispose();
+    }
 
     private void initMenuBar() {
         Menu menuBar = new Menu(shell, SWT.BAR);
@@ -61,11 +86,25 @@ public class MainWindow {
         graphicComponent = new GraphicComponent(shell, SWT.NONE | SWT.DOUBLE_BUFFERED, controller);
     }
 
-    private void initToolBar(){
-        ToolBar toolBar = new ToolBar(shell, SWT.VERTICAL);
-        ToolItem itemCursor = new ToolItem(toolBar, SWT.PUSH);
+    private void initToolBarFile(){
+        ToolBar toolBarFile = new ToolBar(shell, SWT.VERTICAL);
+        ToolItem itemNew = new ToolItem(toolBarFile, SWT.PUSH);
+        itemNew.setText("Новый");
+        ToolItem itemOpen = new ToolItem(toolBarFile, SWT.PUSH);
+        itemOpen.setText("Открыть");
+        ToolItem itemClose = new ToolItem(toolBarFile, SWT.PUSH);
+        itemClose.setText("Закрыть");
+        ToolItem itemSave = new ToolItem(toolBarFile, SWT.PUSH);
+        itemSave.setText("Сохранить");
+        ToolItem itemSaveAs = new ToolItem(toolBarFile, SWT.PUSH);
+        itemSaveAs.setText("Сохранить как");
+    }
+
+    private void initToolBarEdit(){
+        ToolBar toolBarEdit = new ToolBar(shell, SWT.VERTICAL);
+        ToolItem itemCursor = new ToolItem(toolBarEdit, SWT.PUSH);
         itemCursor.setText("Cursor");
-        ToolItem itemArc = new ToolItem(toolBar, SWT.PUSH);
+        ToolItem itemArc = new ToolItem(toolBarEdit, SWT.PUSH);
         itemArc.setText("Arc");
 //        toolBar.pack();
 
@@ -101,29 +140,5 @@ public class MainWindow {
     // Methods with default settings for testing the app !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private void defaultSettings(){
         createGraph();
-    }
-
-    public MainWindow() {
-        display = new Display();
-        shell = new Shell(display);
-        shell.setText("Графовый редактор");
-        shell.setLayout(new GridLayout(5, false));
-
-        controller = new Controller();
-        initMenuBar();
-        initGraphicComponent();
-        initToolBar();
-
-        // Default settings
-        defaultSettings();
-
-        shell.open();
-
-        while (!shell.isDisposed()) {
-            if (display.readAndDispatch()) {
-                display.sleep();
-            }
-        }
-        display.dispose();
     }
 }

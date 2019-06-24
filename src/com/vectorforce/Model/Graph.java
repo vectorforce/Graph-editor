@@ -1,5 +1,6 @@
 package com.vectorforce.Model;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 public class Graph {
@@ -24,20 +25,16 @@ public class Graph {
 
     public void deleteVertex(Vertex vertex) {
         // Delete all adjacent arcs
-        for(Arc currentArc : vertex.getIngoingArcs()){
-            deleteArc(currentArc);
+        for(int index = 0; index < vertex.getIngoingArcs().size(); index++){
+            if(deleteArc(vertex.getIngoingArcs().get(index)) == true){
+                index--;
+            }
         }
-        for(Arc currentArc : vertex.getOutgoingArcs()){
-            deleteArc(currentArc);
+        for(int index = 0; index < vertex.getOutgoingArcs().size(); index++){
+            if(deleteArc(vertex.getOutgoingArcs().get(index)) == true){
+                index--;
+            }
         }
-//        arcs.remove(vertex.getIngoingArcs());
-//        arcs.remove(vertex.getOutgoingArcs());
-//        for (Arc currentArc : vertex.getOutgoingArcs()) {
-//            currentArc = null;
-//        }
-//        for (Arc currentArc : vertex.getIngoingArcs()) {
-//            currentArc = null;
-//        }
         verteces.remove(vertex);
         graphCheck();
     }
@@ -47,13 +44,18 @@ public class Graph {
         graphCheck();
     }
 
-    public void deleteArc(Arc arc) {
+    public boolean deleteArc(Arc arc) {
+        boolean deleteFlag = false;
         arc.getFromVertex().getOutgoingArcs().remove(arc);
         arc.getFromVertex().getIngoingArcs().remove(arc);
         arc.getToVertex().getOutgoingArcs().remove(arc);
         arc.getToVertex().getIngoingArcs().remove(arc);
+        if(arcs.contains(arc) == true){
+            deleteFlag = true;
+        }
         arcs.remove(arc);
         graphCheck();
+        return deleteFlag;
     }
 
     public void removeSelection() {
