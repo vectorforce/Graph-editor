@@ -7,6 +7,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
@@ -83,7 +84,27 @@ public class MainWindow {
 
     // Initialization methods
     private void initGraphicComponent(){
-        graphicComponent = new GraphicComponent(shell, SWT.NONE | SWT.DOUBLE_BUFFERED, controller);
+        Composite compositeGraphicComponent = new Composite(shell, SWT.NONE);
+        compositeGraphicComponent.setLayout(new GridLayout(1, false));
+        compositeGraphicComponent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        graphicComponent = new GraphicComponent(compositeGraphicComponent, SWT.BORDER | SWT.DOUBLE_BUFFERED, controller);
+        initGenerateGraphButton(compositeGraphicComponent);
+    }
+
+    private void initGenerateGraphButton(Composite composite){
+        Button buttonGenerateGraph = new Button(composite, SWT.PUSH);
+        buttonGenerateGraph.setText("Сгенерировать граф");
+        GridData buttonGenerateGraphData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+        buttonGenerateGraphData.widthHint = 200;
+        buttonGenerateGraphData.heightHint = 50;
+        buttonGenerateGraph.setLayoutData(buttonGenerateGraphData);
+
+        buttonGenerateGraph.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+
+            }
+        });
     }
 
     private void initToolBarFile(){
