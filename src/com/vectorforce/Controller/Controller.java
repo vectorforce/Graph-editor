@@ -72,12 +72,4 @@ public class Controller {
     public OperationType.operationType getStatus() {
         return operationType.getStatus();
     }
-
-//    public LinkedList<Vertex> getVerteces(){
-//        return graphs.get(indexCurrentGraph).getVerteces();
-//    }
-//
-//    public LinkedList<Arc> getArcs(){
-//        return graphs.get(indexCurrentGraph).getArcs();
-//    }
 }

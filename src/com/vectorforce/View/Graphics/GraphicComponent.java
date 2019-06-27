@@ -138,11 +138,17 @@ public class GraphicComponent extends Canvas {
             @Override
             public void mouseDoubleClick(MouseEvent e) {
                 if (e.button == 1) {
-                    if (controller.getStatus().equals(OperationType.operationType.CURSOR)) {
-                        Vertex vertex = new Vertex(e.x, e.y);
-                        controller.addVertex(vertex);
-                        drawVertex(vertex);
-                        redraw();
+                    switch (controller.getStatus()) {
+                        case CURSOR:
+                            Vertex vertex = new Vertex(e.x, e.y);
+                            controller.addVertex(vertex);
+                            drawVertex(vertex);
+                            redraw();
+                            break;
+
+                        case ARC:
+
+                            break;
                     }
                 }
             }
@@ -164,20 +170,17 @@ public class GraphicComponent extends Canvas {
                                     fromVertex = ((Vertex) selectedObject.getObject());
                                     startDrawArc = true;
                                     setCursor(SWT.CURSOR_UPARROW);
-
                                 } else {
                                     startDrawArc = false;
                                     setCursor(SWT.CURSOR_ARROW);
                                     // Check on arc between these verteces
-                                    if (controller.getGragh().isOriented() == false) {
-                                        for (Arc currentArc : controller.getGragh().getArcs()) {
-                                            if (currentArc.getFromVertex() == fromVertex
-                                                    && currentArc.getToVertex() == ((Vertex) selectedObject.getObject())) {
-                                                return;
-                                            } else if (currentArc.getFromVertex() == ((Vertex) selectedObject.getObject())
-                                                    && currentArc.getToVertex() == fromVertex) {
-                                                return;
-                                            }
+                                    for (Arc currentArc : controller.getGragh().getArcs()) {
+                                        if (currentArc.getFromVertex() == fromVertex
+                                                && currentArc.getToVertex() == ((Vertex) selectedObject.getObject())) {
+                                            return;
+                                        } else if (currentArc.getToVertex() == fromVertex
+                                                && currentArc.getFromVertex() == ((Vertex) selectedObject.getObject())) {
+                                            return;
                                         }
                                     }
                                     Arc arc = new Arc(fromVertex, ((Vertex) selectedObject.getObject()));
@@ -254,17 +257,22 @@ public class GraphicComponent extends Canvas {
 
     }
 
-    // Draw methods
+    // Drawing methods
     public void drawVertex(Vertex vertex) {
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
-                // Draw default node
                 if (controller.getGragh().getVerteces().contains(vertex) == false) { // ???CHECK THIS MOMENT
                     return;
                 }
-                e.gc.setLineWidth(lineWidth);
-                e.gc.setForeground(vertex.getColor());
-                e.gc.drawOval(vertex.getX(), vertex.getY(), vertex.getDiameter(), vertex.getDiameter());
+                Display.getDefault().syncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Draw default node
+                        e.gc.setLineWidth(lineWidth);
+                        e.gc.setForeground(vertex.getColor());
+                        e.gc.drawOval(vertex.getX(), vertex.getY(), vertex.getDiameter(), vertex.getDiameter());
+                    }
+                });
             }
         });
     }
@@ -272,36 +280,53 @@ public class GraphicComponent extends Canvas {
     public void drawArc(Arc arc) {
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
-                // Draw default arc
                 if (controller.getGragh().getArcs().contains(arc) == false) {
                     return;
                 }
-                e.gc.setLineWidth(lineWidth);
-                int correctingShift = lineWidth - 2;
-                e.gc.setForeground(arc.getColor());
-                // Getting center coordinates
-                int x1 = arc.getFromVertex().getX() + arc.getToVertex().getDiameter() / 2;
-                int y1 = arc.getFromVertex().getY() + arc.getToVertex().getDiameter() / 2;
-                int x2 = arc.getToVertex().getX() + arc.getToVertex().getDiameter() / 2;
-                int y2 = arc.getToVertex().getY() + arc.getToVertex().getDiameter() / 2;
-                // Calculating triangle legs
-                int difX = x2 - x1;
-                int difY = y2 - y1;
-                // Calculating rotation angle for the fromVertex
-                double rotationAngleDegrees = Math.toDegrees(Math.atan2(difY, difX));
-                double rotationAngleRadians = rotationAngleDegrees * Math.PI / 180;
-                x1 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleRadians));
-                y1 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleRadians));
-                // Calculating rotation angle for the toVertex
-                rotationAngleDegrees -= 180;
-                rotationAngleRadians = rotationAngleDegrees * Math.PI / 180;
-                x2 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleRadians));
-                y2 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleRadians));
-                arc.setX1(x1);
-                arc.setY1(y1);
-                arc.setX2(x2);
-                arc.setY2(y2);
-                e.gc.drawLine(x1, y1, x2, y2);
+                Display.getDefault().syncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Drawing default arc
+                        e.gc.setLineWidth(lineWidth);
+                        e.gc.setForeground(arc.getColor());
+                        int correctingShift = lineWidth - 2;
+                        int x1 = arc.getFromVertex().getX() + arc.getToVertex().getDiameter() / 2;
+                        int y1 = arc.getFromVertex().getY() + arc.getToVertex().getDiameter() / 2;
+                        int x2 = arc.getToVertex().getX() + arc.getToVertex().getDiameter() / 2;
+                        int y2 = arc.getToVertex().getY() + arc.getToVertex().getDiameter() / 2;
+                        // Calculating triangle legs
+                        int difX = x2 - x1;
+                        int difY = y2 - y1;
+                        // Calculating rotation angle for the fromVertex
+                        double rotationAngle = Math.atan2(difY, difX);
+                        x1 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngle));
+                        y1 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngle));
+                        // Calculating rotation angle for the toVertex
+                        double rotationAngleSecondVertex = rotationAngle - Math.PI;
+                        x2 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleSecondVertex));
+                        y2 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleSecondVertex));
+                        arc.setX1(x1);
+                        arc.setY1(y1);
+                        arc.setX2(x2);
+                        arc.setY2(y2);
+                        e.gc.drawLine(x1, y1, x2, y2);
+                        // Drawing oriented arc
+                        if (arc.isOriented() == true) {
+                            // Drawing tip of arc
+                            int tipLength = 25;
+                            double tipAngle = Math.toRadians(30);
+                            double xTip;
+                            double yTip;
+                            double beta = rotationAngle + tipAngle;
+                            for (int index = 0; index < 2; index++) {
+                                xTip = x2 - tipLength * Math.cos(beta);
+                                yTip = y2 - tipLength * Math.sin(beta);
+                                e.gc.drawLine(x2, y2, (int) xTip, (int) yTip);
+                                beta = rotationAngle - tipAngle;
+                            }
+                        }
+                    }
+                });
             }
         });
     }
@@ -360,9 +385,9 @@ public class GraphicComponent extends Canvas {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 if (selectedObject.getObject() instanceof Vertex) {
-                    controller.getGragh().deleteVertex((Vertex) selectedObject.getObject());
+                    controller.deleteVertex((Vertex) selectedObject.getObject());
                 } else if (selectedObject.getObject() instanceof Arc) {
-                    controller.getGragh().deleteArc((Arc) selectedObject.getObject());
+                    controller.deleteArc((Arc) selectedObject.getObject());
                 }
                 selectedObject.setObject(null);
                 redraw();
