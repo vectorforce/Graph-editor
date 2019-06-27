@@ -7,10 +7,10 @@ import java.util.LinkedList;
 // Rectangle SelectionBox
 public class SelectionBox {
     private int SINGLE_RECTANGLE_SIZE = 10;
-    private LinkedList<Rectangle> rectangleList;
+    private LinkedList<Rectangle> rectangles;
 
     public SelectionBox(){
-        rectangleList = new LinkedList<>();
+        rectangles = new LinkedList<>();
     }
 
     public SelectionBox(int x1, int y1, int x2, int y2){
@@ -22,7 +22,7 @@ public class SelectionBox {
     }
 
     public boolean contains(int x, int y){
-        for(Rectangle currentRectangle : rectangleList){
+        for(Rectangle currentRectangle : rectangles){
             if(currentRectangle.contains(x, y) == true){
                 return true;
             }
@@ -32,11 +32,11 @@ public class SelectionBox {
 
     // Setters
     public void getRectangleList(LinkedList<Rectangle> rectangleList){
-        this.rectangleList = rectangleList;
+        this.rectangles = rectangleList;
     }
 
     // Getters
-    public LinkedList<Rectangle> getRectangleList(){
-        return rectangleList;
+    public LinkedList<Rectangle> getRectangles(){
+        return rectangles;
     }
 }

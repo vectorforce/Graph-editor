@@ -1,6 +1,7 @@
 package com.vectorforce.Model;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 
 import java.util.LinkedList;
 
@@ -15,7 +16,7 @@ public class Vertex {
     private LinkedList<Arc> outgoingArcs;
     private boolean isSelected;
 
-    public Vertex(int x, int y){
+    public Vertex(int x, int y) {
         this.x = x - diameter / 2;
         this.y = y - diameter / 2;
         this.color = new Color(null, 0, 0, 0);
@@ -26,31 +27,41 @@ public class Vertex {
         isSelected = false;
     }
 
-    public void addIngoingArc(Arc arc){
+    // Check for the presence of a point on the arc
+    public boolean contains(Point point) {
+        if ((point.x > x) && (point.x < x + diameter)) {
+            if ((point.y > y) && (point.y < y + diameter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addIngoingArc(Arc arc) {
         ingoingArcs.add(arc);
     }
 
-    public void addOutgoingArc(Arc arc){
+    public void addOutgoingArc(Arc arc) {
         outgoingArcs.add(arc);
     }
 
-    public LinkedList<Arc> getIngoingArcs(){
+    public LinkedList<Arc> getIngoingArcs() {
         return ingoingArcs;
     }
 
-    public LinkedList<Arc> getOutgoingArcs(){
+    public LinkedList<Arc> getOutgoingArcs() {
         return outgoingArcs;
     }
 
     // Setters
-    public void setColor(Color color){
+    public void setColor(Color color) {
         this.color = color;
         this.deselectColor = color;
     }
 
-    public void select(boolean select){
+    public void select(boolean select) {
         this.isSelected = select;
-        if(select == true){
+        if (select == true) {
             color = selectColor;
         } else {
             color = deselectColor;
@@ -58,36 +69,36 @@ public class Vertex {
     }
 
     // Setters
-    public void setX(int x){
+    public void setX(int x) {
         this.x = x;
     }
 
-    public void setY(int y){
+    public void setY(int y) {
         this.y = y;
     }
 
-    public void setDiameter(int diameter){
+    public void setDiameter(int diameter) {
         this.diameter = diameter;
     }
 
     // Getters
-    public int getX(){
+    public int getX() {
         return x;
     }
 
-    public int getY(){
+    public int getY() {
         return y;
     }
 
-    public int getDiameter(){
+    public int getDiameter() {
         return diameter;
     }
 
-    public boolean isSelected(){
+    public boolean isSelected() {
         return isSelected;
     }
 
-    public Color getColor(){
+    public Color getColor() {
         return color;
     }
 

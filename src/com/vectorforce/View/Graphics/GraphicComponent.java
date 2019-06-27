@@ -63,13 +63,11 @@ public class GraphicComponent extends Canvas {
         controller.removeSelection();
         // Check on vertex
         for (Vertex currentVertex : controller.getGragh().getVerteces()) {
-            if ((e.x > currentVertex.getX()) && (e.x < currentVertex.getX() + currentVertex.getDiameter())) {
-                if ((e.y > currentVertex.getY()) && (e.y < currentVertex.getY() + currentVertex.getDiameter())) {
-                    currentVertex.select(true);
-                    moveCheck = true;
-                    startX = e.x;
-                    startY = e.y;
-                }
+            if (currentVertex.contains(new Point(e.x, e.y))) {
+                currentVertex.select(true);
+                moveCheck = true;
+                startX = e.x;
+                startY = e.y;
             }
         }
         // Cycle for select only one vertex
@@ -87,7 +85,7 @@ public class GraphicComponent extends Canvas {
             return;
         }
         for (Arc currentArc : controller.getGragh().getArcs()) {
-            if (currentArc.getHitBox().contains(e.x, e.y)) {
+            if (currentArc.contains(new Point(e.x, e.y)) == true) {
                 currentArc.select(true);
             }
         }
@@ -290,15 +288,15 @@ public class GraphicComponent extends Canvas {
                 int difX = x2 - x1;
                 int difY = y2 - y1;
                 // Calculating rotation angle for the fromVertex
-                double rotationAngleDegrees = Math.toDegrees(Math.atan2(difY,difX));
+                double rotationAngleDegrees = Math.toDegrees(Math.atan2(difY, difX));
                 double rotationAngleRadians = rotationAngleDegrees * Math.PI / 180;
-                x1 += (int)((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleRadians));
-                y1 += (int)((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleRadians));
+                x1 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleRadians));
+                y1 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleRadians));
                 // Calculating rotation angle for the toVertex
                 rotationAngleDegrees -= 180;
                 rotationAngleRadians = rotationAngleDegrees * Math.PI / 180;
-                x2 += (int)((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleRadians));
-                y2 += (int)((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleRadians));
+                x2 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleRadians));
+                y2 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleRadians));
                 arc.setX1(x1);
                 arc.setY1(y1);
                 arc.setX2(x2);

@@ -1,6 +1,7 @@
 package com.vectorforce.Model;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 public class Arc {
@@ -8,7 +9,6 @@ public class Arc {
     private int y1;
     private int x2;
     private int y2;
-    private Rectangle hitBox;
     private Color color;
     private Color selectColor;
     private Color deselectColor;
@@ -24,7 +24,6 @@ public class Arc {
         this.deselectColor = color;
         this.fromVertex = fromVertex;
         this.toVertex = toVertex;
-        initHitBox();
         isOriented = false;
         isSelected = false;
         // Connect verteces with arc
@@ -37,39 +36,39 @@ public class Arc {
         x2 = 0;
         y2 = 0;
     }
-    // Calculate rectangle for hitBox
-    private void initHitBox(){
-        int x = 0;
-        int y = 0;
-        if (fromVertex.getX() < toVertex.getX()) {
-            x = fromVertex.getX();
-        } else {
-            x = toVertex.getX();
+
+    // Check for the presence of a point on the arc
+    public boolean contains(Point point) {
+        int delta = 3; // deviation from arc
+        Point fromPoint = new Point(fromVertex.getX(), fromVertex.getY());
+        Point toPoint = new Point(toVertex.getX(), toVertex.getY());
+        int lengthSumSegments = distance(fromPoint, point) + distance(point, toPoint);
+        int arcLength = distance(fromPoint, toPoint);
+        if (lengthSumSegments > arcLength - delta && lengthSumSegments < arcLength + delta) {
+            return true;
         }
-        if (fromVertex.getY() < toVertex.getY()) {
-            y = fromVertex.getY();
-        } else {
-            y = toVertex.getY();
-        }
-        int width = Math.abs(fromVertex.getX() - toVertex.getX());
-        int height = Math.abs(fromVertex.getY() - toVertex.getY());
-        hitBox = new Rectangle(x, y, width, height);
+        return false;
+    }
+
+    private int distance(Point from, Point to) {
+        int distance = (int) Math.sqrt((Math.pow((to.x - from.x), 2) + Math.pow((to.y - from.y), 2)));
+        return distance;
     }
 
     //Setters
-    public void setX1(int x1){
+    public void setX1(int x1) {
         this.x1 = x1;
     }
 
-    public void setY1(int y1){
+    public void setY1(int y1) {
         this.y1 = y1;
     }
 
-    public void setX2(int x2){
+    public void setX2(int x2) {
         this.x2 = x2;
     }
 
-    public void setY2(int y2){
+    public void setY2(int y2) {
         this.y2 = y2;
     }
 
@@ -82,12 +81,12 @@ public class Arc {
         }
     }
 
-    public void setOriented(boolean isOriented){
-        if(isOriented == true){
+    public void setOriented(boolean isOriented) {
+        if (isOriented == true) {
             fromVertex.getIngoingArcs().remove(this);
             toVertex.getOutgoingArcs().remove(this);
-        } else{
-            if(this.isOriented == true){
+        } else {
+            if (this.isOriented == true) {
                 fromVertex.addIngoingArc(this);
                 toVertex.addOutgoingArc(this);
             }
@@ -101,19 +100,19 @@ public class Arc {
     }
 
     // Getters
-    public int getX1(){
+    public int getX1() {
         return x1;
     }
 
-    public int getY1(){
+    public int getY1() {
         return y1;
     }
 
-    public int getX2(){
+    public int getX2() {
         return x2;
     }
 
-    public int getY2(){
+    public int getY2() {
         return y2;
     }
 
@@ -135,9 +134,5 @@ public class Arc {
 
     public Vertex getToVertex() {
         return toVertex;
-    }
-
-    public Rectangle getHitBox(){
-        return hitBox;
     }
 }
