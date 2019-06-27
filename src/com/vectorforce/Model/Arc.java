@@ -55,6 +55,18 @@ public class Arc {
         return distance;
     }
 
+    public void changeDirection(){
+        if(isOriented == true){
+            fromVertex.getOutgoingArcs().remove(this);
+            toVertex.getIngoingArcs().remove(this);
+            Vertex changingVertex = toVertex;
+            toVertex = fromVertex;
+            fromVertex = changingVertex;
+            fromVertex.addOutgoingArc(this);
+            toVertex.addIngoingArc(this);
+        }
+    }
+
     //Setters
     public void setX1(int x1) {
         this.x1 = x1;

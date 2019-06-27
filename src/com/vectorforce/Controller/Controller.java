@@ -48,6 +48,10 @@ public class Controller {
         graphs.get(indexCurrentGraph).removeSelection();
     }
 
+    public void changeDirection(Arc arc){
+        arc.changeDirection();
+    }
+
     // Drawing methods
 
 

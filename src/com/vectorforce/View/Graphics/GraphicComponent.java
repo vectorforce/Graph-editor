@@ -54,6 +54,21 @@ public class GraphicComponent extends Canvas {
         // Adding items to menu
         setBasicMenuItems(popupMenuVertex);
         setBasicMenuItems(popupMenuArc);
+        // Set popupMenuVertex
+
+        // Set popupMenuArc
+        MenuItem itemChangeDirection = new MenuItem(popupMenuArc, SWT.NONE);
+        itemChangeDirection.setText("Изменить направление");
+
+        itemChangeDirection.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (selectedObject.getObject() instanceof Arc) {
+                    controller.changeDirection((Arc) selectedObject.getObject());
+                    redraw();
+                }
+            }
+        });
         this.setMenu(popupMenuVertex);
     }
 
@@ -360,7 +375,7 @@ public class GraphicComponent extends Canvas {
         MenuItem itemAddText = new MenuItem(menu, SWT.NONE);
         itemAddText.setText("Идентифицировать");
         MenuItem itemChooseType = new MenuItem(menu, SWT.NONE);
-        itemChooseType.setText("Выбрать тип");
+        itemChooseType.setText("Изменить тип");
         MenuItem itemChangeColor = new MenuItem(menu, SWT.NONE);
         itemChangeColor.setText("Выбрать цвет");
         MenuItem itemDelete = new MenuItem(menu, SWT.NONE);
