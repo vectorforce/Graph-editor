@@ -2,8 +2,7 @@ package com.vectorforce.View.Graphics;
 
 import com.vectorforce.Controller.Controller;
 import com.vectorforce.Model.Arc;
-import com.vectorforce.Controller.Common.OperationType;
-import com.vectorforce.Model.Vertex;
+import com.vectorforce.Model.Node;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -20,7 +19,7 @@ public class GraphicComponent extends Canvas {
     private int startY;
     private boolean moveCheck;
     private boolean startDrawArc;
-    private Vertex fromVertex;
+    private Node fromNode;
     // Context menu for right click
     private Menu popupMenuVertex;
     private Menu popupMenuArc;
@@ -42,7 +41,7 @@ public class GraphicComponent extends Canvas {
         setLayoutData(new GridData(GridData.FILL_BOTH));
         moveCheck = false;
         startDrawArc = false;
-        fromVertex = null;
+        fromNode = null;
         initPopupMenu();
 
         addListeners();
@@ -76,22 +75,23 @@ public class GraphicComponent extends Canvas {
     private void selectObject(MouseEvent e) {
         // Check the objects in area of mouse click
         controller.removeSelection();
-        // Check on vertex
-        for (Vertex currentVertex : controller.getGragh().getVerteces()) {
-            if (currentVertex.contains(new Point(e.x, e.y))) {
-                currentVertex.select(true);
+        // Check on node
+        for (Node currentNode : controller.getGragh().getNodes()) {
+            if (currentNode.contains(new Point(e.x, e.y))) {
+                currentNode.getGraphicalShell().select(true);
+//                currentNode.select(true);
                 moveCheck = true;
                 startX = e.x;
                 startY = e.y;
             }
         }
-        // Cycle for select only one vertex
+        // Cycle for select only one node
         boolean isSelectedVertex = false;
-        for (Vertex currentVertex : controller.getGragh().getVerteces()) {
-            if (currentVertex.isSelected() == true && isSelectedVertex == false) {
+        for (Node currentNode : controller.getGragh().getNodes()) {
+            if (currentNode.getGraphicalShell().isSelected() == true && isSelectedVertex == false) {
                 isSelectedVertex = true;
-            } else if (currentVertex.isSelected() == true && isSelectedVertex == true) {
-                currentVertex.select(false);
+            } else if (currentNode.getGraphicalShell().isSelected() == true && isSelectedVertex == true) {
+                currentNode.getGraphicalShell().select(false);
             }
         }
         setSelectedObject();
@@ -101,7 +101,7 @@ public class GraphicComponent extends Canvas {
         }
         for (Arc currentArc : controller.getGragh().getArcs()) {
             if (currentArc.contains(new Point(e.x, e.y)) == true) {
-                currentArc.select(true);
+                currentArc.getGraphicalShell().select(true);
             }
         }
         // Cycle for select only one arc
@@ -110,7 +110,7 @@ public class GraphicComponent extends Canvas {
             if (currentArc.isSelected() == true && isSelectedArc == false) {
                 isSelectedArc = true;
             } else if (currentArc.isSelected() == true && isSelectedArc == true) {
-                currentArc.select(false);
+                currentArc.getGraphicalShell().select(false);
             }
         }
         setSelectedObject();
@@ -121,10 +121,10 @@ public class GraphicComponent extends Canvas {
         if (selectedObject.getObject() == null) {
             return;
         }
-        if (selectedObject.getObject() instanceof Vertex) {
-            ((Vertex) selectedObject.getObject()).setColor(colorSelectedObject);
+        if (selectedObject.getObject() instanceof Node) {
+            ((Node) selectedObject.getObject()).getGraphicalShell().setColor(colorSelectedObject);
         } else if (selectedObject.getObject() instanceof Arc) {
-            ((Arc) selectedObject.getObject()).setColor(colorSelectedObject);
+            ((Arc) selectedObject.getObject()).getGraphicalShell().setColor(colorSelectedObject);
         }
     }
 
@@ -141,13 +141,14 @@ public class GraphicComponent extends Canvas {
                 setSelectedObject();
                 if (selectedObject.getObject() == null) {
                     e.doit = false;
-                } else if (selectedObject.getObject() instanceof Vertex) {
+                } else if (selectedObject.getObject() instanceof Node) {
                     setPopupMenu(popupMenuVertex);
                 } else if (selectedObject.getObject() instanceof Arc) {
                     setPopupMenu(popupMenuArc);
                 }
             }
         });
+
         // Listeners for mouse click
         this.addMouseListener(new MouseListener() {
             @Override
@@ -155,9 +156,9 @@ public class GraphicComponent extends Canvas {
                 if (e.button == 1) {
                     switch (controller.getStatus()) {
                         case CURSOR:
-                            Vertex vertex = new Vertex(e.x, e.y);
-                            controller.addVertex(vertex);
-                            drawVertex(vertex);
+                            Node node = new Node(e.x, e.y);
+                            controller.addNode(node);
+                            drawNode(node);
                             redraw();
                             break;
 
@@ -180,31 +181,31 @@ public class GraphicComponent extends Canvas {
                         case ARC:
                             controller.removeSelection();
                             selectObject(e);
-                            if (selectedObject.getObject() instanceof Vertex) {
+                            if (selectedObject.getObject() instanceof Node) {
                                 if (startDrawArc == false) {
-                                    fromVertex = ((Vertex) selectedObject.getObject());
+                                    fromNode = ((Node) selectedObject.getObject());
                                     startDrawArc = true;
                                     setCursor(SWT.CURSOR_UPARROW);
                                 } else {
                                     startDrawArc = false;
                                     setCursor(SWT.CURSOR_ARROW);
-                                    // Check on arc between these verteces
+                                    // Check on arc between these nodes
                                     for (Arc currentArc : controller.getGragh().getArcs()) {
-                                        if (currentArc.getFromVertex() == fromVertex
-                                                && currentArc.getToVertex() == ((Vertex) selectedObject.getObject())) {
+                                        if (currentArc.getFromNode() == fromNode
+                                                && currentArc.getToNode() == ((Node) selectedObject.getObject())) {
                                             return;
-                                        } else if (currentArc.getToVertex() == fromVertex
-                                                && currentArc.getFromVertex() == ((Vertex) selectedObject.getObject())) {
+                                        } else if (currentArc.getToNode() == fromNode
+                                                && currentArc.getFromNode() == ((Node) selectedObject.getObject())) {
                                             return;
                                         }
                                     }
-                                    Arc arc = new Arc(fromVertex, ((Vertex) selectedObject.getObject()));
+                                    Arc arc = new Arc(fromNode, ((Node) selectedObject.getObject()));
                                     controller.addArc(arc);
                                     drawArc(arc);
                                 }
                             } else if (selectedObject.getObject() == null) {
-                                if (fromVertex != null) {
-                                    fromVertex = null;
+                                if (fromNode != null) {
+                                    fromNode = null;
                                     startDrawArc = false;
                                     setCursor(SWT.CURSOR_ARROW);
                                 }
@@ -235,6 +236,7 @@ public class GraphicComponent extends Canvas {
                 }
             }
         });
+
         // Listeners for mouse move
         this.addMouseMoveListener(new MouseMoveListener() {
             @Override
@@ -246,15 +248,15 @@ public class GraphicComponent extends Canvas {
                             if (e.x == startX && e.y == startY) {
                                 return;
                             } else if (e.x != -1 && e.y != -1) {
-                                Vertex selectedVertex = null;
-                                for (Vertex currentVertex : controller.getGragh().getVerteces()) {
-                                    if (currentVertex.isSelected() == true) {
-                                        selectedVertex = currentVertex;
+                                Node selectedNode = null;
+                                for (Node currentNode : controller.getGragh().getNodes()) {
+                                    if (currentNode.getGraphicalShell().isSelected() == true) {
+                                        selectedNode = currentNode;
                                     }
                                 }
-                                if (selectedVertex != null) {
-                                    selectedVertex.setX(e.x - (selectedVertex.getDiameter() / 2));
-                                    selectedVertex.setY(e.y - (selectedVertex.getDiameter() / 2));
+                                if (selectedNode != null) {
+                                    selectedNode.setX(e.x - (selectedNode.getDiameter() / 2));
+                                    selectedNode.setY(e.y - (selectedNode.getDiameter() / 2));
                                     redraw();
                                 }
                             }
@@ -273,19 +275,19 @@ public class GraphicComponent extends Canvas {
     }
 
     // Drawing methods
-    public void drawVertex(Vertex vertex) {
+    public void drawNode(Node node) {
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
-                if (controller.getGragh().getVerteces().contains(vertex) == false) { // ???CHECK THIS MOMENT
+                if (controller.getGragh().getNodes().contains(node) == false) { // ???CHECK THIS MOMENT
                     return;
                 }
                 Display.getDefault().syncExec(new Runnable() {
                     @Override
                     public void run() {
                         // Draw default node
-                        e.gc.setLineWidth(lineWidth);
-                        e.gc.setForeground(vertex.getColor());
-                        e.gc.drawOval(vertex.getX(), vertex.getY(), vertex.getDiameter(), vertex.getDiameter());
+                        setGC(e.gc);
+                        e.gc.setForeground(node.getGraphicalShell().getColor());
+                        e.gc.drawOval(node.getX(), node.getY(), node.getDiameter(), node.getDiameter());
                     }
                 });
             }
@@ -302,44 +304,45 @@ public class GraphicComponent extends Canvas {
                     @Override
                     public void run() {
                         // Drawing default arc
-                        e.gc.setLineWidth(lineWidth);
-                        e.gc.setForeground(arc.getColor());
+                        setGC(e.gc);
+                        e.gc.setForeground(arc.getGraphicalShell().getColor());
                         int correctingShift = lineWidth - 2;
-                        int x1 = arc.getFromVertex().getX() + arc.getToVertex().getDiameter() / 2;
-                        int y1 = arc.getFromVertex().getY() + arc.getToVertex().getDiameter() / 2;
-                        int x2 = arc.getToVertex().getX() + arc.getToVertex().getDiameter() / 2;
-                        int y2 = arc.getToVertex().getY() + arc.getToVertex().getDiameter() / 2;
+                        int correctingShiftOrientedArc = correctingShift + 7;
+                        int x1 = arc.getFromNode().getX() + arc.getToNode().getDiameter() / 2;
+                        int y1 = arc.getFromNode().getY() + arc.getToNode().getDiameter() / 2;
+                        int x2 = arc.getToNode().getX() + arc.getToNode().getDiameter() / 2;
+                        int y2 = arc.getToNode().getY() + arc.getToNode().getDiameter() / 2;
+                        int xTip = x2;
+                        int yTip = y2;
                         // Calculating triangle legs
                         int difX = x2 - x1;
                         int difY = y2 - y1;
-                        // Calculating rotation angle for the fromVertex
+                        // Calculating rotation angle for the fromNode
                         double rotationAngle = Math.atan2(difY, difX);
-                        x1 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngle));
-                        y1 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngle));
+                        x1 += (int) ((arc.getToNode().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngle));
+                        y1 += (int) ((arc.getToNode().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngle));
                         // Calculating rotation angle for the toVertex
                         double rotationAngleSecondVertex = rotationAngle - Math.PI;
-                        x2 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleSecondVertex));
-                        y2 += (int) ((arc.getToVertex().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleSecondVertex));
+                        int shift = correctingShift;
+                        if (arc.isOriented() == true) {
+                            // Drawing tip of arc
+                            int widthTip = 60;
+                            int heightTip = 60;
+                            int arcAngleTip = 40;
+                            xTip += (int) ((arc.getToNode().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleSecondVertex));
+                            yTip += (int) ((arc.getToNode().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleSecondVertex));
+                            e.gc.setBackground(arc.getGraphicalShell().getColor());
+                            e.gc.fillArc(xTip - widthTip / 2, yTip - heightTip / 2, widthTip, heightTip,
+                                    (180 - (int) Math.toDegrees((double) (rotationAngle)) - arcAngleTip / 2), arcAngleTip);
+                            shift = correctingShiftOrientedArc;
+                        }
+                        x2 += (int) ((arc.getToNode().getDiameter() / 2 + shift) * Math.cos(rotationAngleSecondVertex));
+                        y2 += (int) ((arc.getToNode().getDiameter() / 2 + shift) * Math.sin(rotationAngleSecondVertex));
                         arc.setX1(x1);
                         arc.setY1(y1);
                         arc.setX2(x2);
                         arc.setY2(y2);
                         e.gc.drawLine(x1, y1, x2, y2);
-                        // Drawing oriented arc
-                        if (arc.isOriented() == true) {
-                            // Drawing tip of arc
-                            int tipLength = 25;
-                            double tipAngle = Math.toRadians(30);
-                            double xTip;
-                            double yTip;
-                            double beta = rotationAngle + tipAngle;
-                            for (int index = 0; index < 2; index++) {
-                                xTip = x2 - tipLength * Math.cos(beta);
-                                yTip = y2 - tipLength * Math.sin(beta);
-                                e.gc.drawLine(x2, y2, (int) xTip, (int) yTip);
-                                beta = rotationAngle - tipAngle;
-                            }
-                        }
                     }
                 });
             }
@@ -347,10 +350,15 @@ public class GraphicComponent extends Canvas {
     }
 
     // Setters
+    private void setGC(GC gc) {
+        gc.setAntialias(SWT.ON);
+        gc.setLineWidth(lineWidth);
+    }
+
     private void setSelectedObject() {
-        for (Vertex currentVertex : controller.getGragh().getVerteces()) {
-            if (currentVertex.isSelected() == true) {
-                selectedObject.setObject(currentVertex);
+        for (Node currentNode : controller.getGragh().getNodes()) {
+            if (currentNode.getGraphicalShell().isSelected() == true) {
+                selectedObject.setObject(currentNode);
                 return;
             }
         }
@@ -399,8 +407,8 @@ public class GraphicComponent extends Canvas {
         itemDelete.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if (selectedObject.getObject() instanceof Vertex) {
-                    controller.deleteVertex((Vertex) selectedObject.getObject());
+                if (selectedObject.getObject() instanceof Node) {
+                    controller.deleteNode((Node) selectedObject.getObject());
                 } else if (selectedObject.getObject() instanceof Arc) {
                     controller.deleteArc((Arc) selectedObject.getObject());
                 }

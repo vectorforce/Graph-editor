@@ -2,72 +2,78 @@ package com.vectorforce.Model;
 
 import java.util.LinkedList;
 
-public class Graph {
-    private LinkedList<Vertex> verteces;
+public class Graph implements IGraph{
+    private String ID;
+    private LinkedList<Node> nodes;
     private LinkedList<Arc> arcs;
     private boolean isOriented;
     private boolean isMixed;
     private boolean isFull;
 
     public Graph() {
-        verteces = new LinkedList<>();
+        ID = null;
+        nodes = new LinkedList<>();
         arcs = new LinkedList<>();
         isOriented = false;
         isMixed = false;
         isFull = false;
     }
 
-    public void addVertex(Vertex vertex) {
-        verteces.add(vertex);
-        graphCheck();
+    public void addNode(Node node) {
+        nodes.add(node);
+        checkGraph();
     }
 
-    public void deleteVertex(Vertex vertex) {
+    public void deleteNode(Node node) {
         // Delete all adjacent arcs
-        for(int index = 0; index < vertex.getIngoingArcs().size(); index++){
-            if(deleteArc(vertex.getIngoingArcs().get(index)) == true){
+        for(int index = 0; index < node.getIngoingArcs().size(); index++){
+            if(deleteArc((Arc) node.getIngoingArcs().get(index)) == true){
                 index--;
             }
         }
-        for(int index = 0; index < vertex.getOutgoingArcs().size(); index++){
-            if(deleteArc(vertex.getOutgoingArcs().get(index)) == true){
+        for(int index = 0; index < node.getOutgoingArcs().size(); index++){
+            if(deleteArc((Arc) node.getOutgoingArcs().get(index)) == true){
                 index--;
             }
         }
-        verteces.remove(vertex);
-        graphCheck();
+        nodes.remove(node);
+        checkGraph();
     }
 
     public void addArc(Arc arc) {
         arcs.add(arc);
-        graphCheck();
+        checkGraph();
     }
 
     public boolean deleteArc(Arc arc) {
         boolean deleteFlag = false;
-        arc.getFromVertex().getOutgoingArcs().remove(arc);
-        arc.getFromVertex().getIngoingArcs().remove(arc);
-        arc.getToVertex().getOutgoingArcs().remove(arc);
-        arc.getToVertex().getIngoingArcs().remove(arc);
         if(arcs.contains(arc) == true){
             deleteFlag = true;
         }
-        arcs.remove(arc);
-        graphCheck();
+        removeLinks(arc);
         return deleteFlag;
     }
 
+    private void removeLinks(Arc arc){
+        arc.getFromNode().getOutgoingArcs().remove(arc);
+        arc.getFromNode().getIngoingArcs().remove(arc);
+        arc.getToNode().getOutgoingArcs().remove(arc);
+        arc.getToNode().getIngoingArcs().remove(arc);
+        arcs.remove(arc);
+        checkGraph();
+    }
+
     public void removeSelection() {
-        for (Vertex currentVertex : getVerteces()) {
-            currentVertex.select(false);
+        for (Node currentNode : getNodes()) {
+            currentNode.getGraphicalShell().select(false);
         }
         for (Arc currentArc : getArcs()) {
-            currentArc.select(false);
+            currentArc.getGraphicalShell().select(false);
         }
     }
 
     // Method for update information of graph
-    private void graphCheck() {
+    private void checkGraph() {
         int counterOriented = 0;
         int counterNonOriented = 0;
         for (int index = 0; index < arcs.size(); index++) {
@@ -93,7 +99,16 @@ public class Graph {
         }
     }
 
+    // Setters
+    public void setID(String ID){
+        this.ID = ID;
+    }
+
     // Getters
+    public String getID(){
+        return ID;
+    }
+
     public boolean isOriented() {
         return isOriented;
     }
@@ -106,8 +121,8 @@ public class Graph {
         return isFull;
     }
 
-    public LinkedList<Vertex> getVerteces() {
-        return verteces;
+    public LinkedList<Node> getNodes() {
+        return nodes;
     }
 
     public LinkedList<Arc> getArcs() {

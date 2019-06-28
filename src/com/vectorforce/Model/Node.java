@@ -5,26 +5,24 @@ import org.eclipse.swt.graphics.Point;
 
 import java.util.LinkedList;
 
-public class Vertex {
+public class Node<Type> {
+    private String ID;
     private int x;
     private int y;
     private int diameter = 25;
-    private Color color;
-    private Color selectColor;
-    private Color deselectColor;
     private LinkedList<Arc> ingoingArcs;
     private LinkedList<Arc> outgoingArcs;
-    private boolean isSelected;
+    private GraphicalShell graphicalShell;
+    private Type data;
 
-    public Vertex(int x, int y) {
+    public Node(int x, int y) {
+        ID = null;
         this.x = x - diameter / 2;
         this.y = y - diameter / 2;
-        this.color = new Color(null, 0, 0, 0);
-        this.selectColor = new Color(null, 0, 255, 0);
-        this.deselectColor = color;
+        graphicalShell = new GraphicalShell();
         ingoingArcs = new LinkedList<>();
         outgoingArcs = new LinkedList<>();
-        isSelected = false;
+        data = null;
     }
 
     // Check for the presence of a point on the arc
@@ -54,21 +52,14 @@ public class Vertex {
     }
 
     // Setters
-    public void setColor(Color color) {
-        this.color = color;
-        this.deselectColor = color;
+    public void setID(String ID){
+        this.ID = ID;
     }
 
-    public void select(boolean select) {
-        this.isSelected = select;
-        if (select == true) {
-            color = selectColor;
-        } else {
-            color = deselectColor;
-        }
+    public void setData(Type data) {
+        this.data = data;
     }
 
-    // Setters
     public void setX(int x) {
         this.x = x;
     }
@@ -82,6 +73,14 @@ public class Vertex {
     }
 
     // Getters
+    public String getID(){
+        return ID;
+    }
+
+    public Type getData() {
+        return data;
+    }
+
     public int getX() {
         return x;
     }
@@ -94,12 +93,7 @@ public class Vertex {
         return diameter;
     }
 
-    public boolean isSelected() {
-        return isSelected;
+    public GraphicalShell getGraphicalShell() {
+        return graphicalShell;
     }
-
-    public Color getColor() {
-        return color;
-    }
-
 }

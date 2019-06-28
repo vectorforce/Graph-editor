@@ -2,6 +2,8 @@ package com.vectorforce.View;
 
 import com.vectorforce.Controller.Controller;
 import com.vectorforce.Controller.Common.OperationType;
+import com.vectorforce.Model.Arc;
+import com.vectorforce.Model.Node;
 import com.vectorforce.View.Graphics.GraphicComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -102,7 +104,16 @@ public class MainWindow {
         buttonGenerateGraph.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-
+                Node node1 = new Node(200, 300);
+                Node node2 = new Node(500, 300);
+                Arc arc = new Arc(node2, node1);
+                controller.getGragh().addNode(node1);
+                controller.getGragh().addNode(node2);
+                controller.getGragh().addArc(arc);
+                graphicComponent.drawNode(node1);
+                graphicComponent.drawNode(node2);
+                graphicComponent.drawArc(arc);
+                graphicComponent.redraw();
             }
         });
     }

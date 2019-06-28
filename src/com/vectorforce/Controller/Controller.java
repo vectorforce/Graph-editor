@@ -3,7 +3,7 @@ package com.vectorforce.Controller;
 import com.vectorforce.Model.Arc;
 import com.vectorforce.Model.Graph;
 import com.vectorforce.Controller.Common.OperationType;
-import com.vectorforce.Model.Vertex;
+import com.vectorforce.Model.Node;
 
 import java.util.LinkedList;
 
@@ -28,12 +28,12 @@ public class Controller {
         graphs.remove(indexCurrentGraph);
     }
 
-    public void addVertex(Vertex vertex){
-        graphs.get(indexCurrentGraph).addVertex(vertex);
+    public void addNode(Node node){
+        graphs.get(indexCurrentGraph).addNode(node);
     }
 
-    public void deleteVertex(Vertex vertex){
-        graphs.get(indexCurrentGraph).deleteVertex(vertex);
+    public void deleteNode(Node node){
+        graphs.get(indexCurrentGraph).deleteNode(node);
     }
 
     public void addArc(Arc arc){
