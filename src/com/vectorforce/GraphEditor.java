@@ -1,6 +1,6 @@
 package com.vectorforce;
 
-import com.vectorforce.View.MainWindow;
+import com.vectorforce.view.MainWindow;
 
 public class GraphEditor {
 

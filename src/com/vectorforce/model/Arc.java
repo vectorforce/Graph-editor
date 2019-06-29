@@ -1,6 +1,5 @@
-package com.vectorforce.Model;
+package com.vectorforce.model;
 
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 
 public class Arc {
@@ -13,7 +12,7 @@ public class Arc {
     private Node toNode;
     private boolean isOriented;
     private GraphicalShell graphicalShell;
-    //    private boolean isBinary;
+    private boolean isBinary;
 
     public Arc(Node fromNode, Node toNode) {
         ID = null;
@@ -21,6 +20,7 @@ public class Arc {
         this.fromNode = fromNode;
         this.toNode = toNode;
         isOriented = true;
+        isBinary = false;
         // Connect nodes with arc
         fromNode.addOutgoingArc(this);
         fromNode.addIngoingArc(this);
@@ -85,15 +85,21 @@ public class Arc {
 
     public void setOriented(boolean isOriented) {
         if (isOriented == true) {
-            fromNode.getIngoingArcs().remove(this);
-            toNode.getOutgoingArcs().remove(this);
-        } else {
-            if (this.isOriented == true) {
+            if(this.isOriented == false){
                 fromNode.addIngoingArc(this);
                 toNode.addOutgoingArc(this);
             }
+        } else {
+            if (this.isOriented == true) {
+                fromNode.getIngoingArcs().remove(this);
+                toNode.getOutgoingArcs().remove(this);
+            }
         }
         this.isOriented = isOriented;
+    }
+
+    public void setBinary(boolean binary){
+        isBinary = binary;
     }
 
     // Getters
@@ -119,6 +125,10 @@ public class Arc {
 
     public boolean isOriented() {
         return isOriented;
+    }
+
+    public boolean isBinary(){
+        return isBinary;
     }
 
     public boolean isSelected() {

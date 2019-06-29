@@ -1,4 +1,4 @@
-package com.vectorforce.View.Graphics;
+package com.vectorforce.view.graphics;
 
 // This class created for store selected object on graphic component
 public class GraphicObject<Type> {

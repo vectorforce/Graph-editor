@@ -1,4 +1,4 @@
-package com.vectorforce.Model;
+package com.vectorforce.model;
 
 import java.util.LinkedList;
 

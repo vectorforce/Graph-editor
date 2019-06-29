@@ -1,4 +1,4 @@
-package com.vectorforce.Model;
+package com.vectorforce.model;
 
 public interface IGraph {
     void addNode(Node node);

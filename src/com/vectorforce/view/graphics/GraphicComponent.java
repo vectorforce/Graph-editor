@@ -1,8 +1,10 @@
-package com.vectorforce.View.Graphics;
+package com.vectorforce.view.graphics;
 
-import com.vectorforce.Controller.Controller;
-import com.vectorforce.Model.Arc;
-import com.vectorforce.Model.Node;
+import com.vectorforce.controller.Controller;
+import com.vectorforce.model.Arc;
+import com.vectorforce.model.Node;
+import com.vectorforce.view.dialogs.choose.ChooseArc;
+import com.vectorforce.view.dialogs.choose.ChooseNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -51,8 +53,8 @@ public class GraphicComponent extends Canvas {
         popupMenuVertex = new Menu(this);
         popupMenuArc = new Menu(this);
         // Adding items to menu
-        setBasicMenuItems(popupMenuVertex);
-        setBasicMenuItems(popupMenuArc);
+        setBasicMenuItems(popupMenuVertex, this);
+        setBasicMenuItems(popupMenuArc, this);
         // Set popupMenuVertex
 
         // Set popupMenuArc
@@ -307,7 +309,7 @@ public class GraphicComponent extends Canvas {
                         setGC(e.gc);
                         e.gc.setForeground(arc.getGraphicalShell().getColor());
                         int correctingShift = lineWidth - 2;
-                        int correctingShiftOrientedArc = correctingShift + 7;
+                        int correctingShiftOrientedArc = correctingShift + 15;
                         int x1 = arc.getFromNode().getX() + arc.getToNode().getDiameter() / 2;
                         int y1 = arc.getFromNode().getY() + arc.getToNode().getDiameter() / 2;
                         int x2 = arc.getToNode().getX() + arc.getToNode().getDiameter() / 2;
@@ -331,9 +333,11 @@ public class GraphicComponent extends Canvas {
                             int arcAngleTip = 40;
                             xTip += (int) ((arc.getToNode().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleSecondVertex));
                             yTip += (int) ((arc.getToNode().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleSecondVertex));
+                            int angleTipCorrectingShift = 3;
                             e.gc.setBackground(arc.getGraphicalShell().getColor());
+                            // Drawing tip of arc
                             e.gc.fillArc(xTip - widthTip / 2, yTip - heightTip / 2, widthTip, heightTip,
-                                    (180 - (int) Math.toDegrees((double) (rotationAngle)) - arcAngleTip / 2), arcAngleTip);
+                                    (180 - (int) Math.toDegrees((double) (rotationAngle)) - (arcAngleTip + angleTipCorrectingShift) / 2), arcAngleTip);
                             shift = correctingShiftOrientedArc;
                         }
                         x2 += (int) ((arc.getToNode().getDiameter() / 2 + shift) * Math.cos(rotationAngleSecondVertex));
@@ -342,7 +346,24 @@ public class GraphicComponent extends Canvas {
                         arc.setY1(y1);
                         arc.setX2(x2);
                         arc.setY2(y2);
-                        e.gc.drawLine(x1, y1, x2, y2);
+                        // Drawing arc
+                        if (arc.isBinary() == true) {
+                            // Drawing main line
+                            e.gc.setLineWidth(10);
+                            e.gc.drawLine(x1, y1, x2, y2);
+                            // Drawing center line for separate main line
+                            Color colorSeparateLine = new Color(null, 255, 255, 255);
+                            int separateLineWidth = 4;
+                            e.gc.setForeground(colorSeparateLine);
+                            e.gc.setLineWidth(separateLineWidth);
+                            if (arc.isOriented() == true) {
+                                x2 += (int) ((arc.getToNode().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleSecondVertex));
+                                y2 += (int) ((arc.getToNode().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleSecondVertex));
+                            }
+                            e.gc.drawLine(x1, y1, x2, y2);
+                        } else {
+                            e.gc.drawLine(x1, y1, x2, y2);
+                        }
                     }
                 });
             }
@@ -379,9 +400,9 @@ public class GraphicComponent extends Canvas {
         this.setMenu(popMenu);
     }
 
-    private void setBasicMenuItems(Menu menu) {
-        MenuItem itemAddText = new MenuItem(menu, SWT.NONE);
-        itemAddText.setText("Идентифицировать");
+    private void setBasicMenuItems(Menu menu, GraphicComponent graphicComponent) {
+        MenuItem itemSetID = new MenuItem(menu, SWT.NONE);
+        itemSetID.setText("Идентифицировать");
         MenuItem itemChooseType = new MenuItem(menu, SWT.NONE);
         itemChooseType.setText("Изменить тип");
         MenuItem itemChangeColor = new MenuItem(menu, SWT.NONE);
@@ -390,6 +411,24 @@ public class GraphicComponent extends Canvas {
         itemDelete.setText("Удалить");
 
         // Listeners for items
+        itemSetID.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+
+            }
+        });
+
+        itemChooseType.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (selectedObject.getObject() instanceof Arc) {
+                    new ChooseArc(getDisplay(), controller, (Arc) selectedObject.getObject(), graphicComponent);
+                } else if (selectedObject.getObject() instanceof Node) {
+                    new ChooseNode(getDisplay());
+                }
+            }
+        });
+
         itemChangeColor.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {

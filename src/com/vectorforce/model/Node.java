@@ -1,6 +1,5 @@
-package com.vectorforce.Model;
+package com.vectorforce.model;
 
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 
 import java.util.LinkedList;

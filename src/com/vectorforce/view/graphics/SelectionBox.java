@@ -1,4 +1,4 @@
-package com.vectorforce.View.Graphics;
+package com.vectorforce.view.graphics;
 
 import org.eclipse.swt.graphics.Rectangle;
 

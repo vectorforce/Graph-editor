@@ -1,10 +1,10 @@
-package com.vectorforce.View;
+package com.vectorforce.view;
 
-import com.vectorforce.Controller.Controller;
-import com.vectorforce.Controller.Common.OperationType;
-import com.vectorforce.Model.Arc;
-import com.vectorforce.Model.Node;
-import com.vectorforce.View.Graphics.GraphicComponent;
+import com.vectorforce.controller.Controller;
+import com.vectorforce.controller.common.OperationType;
+import com.vectorforce.model.Arc;
+import com.vectorforce.model.Node;
+import com.vectorforce.view.graphics.GraphicComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -35,11 +35,14 @@ public class MainWindow {
 
         // Default settings
         defaultSettings();
+        run();
+    }
 
+    private void run(){
         shell.open();
 
-        while (!shell.isDisposed()) {
-            if (display.readAndDispatch()) {
+        while (shell.isDisposed() == false) {
+            if (display.readAndDispatch() == true) {
                 display.sleep();
             }
         }

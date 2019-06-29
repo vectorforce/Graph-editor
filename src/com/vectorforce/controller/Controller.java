@@ -1,9 +1,9 @@
-package com.vectorforce.Controller;
+package com.vectorforce.controller;
 
-import com.vectorforce.Model.Arc;
-import com.vectorforce.Model.Graph;
-import com.vectorforce.Controller.Common.OperationType;
-import com.vectorforce.Model.Node;
+import com.vectorforce.model.Arc;
+import com.vectorforce.model.Graph;
+import com.vectorforce.controller.common.OperationType;
+import com.vectorforce.model.Node;
 
 import java.util.LinkedList;
 
@@ -56,6 +56,14 @@ public class Controller {
 
 
     // Setters
+    public void setOriented(Arc arc, boolean orientation){
+        arc.setOriented(orientation);
+    }
+
+    public void setBinary(Arc arc, boolean binary){
+        arc.setBinary(binary);
+    }
+
     public void setIndexCurrentGraph(int indexCurrentGraph){
         this.indexCurrentGraph = indexCurrentGraph;
     }
