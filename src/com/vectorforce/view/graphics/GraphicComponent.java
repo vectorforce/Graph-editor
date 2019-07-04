@@ -3,8 +3,11 @@ package com.vectorforce.view.graphics;
 import com.vectorforce.controller.Controller;
 import com.vectorforce.model.Arc;
 import com.vectorforce.model.Node;
-import com.vectorforce.view.dialogs.choose.ChooseArc;
-import com.vectorforce.view.dialogs.choose.ChooseNode;
+import com.vectorforce.view.dialogs.SetIDDialog;
+import com.vectorforce.view.dialogs.SetWeightDialog;
+import com.vectorforce.view.dialogs.choose.ChooseArcDialog;
+import com.vectorforce.view.dialogs.choose.ChooseNodeDialog;
+import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -23,7 +26,7 @@ public class GraphicComponent extends Canvas {
     private boolean startDrawArc;
     private Node fromNode;
     // Context menu for right click
-    private Menu popupMenuVertex;
+    private Menu popupMenuNode;
     private Menu popupMenuArc;
     // Variables for change selected objects
     private GraphicObject selectedObject;
@@ -35,9 +38,10 @@ public class GraphicComponent extends Canvas {
 
         this.controller = controller;
 
+        ColorSetupComponent.setDarkTheme();
         lineWidth = 5;
-        backgroundColor = new Color(null, 255, 255, 255);
-        colorSelectedObject = null;
+        backgroundColor = ColorSetupComponent.getBackgroundColor();
+        colorSelectedObject = ColorSetupComponent.getSelectColor();
         selectedObject = new GraphicObject();
         setBackground(backgroundColor);
         setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -50,16 +54,29 @@ public class GraphicComponent extends Canvas {
     }
 
     private void initPopupMenu() {
-        popupMenuVertex = new Menu(this);
+        popupMenuNode = new Menu(this);
         popupMenuArc = new Menu(this);
         // Adding items to menu
-        setBasicMenuItems(popupMenuVertex, this);
+        setBasicMenuItems(popupMenuNode, this);
         setBasicMenuItems(popupMenuArc, this);
-        // Set popupMenuVertex
+        // Set popupMenuNode
 
         // Set popupMenuArc
         MenuItem itemChangeDirection = new MenuItem(popupMenuArc, SWT.NONE);
         itemChangeDirection.setText("Изменить направление");
+
+        MenuItem itemSetWeight = new MenuItem(popupMenuArc, SWT.NONE);
+        itemSetWeight.setText("Установить вес");
+
+        itemSetWeight.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (selectedObject.getObject() instanceof Arc) {
+                    new SetWeightDialog(getDisplay(), controller, (Arc) selectedObject.getObject());
+                }
+                redraw();
+            }
+        });
 
         itemChangeDirection.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -70,7 +87,7 @@ public class GraphicComponent extends Canvas {
                 }
             }
         });
-        this.setMenu(popupMenuVertex);
+        this.setMenu(popupMenuNode);
     }
 
     // Method for select the objects on graphic component
@@ -144,7 +161,7 @@ public class GraphicComponent extends Canvas {
                 if (selectedObject.getObject() == null) {
                     e.doit = false;
                 } else if (selectedObject.getObject() instanceof Node) {
-                    setPopupMenu(popupMenuVertex);
+                    setPopupMenu(popupMenuNode);
                 } else if (selectedObject.getObject() instanceof Arc) {
                     setPopupMenu(popupMenuArc);
                 }
@@ -183,7 +200,7 @@ public class GraphicComponent extends Canvas {
                         case ARC:
                             controller.removeSelection();
                             selectObject(e);
-                            if (selectedObject.getObject() instanceof Node) {
+                            if (selectedObject.getObject() instanceof Node && selectedObject.getObject() != fromNode) {   // !!!!Change for drawing loops
                                 if (startDrawArc == false) {
                                     fromNode = ((Node) selectedObject.getObject());
                                     startDrawArc = true;
@@ -205,7 +222,7 @@ public class GraphicComponent extends Canvas {
                                     controller.addArc(arc);
                                     drawArc(arc);
                                 }
-                            } else if (selectedObject.getObject() == null) {
+                            } else if (selectedObject.getObject() == null || selectedObject.getObject() instanceof Arc) {  // !!!!Change for drawing loops
                                 if (fromNode != null) {
                                     fromNode = null;
                                     startDrawArc = false;
@@ -290,6 +307,10 @@ public class GraphicComponent extends Canvas {
                         setGC(e.gc);
                         e.gc.setForeground(node.getGraphicalShell().getColor());
                         e.gc.drawOval(node.getX(), node.getY(), node.getDiameter(), node.getDiameter());
+                        if (node.getID() != null) {
+                            e.gc.drawText(node.getID(), (node.getX() + node.getDiameter()),
+                                    (int) (node.getY() - node.getDiameter() / 1.5), true);
+                        }
                     }
                 });
             }
@@ -337,7 +358,7 @@ public class GraphicComponent extends Canvas {
                             e.gc.setBackground(arc.getGraphicalShell().getColor());
                             // Drawing tip of arc
                             e.gc.fillArc(xTip - widthTip / 2, yTip - heightTip / 2, widthTip, heightTip,
-                                    (180 - (int) Math.toDegrees((double) (rotationAngle)) - (arcAngleTip + angleTipCorrectingShift) / 2), arcAngleTip);
+                                    ((int) Math.toDegrees(Math.PI) - (int) Math.toDegrees((double) (rotationAngle)) - (arcAngleTip + angleTipCorrectingShift) / 2), arcAngleTip);
                             shift = correctingShiftOrientedArc;
                         }
                         x2 += (int) ((arc.getToNode().getDiameter() / 2 + shift) * Math.cos(rotationAngleSecondVertex));
@@ -346,13 +367,21 @@ public class GraphicComponent extends Canvas {
                         arc.setY1(y1);
                         arc.setX2(x2);
                         arc.setY2(y2);
+                        // Calculating weightText coordinates
+                        int arcLenght = (int) Math.sqrt(Math.pow((double) difX, 2) + Math.pow((double) difY, 2.0));
+                        int textCorrectingShift = 40;
+                        int indentFromArc = 7;
+                        int xWeight = x1 + indentFromArc + (int) (((arcLenght - textCorrectingShift) / 2) * Math.cos(rotationAngle));
+                        int yWeight = y1 + indentFromArc + (int) (((arcLenght - textCorrectingShift) / 2) * Math.sin(rotationAngle));
                         // Drawing arc
                         if (arc.isBinary() == true) {
                             // Drawing main line
                             e.gc.setLineWidth(10);
                             e.gc.drawLine(x1, y1, x2, y2);
+                            // Drawing textWeight
+                            e.gc.drawText(String.valueOf(arc.getWeight()), xWeight, yWeight, true);
                             // Drawing center line for separate main line
-                            Color colorSeparateLine = new Color(null, 255, 255, 255);
+                            Color colorSeparateLine = ColorSetupComponent.getBackgroundColor();
                             int separateLineWidth = 4;
                             e.gc.setForeground(colorSeparateLine);
                             e.gc.setLineWidth(separateLineWidth);
@@ -363,11 +392,28 @@ public class GraphicComponent extends Canvas {
                             e.gc.drawLine(x1, y1, x2, y2);
                         } else {
                             e.gc.drawLine(x1, y1, x2, y2);
+                            e.gc.drawText(String.valueOf(arc.getWeight()), xWeight, yWeight, true);
                         }
                     }
                 });
             }
         });
+    }
+
+    public void changeTheme() {
+        if (ColorSetupComponent.isDarkTheme() == true) {
+            ColorSetupComponent.setLightTheme();
+        } else {
+            ColorSetupComponent.setDarkTheme();
+        }
+        for (Node currentNode : controller.getGragh().getNodes()) {
+            currentNode.getGraphicalShell().setColor(ColorSetupComponent.getNodeColor());
+        }
+        for (Arc currentArc : controller.getGragh().getArcs()) {
+            currentArc.getGraphicalShell().setColor(ColorSetupComponent.getArcColor());
+        }
+        setBackground(ColorSetupComponent.getBackgroundColor());
+        redraw();
     }
 
     // Setters
@@ -402,7 +448,7 @@ public class GraphicComponent extends Canvas {
 
     private void setBasicMenuItems(Menu menu, GraphicComponent graphicComponent) {
         MenuItem itemSetID = new MenuItem(menu, SWT.NONE);
-        itemSetID.setText("Идентифицировать");
+        itemSetID.setText("Установить идентификатор");
         MenuItem itemChooseType = new MenuItem(menu, SWT.NONE);
         itemChooseType.setText("Изменить тип");
         MenuItem itemChangeColor = new MenuItem(menu, SWT.NONE);
@@ -414,7 +460,12 @@ public class GraphicComponent extends Canvas {
         itemSetID.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-
+                if (selectedObject.getObject() instanceof Arc) {
+                    new SetIDDialog(getDisplay(), controller, selectedObject);
+                } else if (selectedObject.getObject() instanceof Node) {
+                    new SetIDDialog(getDisplay(), controller, selectedObject);
+                }
+                redraw();
             }
         });
 
@@ -422,9 +473,9 @@ public class GraphicComponent extends Canvas {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 if (selectedObject.getObject() instanceof Arc) {
-                    new ChooseArc(getDisplay(), controller, (Arc) selectedObject.getObject(), graphicComponent);
+                    new ChooseArcDialog(getDisplay(), controller, (Arc) selectedObject.getObject(), graphicComponent);
                 } else if (selectedObject.getObject() instanceof Node) {
-                    new ChooseNode(getDisplay());
+                    new ChooseNodeDialog(getDisplay());
                 }
             }
         });

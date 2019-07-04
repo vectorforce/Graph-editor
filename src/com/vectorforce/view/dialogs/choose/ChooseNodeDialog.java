@@ -5,11 +5,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class ChooseNode {
+public class ChooseNodeDialog {
     private Display display;
     private Shell shell;
 
-    public ChooseNode(Display display){
+    public ChooseNodeDialog(Display display){
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Выберите тип");

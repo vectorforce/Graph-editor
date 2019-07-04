@@ -1,5 +1,6 @@
 package com.vectorforce.model;
 
+import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.graphics.Point;
 
 public class Arc {
@@ -10,6 +11,7 @@ public class Arc {
     private int y2;
     private Node fromNode;
     private Node toNode;
+    private int weight;
     private boolean isOriented;
     private GraphicalShell graphicalShell;
     private boolean isBinary;
@@ -17,11 +19,13 @@ public class Arc {
     public Arc(Node fromNode, Node toNode) {
         ID = null;
         graphicalShell = new GraphicalShell();
+        graphicalShell.setColor(ColorSetupComponent.getArcColor());
         this.fromNode = fromNode;
         this.toNode = toNode;
+        weight = 0;
         isOriented = true;
         isBinary = false;
-        // Connect nodes with arc
+        // Connecting nodes with arc
         fromNode.addOutgoingArc(this);
         fromNode.addIngoingArc(this);
         toNode.addOutgoingArc(this);
@@ -63,6 +67,10 @@ public class Arc {
     }
 
     //Setters
+    public void setWeight(int weight){
+        this.weight = weight;
+    }
+
     public void setID(String ID){
         this.ID = ID;
     }
@@ -103,6 +111,10 @@ public class Arc {
     }
 
     // Getters
+    public int getWeight(){
+        return weight;
+    }
+
     public String getID(){
         return ID;
     }

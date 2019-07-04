@@ -56,6 +56,18 @@ public class Controller {
 
 
     // Setters
+    public void setWeight(Arc arc, int weight){
+        arc.setWeight(weight);
+    }
+
+    public void setID(Node node, String ID){
+        node.setID(ID);
+    }
+
+    public void setID(Arc arc, String ID){
+        arc.setID(ID);
+    }
+
     public void setOriented(Arc arc, boolean orientation){
         arc.setOriented(orientation);
     }

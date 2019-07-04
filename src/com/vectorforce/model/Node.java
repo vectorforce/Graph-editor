@@ -1,5 +1,6 @@
 package com.vectorforce.model;
 
+import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.graphics.Point;
 
 import java.util.LinkedList;
@@ -19,6 +20,7 @@ public class Node<Type> {
         this.x = x - diameter / 2;
         this.y = y - diameter / 2;
         graphicalShell = new GraphicalShell();
+        graphicalShell.setColor(ColorSetupComponent.getNodeColor());
         ingoingArcs = new LinkedList<>();
         outgoingArcs = new LinkedList<>();
         data = null;

@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.*;
 
 import java.util.ArrayList;
 
-public class ChooseArc {
+public class ChooseArcDialog {
     private Display display;
     private Shell shell;
     private Controller controller;
@@ -20,7 +20,7 @@ public class ChooseArc {
     private ArrayList<Button> buttons;
     private GraphicComponent graphicComponent;
 
-    public ChooseArc(Display display, Controller controller, Arc arc, GraphicComponent graphicComponent) {
+    public ChooseArcDialog(Display display, Controller controller, Arc arc, GraphicComponent graphicComponent) {
         this.graphicComponent = graphicComponent;
         buttons = new ArrayList<>();
         this.controller = controller;

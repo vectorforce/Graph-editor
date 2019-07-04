@@ -30,6 +30,10 @@ public class GraphicalShell {
         this.deselectColor = color;
     }
 
+    public void setSelectColor(Color selectColor){
+        this.selectColor = selectColor;
+    }
+
     // Getters
     public boolean isSelected() {
         return isSelected;
