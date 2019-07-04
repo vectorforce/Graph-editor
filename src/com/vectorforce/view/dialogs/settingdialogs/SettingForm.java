@@ -1,4 +1,4 @@
-package com.vectorforce.view.dialogs;
+package com.vectorforce.view.dialogs.settingdialogs;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

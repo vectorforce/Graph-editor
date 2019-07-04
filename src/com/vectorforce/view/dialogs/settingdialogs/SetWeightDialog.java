@@ -1,17 +1,14 @@
-package com.vectorforce.view.dialogs;
+package com.vectorforce.view.dialogs.settingdialogs;
 
 import com.vectorforce.controller.Controller;
 import com.vectorforce.model.Arc;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-
-import java.util.Set;
+import org.eclipse.swt.widgets.*;
 
 public class SetWeightDialog {
     private Display display;
@@ -19,13 +16,13 @@ public class SetWeightDialog {
     private Controller controller;
     private Arc arc;
     private SettingForm settingForm;
-    private int weight;
 
     public SetWeightDialog(Display display, Controller controller, Arc arc) {
         this.controller = controller;
         this.display = display;
         this.arc = arc;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
+        shell.setText("Установить вес");
         shell.setLayout(new GridLayout(1, false));
         initForm();
 
@@ -64,6 +61,8 @@ public class SetWeightDialog {
 
     private void run() {
         shell.pack();
+        Rectangle screenSize = display.getPrimaryMonitor().getBounds();
+        shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 
         while (shell.isDisposed() == false) {
