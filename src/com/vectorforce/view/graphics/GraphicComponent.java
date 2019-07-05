@@ -368,11 +368,18 @@ public class GraphicComponent extends Canvas {
                         arc.setX2(x2);
                         arc.setY2(y2);
                         // Calculating weightText coordinates
-                        int arcLenght = (int) Math.sqrt(Math.pow((double) difX, 2) + Math.pow((double) difY, 2.0));
+                        int arcLength = (int) Math.sqrt(Math.pow((double) difX, 2) + Math.pow((double) difY, 2.0));
                         int textCorrectingShift = 40;
-                        int indentFromArc = 7;
-                        int xWeight = x1 + indentFromArc + (int) (((arcLenght - textCorrectingShift) / 2) * Math.cos(rotationAngle));
-                        int yWeight = y1 + indentFromArc + (int) (((arcLenght - textCorrectingShift) / 2) * Math.sin(rotationAngle));
+                        int indentFromArcX = 7;
+                        int indentFromArcY = 7;
+                        // Changing the side of the display textWeight to avoid overlapping of the arc on the textWeight
+                        // Change occurs in the second and fourth quarters
+                        if (((rotationAngle < -1.5) && (rotationAngle > -3.14)) ||
+                                ((rotationAngle < 1.5) && (rotationAngle > 0))) {
+                            indentFromArcY = -25;
+                        }
+                        int xWeight = x1 + indentFromArcX + (int) (((arcLength - textCorrectingShift) / 2) * Math.cos(rotationAngle));
+                        int yWeight = y1 + indentFromArcY + (int) (((arcLength - textCorrectingShift) / 2) * Math.sin(rotationAngle));
                         // Drawing arc
                         if (arc.isBinary() == true) {
                             // Drawing main line
