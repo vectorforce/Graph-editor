@@ -31,10 +31,15 @@ public class GraphicComponent extends Canvas {
     // Variables for change selected objects
     private GraphicObject selectedObject;
     private Color colorSelectedObject;
+    // Variables for scrolling
+    private final ScrollBar vBar;
+    private final ScrollBar hBar;
+    private final Point origin = new Point(0, 0); // Point showing the origin and offset by scrolling(using only for drawing objects)
+    private Rectangle rectangle;
 
     // Constructor
     public GraphicComponent(Composite parent, int style, Controller controller) {
-        super(parent, style);
+        super(parent, style | SWT.H_SCROLL | SWT.V_SCROLL);
 
         this.controller = controller;
 
@@ -48,6 +53,9 @@ public class GraphicComponent extends Canvas {
         moveCheck = false;
         startDrawArc = false;
         fromNode = null;
+        rectangle = null;
+        vBar = getVerticalBar();
+        hBar = getHorizontalBar();
         initPopupMenu();
 
         addListeners();
@@ -96,12 +104,12 @@ public class GraphicComponent extends Canvas {
         controller.removeSelection();
         // Check on node
         for (Node currentNode : controller.getGragh().getNodes()) {
-            if (currentNode.contains(new Point(e.x, e.y))) {
+            if (currentNode.contains(new Point(e.x - origin.x, e.y - origin.y))) {
                 currentNode.getGraphicalShell().select(true);
 //                currentNode.select(true);
                 moveCheck = true;
-                startX = e.x;
-                startY = e.y;
+                startX = e.x - origin.x;
+                startY = e.y - origin.y;
             }
         }
         // Cycle for select only one node
@@ -119,7 +127,7 @@ public class GraphicComponent extends Canvas {
             return;
         }
         for (Arc currentArc : controller.getGragh().getArcs()) {
-            if (currentArc.contains(new Point(e.x, e.y)) == true) {
+            if (currentArc.contains(new Point(e.x - origin.x, e.y - origin.y)) == true) {
                 currentArc.getGraphicalShell().select(true);
             }
         }
@@ -147,13 +155,79 @@ public class GraphicComponent extends Canvas {
         }
     }
 
+    private void scrollRectangleUpdate() {
+        int xMax = 0;
+        int yMax = 0;
+        for (Node currentNode : controller.getGragh().getNodes()) {
+            if (currentNode.getX() > xMax) {
+                xMax = currentNode.getX() + currentNode.getDiameter();
+            }
+            if (currentNode.getY() > yMax) {
+                yMax = currentNode.getY() + currentNode.getDiameter();
+            }
+        }
+        rectangle = new Rectangle(0, 0, xMax, yMax);
+    }
+
     // Adding listeners
     private void addListeners() {
+        // Resize listener for setting scrollBars
+        this.addListener(SWT.Resize, new Listener() {
+            public void handleEvent(Event e) {
+                scrollRectangleUpdate();
+                Rectangle client = getClientArea();
+                hBar.setMaximum(rectangle.width);
+                vBar.setMaximum(rectangle.height);
+                hBar.setThumb(Math.min(rectangle.width, client.width));
+                vBar.setThumb(Math.min(rectangle.height, client.height));
+                int hPage = rectangle.width - client.width;
+                int vPage = rectangle.height - client.height;
+                int hSelection = hBar.getSelection();
+                int vSelection = vBar.getSelection();
+                if (hSelection >= hPage) {
+                    if (hPage <= 0) {
+                        hSelection = 0;
+                    }
+                    origin.x = -hSelection;
+                }
+                if (vSelection >= vPage) {
+                    if (vPage <= 0) {
+                        vSelection = 0;
+                    }
+                    origin.y = -vSelection;
+                }
+                redraw();
+            }
+        });
+
+        // ScrollBar listeners
+        vBar.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event e) {
+                scrollRectangleUpdate();
+                int vSelection = vBar.getSelection();
+                int destY = vSelection + origin.y;
+                scroll(0, destY, 0, 0, rectangle.width, rectangle.height, false);
+                origin.y = -vSelection;
+                redraw();
+            }
+        });
+
+        hBar.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event e) {
+                scrollRectangleUpdate();
+                int hSelection = hBar.getSelection();
+                int destX = hSelection + origin.x;
+                scroll(destX, 0, 0, 0, rectangle.width, rectangle.height, false);
+                origin.x = -hSelection;
+                redraw();
+            }
+        });
+
         // Call context menu
         this.addListener(SWT.MenuDetect, new Listener() {
             @Override
             public void handleEvent(Event e) {
-                Point location = toControl(e.x, e.y);
+                Point location = toControl(e.x + origin.x, e.y + origin.y);
                 if (location.x > getBounds().width) {
                     e.doit = false;
                 }
@@ -175,7 +249,7 @@ public class GraphicComponent extends Canvas {
                 if (e.button == 1) {
                     switch (controller.getStatus()) {
                         case CURSOR:
-                            Node node = new Node(e.x, e.y);
+                            Node node = new Node(e.x - origin.x, e.y - origin.y);
                             controller.addNode(node);
                             drawNode(node);
                             redraw();
@@ -235,6 +309,9 @@ public class GraphicComponent extends Canvas {
                 } else if (e.button == 3) { // Right button click
                     selectObject(e);
                     moveCheck = false;
+                    fromNode = null;
+                    startDrawArc = false;
+                    setCursor(SWT.CURSOR_ARROW);
                     redraw();
                 }
             }
@@ -264,9 +341,9 @@ public class GraphicComponent extends Canvas {
                     case CURSOR:
                         // Check moving flag on mouse pressed
                         if (moveCheck == true) {
-                            if (e.x == startX && e.y == startY) {
+                            if (e.x + origin.x == startX && e.y + origin.y == startY) {
                                 return;
-                            } else if (e.x != -1 && e.y != -1) {
+                            } else if (e.x + origin.x != -1 && e.y + origin.y != -1) {
                                 Node selectedNode = null;
                                 for (Node currentNode : controller.getGragh().getNodes()) {
                                     if (currentNode.getGraphicalShell().isSelected() == true) {
@@ -274,8 +351,8 @@ public class GraphicComponent extends Canvas {
                                     }
                                 }
                                 if (selectedNode != null) {
-                                    selectedNode.setX(e.x - (selectedNode.getDiameter() / 2));
-                                    selectedNode.setY(e.y - (selectedNode.getDiameter() / 2));
+                                    selectedNode.setX(e.x - origin.x - (selectedNode.getDiameter() / 2));
+                                    selectedNode.setY(e.y - origin.y - (selectedNode.getDiameter() / 2));
                                     redraw();
                                 }
                             }
@@ -306,10 +383,10 @@ public class GraphicComponent extends Canvas {
                         // Draw default node
                         setGC(e.gc);
                         e.gc.setForeground(node.getGraphicalShell().getColor());
-                        e.gc.drawOval(node.getX(), node.getY(), node.getDiameter(), node.getDiameter());
+                        e.gc.drawOval(node.getX() + origin.x, node.getY() + origin.y, node.getDiameter(), node.getDiameter());
                         if (node.getID() != null) {
-                            e.gc.drawText(node.getID(), (node.getX() + node.getDiameter()),
-                                    (int) (node.getY() - node.getDiameter() / 1.5), true);
+                            e.gc.drawText(node.getID(), (node.getX() + origin.x + node.getDiameter()),
+                                    (int) (node.getY() + origin.y - node.getDiameter() / 1.5), true);
                         }
                     }
                 });
@@ -357,7 +434,7 @@ public class GraphicComponent extends Canvas {
                             int angleTipCorrectingShift = 3;
                             e.gc.setBackground(arc.getGraphicalShell().getColor());
                             // Drawing tip of arc
-                            e.gc.fillArc(xTip - widthTip / 2, yTip - heightTip / 2, widthTip, heightTip,
+                            e.gc.fillArc(xTip + origin.x - widthTip / 2, yTip + origin.y - heightTip / 2, widthTip, heightTip,
                                     ((int) Math.toDegrees(Math.PI) - (int) Math.toDegrees((double) (rotationAngle)) - (arcAngleTip + angleTipCorrectingShift) / 2), arcAngleTip);
                             shift = correctingShiftOrientedArc;
                         }
@@ -384,9 +461,9 @@ public class GraphicComponent extends Canvas {
                         if (arc.isBinary() == true) {
                             // Drawing main line
                             e.gc.setLineWidth(10);
-                            e.gc.drawLine(x1, y1, x2, y2);
+                            e.gc.drawLine(x1 + origin.x, y1 + origin.y, x2 + origin.x, y2 + origin.y);
                             // Drawing textWeight
-                            e.gc.drawText(String.valueOf(arc.getWeight()), xWeight, yWeight, true);
+                            e.gc.drawText(String.valueOf(arc.getWeight()), xWeight + origin.x, yWeight + origin.y, true);
                             // Drawing center line for separate main line
                             Color colorSeparateLine = ColorSetupComponent.getBackgroundColor();
                             int separateLineWidth = 4;
@@ -396,10 +473,10 @@ public class GraphicComponent extends Canvas {
                                 x2 += (int) ((arc.getToNode().getDiameter() / 2 + correctingShift) * Math.cos(rotationAngleSecondVertex));
                                 y2 += (int) ((arc.getToNode().getDiameter() / 2 + correctingShift) * Math.sin(rotationAngleSecondVertex));
                             }
-                            e.gc.drawLine(x1, y1, x2, y2);
+                            e.gc.drawLine(x1 + origin.x, y1 + origin.y, x2 + origin.x, y2 + origin.y);
                         } else {
-                            e.gc.drawLine(x1, y1, x2, y2);
-                            e.gc.drawText(String.valueOf(arc.getWeight()), xWeight, yWeight, true);
+                            e.gc.drawLine(x1 + origin.x, y1 + origin.y, x2 + origin.x, y2 + origin.y);
+                            e.gc.drawText(String.valueOf(arc.getWeight()), xWeight + origin.x, yWeight + origin.y, true);
                         }
                     }
                 });
@@ -424,6 +501,22 @@ public class GraphicComponent extends Canvas {
     }
 
     // Setters
+    public void setVBarMaximum(int maximum) {
+        vBar.setMaximum(maximum);
+    }
+
+    public void setHBarMaximum(int maximum) {
+        hBar.setMaximum(maximum);
+    }
+
+    public void setVBarThumb(int thumb) {
+        vBar.setThumb(thumb);
+    }
+
+    public void setHBarThumb(int thumb) {
+        hBar.setThumb(thumb);
+    }
+
     private void setGC(GC gc) {
         gc.setAntialias(SWT.ON);
         gc.setLineWidth(lineWidth);

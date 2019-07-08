@@ -5,11 +5,9 @@ import com.vectorforce.controller.common.OperationType;
 import com.vectorforce.model.Arc;
 import com.vectorforce.model.Node;
 import com.vectorforce.view.graphics.GraphicComponent;
-import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,6 +35,7 @@ public class MainWindow {
 
         // Default settings
         defaultSettings();
+
         run();
     }
 
