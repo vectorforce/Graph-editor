@@ -1,5 +1,7 @@
 package com.vectorforce.model;
 
+import com.vectorforce.model.node.Node;
+
 import java.util.LinkedList;
 
 public class Graph implements IGraph{

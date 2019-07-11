@@ -1,5 +1,7 @@
-package com.vectorforce.model;
+package com.vectorforce.model.node;
 
+import com.vectorforce.model.Arc;
+import com.vectorforce.model.GraphicalShell;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.graphics.Point;
 
@@ -13,6 +15,7 @@ public class Node<Type> {
     private LinkedList<Arc> ingoingArcs;
     private LinkedList<Arc> outgoingArcs;
     private GraphicalShell graphicalShell;
+    private NodeType nodeType;
     private Type data;
 
     public Node(int x, int y) {
@@ -21,6 +24,7 @@ public class Node<Type> {
         this.y = y - diameter / 2;
         graphicalShell = new GraphicalShell();
         graphicalShell.setColor(ColorSetupComponent.getNodeColor());
+        nodeType = new NodeType();
         ingoingArcs = new LinkedList<>();
         outgoingArcs = new LinkedList<>();
         data = null;
@@ -53,6 +57,10 @@ public class Node<Type> {
     }
 
     // Setters
+    public void setStatus(NodeType.nodeType status){
+        nodeType.setStatus(status);
+    }
+
     public void setID(String ID){
         this.ID = ID;
     }
@@ -74,6 +82,10 @@ public class Node<Type> {
     }
 
     // Getters
+    public NodeType.nodeType getStatus() {
+        return nodeType.getStatus();
+    }
+
     public String getID(){
         return ID;
     }

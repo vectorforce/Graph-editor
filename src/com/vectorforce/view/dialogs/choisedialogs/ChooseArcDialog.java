@@ -16,15 +16,11 @@ import java.util.ArrayList;
 public class ChooseArcDialog {
     private Display display;
     private Shell shell;
-    private Controller controller;
+    private CommonPartChooseDialog commonPartChooseDialog;
     private Arc arc;
-    private ArrayList<Button> buttons;
-    private GraphicComponent graphicComponent;
 
-    public ChooseArcDialog(Display display, Controller controller, Arc arc, GraphicComponent graphicComponent) {
-        this.graphicComponent = graphicComponent;
-        buttons = new ArrayList<>();
-        this.controller = controller;
+    public ChooseArcDialog(Display display, Controller controller,  GraphicComponent graphicComponent, Arc arc) {
+        commonPartChooseDialog = new CommonPartChooseDialog(controller, graphicComponent);
         this.arc = arc;
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
@@ -48,12 +44,6 @@ public class ChooseArcDialog {
         }
     }
 
-    private void removeSelection() {
-        for (Button currentButton : buttons) {
-            currentButton.setSelection(false);
-        }
-    }
-
     private void initButtons() {
         Composite compositeTypesButtons = new Composite(shell, SWT.NONE);
         compositeTypesButtons.setLayout(new GridLayout(2, true));
@@ -63,10 +53,10 @@ public class ChooseArcDialog {
         compositeOriented.setLayout(new GridLayout(1, false));
 
         Button buttonOriented = new Button(compositeOriented, SWT.TOGGLE);
-        buttons.add(buttonOriented);
+        commonPartChooseDialog.addButton(buttonOriented);
         buttonOriented.setText("-------->");
         Button buttonOrientedBinary = new Button(compositeOriented, SWT.TOGGLE);
-        buttons.add(buttonOrientedBinary);
+        commonPartChooseDialog.addButton(buttonOrientedBinary);
         buttonOrientedBinary.setText("========>");
 
         Composite compositeNonOriented = new Group(compositeTypesButtons, SWT.NONE);
@@ -74,10 +64,10 @@ public class ChooseArcDialog {
         compositeNonOriented.setLayout(new GridLayout(1, true));
 
         Button buttonNonOriented = new Button(compositeNonOriented, SWT.TOGGLE);
-        buttons.add(buttonNonOriented);
+        commonPartChooseDialog.addButton(buttonNonOriented);
         buttonNonOriented.setText("---------");
         Button buttonNonOrientedBinary = new Button(compositeNonOriented, SWT.TOGGLE);
-        buttons.add(buttonNonOrientedBinary);
+        commonPartChooseDialog.addButton(buttonNonOrientedBinary);
         buttonNonOrientedBinary.setText("========");
 
         Composite compositeOK = new Composite(shell, SWT.NONE);
@@ -95,7 +85,7 @@ public class ChooseArcDialog {
         buttonOriented.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                removeSelection();
+                commonPartChooseDialog.removeSelection();
                 buttonOriented.setSelection(true);
             }
         });
@@ -103,7 +93,7 @@ public class ChooseArcDialog {
         buttonOrientedBinary.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                removeSelection();
+                commonPartChooseDialog.removeSelection();
                 buttonOrientedBinary.setSelection(true);
             }
         });
@@ -111,7 +101,7 @@ public class ChooseArcDialog {
         buttonNonOriented.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                removeSelection();
+                commonPartChooseDialog.removeSelection();
                 buttonNonOriented.setSelection(true);
             }
         });
@@ -119,7 +109,7 @@ public class ChooseArcDialog {
         buttonNonOrientedBinary.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                removeSelection();
+                commonPartChooseDialog.removeSelection();
                 buttonNonOrientedBinary.setSelection(true);
             }
         });
@@ -127,28 +117,28 @@ public class ChooseArcDialog {
         buttonOK.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                for (Button currentButton : buttons) {
+                for (Button currentButton : commonPartChooseDialog.getButtons()) {
                     if (currentButton.getSelection() == true) {
                         if (currentButton == buttonOriented) {
-                            controller.setOriented(arc, true);
-                            controller.setBinary(arc, false);
+                            commonPartChooseDialog.getController().setOriented(arc, true);
+                            commonPartChooseDialog.getController().setBinary(arc, false);
                             break;
                         } else if (currentButton == buttonNonOriented) {
-                            controller.setOriented(arc, false);
-                            controller.setBinary(arc, false);
+                            commonPartChooseDialog.getController().setOriented(arc, false);
+                            commonPartChooseDialog.getController().setBinary(arc, false);
                             break;
                         } else if (currentButton == buttonOrientedBinary) {
-                            controller.setOriented(arc, true);
-                            controller.setBinary(arc, true);
+                            commonPartChooseDialog.getController().setOriented(arc, true);
+                            commonPartChooseDialog.getController().setBinary(arc, true);
                             break;
                         } else if (currentButton == buttonNonOrientedBinary) {
-                            controller.setOriented(arc, false);
-                            controller.setBinary(arc, true);
+                            commonPartChooseDialog.getController().setOriented(arc, false);
+                            commonPartChooseDialog.getController().setBinary(arc, true);
                             break;
                         }
                     }
                 }
-                graphicComponent.redraw();
+                commonPartChooseDialog.getGraphicComponent().redraw();
                 shell.close();
             }
         });

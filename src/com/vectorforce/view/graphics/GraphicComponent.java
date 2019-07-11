@@ -2,7 +2,7 @@ package com.vectorforce.view.graphics;
 
 import com.vectorforce.controller.Controller;
 import com.vectorforce.model.Arc;
-import com.vectorforce.model.Node;
+import com.vectorforce.model.node.Node;
 import com.vectorforce.view.dialogs.settingdialogs.SetIDDialog;
 import com.vectorforce.view.dialogs.settingdialogs.SetWeightDialog;
 import com.vectorforce.view.dialogs.choisedialogs.ChooseArcDialog;
@@ -371,6 +371,29 @@ public class GraphicComponent extends Canvas {
     }
 
     // Drawing methods
+    private void drawNodeLink(Node node, PaintEvent e){
+        int correctingShift = 1;
+        // Drawing horizontal line
+        e.gc.drawLine(node.getX() + origin.x, node.getY() + origin.y + node.getDiameter() / 2 + correctingShift,
+                node.getX() + origin.x + node.getDiameter(), node.getY() + origin.y + node.getDiameter() / 2 + correctingShift);
+    }
+
+    private void drawNodeNrel(Node node, PaintEvent e){
+        int correctingShift = 2;
+        e.gc.drawLine(node.getX() + origin.x + correctingShift, node.getY() + origin.y + correctingShift,
+                node.getX() + origin.x + node.getDiameter() - correctingShift, node.getY() + origin.y + node.getDiameter() - correctingShift);
+        e.gc.drawLine(node.getX() + origin.x + node.getDiameter() - correctingShift, node.getY() + origin.y + correctingShift,
+                node.getX() + origin.x + correctingShift, node.getY() + origin.y + node.getDiameter() - correctingShift);
+    }
+
+    private void drawNodeRrel(Node node, PaintEvent e){
+        int correctingShift = 1;
+        drawNodeLink(node, e);
+        // Drawing vertical line
+        e.gc.drawLine(node.getX() + origin.x + node.getDiameter() / 2 + correctingShift, node.getY() + origin.y,
+                node.getX() + origin.x + node.getDiameter() / 2 + correctingShift, node.getY() + origin.y + node.getDiameter());
+    }
+
     public void drawNode(Node node) {
         addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
@@ -380,10 +403,32 @@ public class GraphicComponent extends Canvas {
                 Display.getDefault().syncExec(new Runnable() {
                     @Override
                     public void run() {
-                        // Draw default node
+                        // Drawing default node
                         setGC(e.gc);
                         e.gc.setForeground(node.getGraphicalShell().getColor());
                         e.gc.drawOval(node.getX() + origin.x, node.getY() + origin.y, node.getDiameter(), node.getDiameter());
+                        // Drawing visual ID of type of node
+                        e.gc.setLineWidth(3);
+                        switch (node.getStatus()){
+                            case EMPTY: break;
+
+                            case LINK:
+                                drawNodeLink(node, e);
+                                break;
+
+                            case NREL:
+                                drawNodeNrel(node, e);
+                                break;
+
+                            case RREL:
+                                drawNodeRrel(node, e);
+                                break;
+
+                            case CLASS:
+                                drawNodeNrel(node, e);
+                                drawNodeLink(node, e);
+                                break;
+                        }
                         if (node.getID() != null) {
                             e.gc.drawText(node.getID(), (node.getX() + origin.x + node.getDiameter()),
                                     (int) (node.getY() + origin.y - node.getDiameter() / 1.5), true);
@@ -501,22 +546,6 @@ public class GraphicComponent extends Canvas {
     }
 
     // Setters
-    public void setVBarMaximum(int maximum) {
-        vBar.setMaximum(maximum);
-    }
-
-    public void setHBarMaximum(int maximum) {
-        hBar.setMaximum(maximum);
-    }
-
-    public void setVBarThumb(int thumb) {
-        vBar.setThumb(thumb);
-    }
-
-    public void setHBarThumb(int thumb) {
-        hBar.setThumb(thumb);
-    }
-
     private void setGC(GC gc) {
         gc.setAntialias(SWT.ON);
         gc.setLineWidth(lineWidth);
@@ -573,9 +602,9 @@ public class GraphicComponent extends Canvas {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 if (selectedObject.getObject() instanceof Arc) {
-                    new ChooseArcDialog(getDisplay(), controller, (Arc) selectedObject.getObject(), graphicComponent);
+                    new ChooseArcDialog(getDisplay(), controller, graphicComponent, (Arc) selectedObject.getObject());
                 } else if (selectedObject.getObject() instanceof Node) {
-                    new ChooseNodeDialog(getDisplay());
+                    new ChooseNodeDialog(getDisplay(), controller, graphicComponent, (Node) selectedObject.getObject());
                 }
             }
         });

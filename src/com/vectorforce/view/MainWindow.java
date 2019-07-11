@@ -3,7 +3,7 @@ package com.vectorforce.view;
 import com.vectorforce.controller.Controller;
 import com.vectorforce.controller.common.OperationType;
 import com.vectorforce.model.Arc;
-import com.vectorforce.model.Node;
+import com.vectorforce.model.node.Node;
 import com.vectorforce.view.graphics.GraphicComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;

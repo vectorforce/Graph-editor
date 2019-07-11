@@ -1,5 +1,6 @@
 package com.vectorforce.model;
 
+import com.vectorforce.model.node.Node;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.graphics.Point;
 

@@ -2,7 +2,7 @@ package com.vectorforce.view.dialogs.settingdialogs;
 
 import com.vectorforce.controller.Controller;
 import com.vectorforce.model.Arc;
-import com.vectorforce.model.Node;
+import com.vectorforce.model.node.Node;
 import com.vectorforce.view.graphics.GraphicObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
