@@ -11,7 +11,7 @@ public class Node<Type> {
     private String ID;
     private int x;
     private int y;
-    private int diameter = 25;
+    private static int diameter = 25;
     private LinkedList<Arc> ingoingArcs;
     private LinkedList<Arc> outgoingArcs;
     private GraphicalShell graphicalShell;

@@ -10,6 +10,10 @@ public class ColorSetupComponent {
     private static Color backgroundColor;
     private static Color gridColor;
     private static boolean darkTheme;
+    // Default colors
+    private static Color defaultObjectColorLightTheme = new Color(null, 0, 0, 0);
+    private static Color defaultNodeColorDarkTheme = new Color(null, 92, 248, 255);
+    private static Color defaultArcColorDarkTheme = new Color(null, 230, 243, 255);
 
     public ColorSetupComponent(){
         setLightTheme();
@@ -18,8 +22,8 @@ public class ColorSetupComponent {
     // Setters
     public static void setDarkTheme(){
         darkTheme = true;
-        nodeColor = new Color(null, 92, 248, 255);
-        arcColor = new Color(null, 230, 243, 255);
+        nodeColor = defaultNodeColorDarkTheme;
+        arcColor = defaultArcColorDarkTheme;
         selectColor = new Color(null, 0, 255, 0);
         characterColor = new Color(null, 255, 255, 255);
         backgroundColor = new Color(null, 59, 63, 64);
@@ -28,8 +32,8 @@ public class ColorSetupComponent {
 
     public static void setLightTheme(){
         darkTheme = false;
-        nodeColor = new Color(null, 0, 0, 0);
-        arcColor = new Color(null, 0, 0, 0);
+        nodeColor = defaultObjectColorLightTheme;
+        arcColor = defaultObjectColorLightTheme;
         selectColor = new Color(null, 0, 255, 0);
         characterColor = new Color(null, 0, 0, 0);
         backgroundColor = new Color(null, 255, 255, 255);
@@ -61,6 +65,18 @@ public class ColorSetupComponent {
     }
 
     // Getters
+    public static Color getDefaultObjectColorLightTheme(){
+        return defaultObjectColorLightTheme;
+    }
+
+    public static Color getDefaultNodeColorDarkTheme(){
+        return defaultNodeColorDarkTheme;
+    }
+
+    public static Color getDefaultArcColorDarkTheme(){
+        return defaultArcColorDarkTheme;
+    }
+
     public static boolean isDarkTheme(){
         return darkTheme;
     }

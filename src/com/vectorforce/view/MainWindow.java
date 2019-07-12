@@ -6,18 +6,29 @@ import com.vectorforce.model.Arc;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.view.graphics.GraphicComponent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class MainWindow {
     private Display display;
     private Shell shell;
 
     private GraphicComponent graphicComponent;
+    private CTabFolder tabFolder;
+    private ArrayList<CTabItem> tabItems;
+    private ArrayList<File> files;
 
     private Controller controller;
 
@@ -27,19 +38,21 @@ public class MainWindow {
         shell.setText("Графовый редактор");
         shell.setLayout(new GridLayout(5, false));
 
+        tabItems = new ArrayList<>();
+        files = new ArrayList<>();
         controller = new Controller();
         initMenuBar();
         initToolBarFile();
         initGraphicComponent();
         initToolBarEdit();
 
-        // Default settings
-        defaultSettings();
+        // Start page of MainWindow
+        startForm();
 
         run();
     }
 
-    private void run(){
+    private void run() {
         shell.open();
 
         while (shell.isDisposed() == false) {
@@ -48,6 +61,52 @@ public class MainWindow {
             }
         }
         display.dispose();
+    }
+
+    private void createTabItem(String fileName) {
+        CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE | SWT.CLOSE);
+        tabItems.add(tabItem);
+        if(fileName != null){
+            tabItem.setText(fileName);
+        } else {
+            tabItem.setText("Пустой файл");
+        }
+        Composite compositeTabItem = new Composite(tabFolder, SWT.NONE);
+        compositeTabItem.setLayout(new GridLayout(1, false));
+        compositeTabItem.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        graphicComponent = new GraphicComponent(compositeTabItem, SWT.BORDER | SWT.DOUBLE_BUFFERED, controller);
+        createGraph();
+        tabItem.setControl(compositeTabItem);
+
+        // Adding DisposeListener for every tabItem
+        tabItem.addDisposeListener(new DisposeListener() {
+            @Override
+            public void widgetDisposed(DisposeEvent disposeEvent) {
+                System.out.println("Deleted!!!");
+            }
+        });
+    }
+
+    // Initialization methods
+    private void initGraphicComponent() {
+        Composite compositeGraphicComponent = new Composite(shell, SWT.NONE);
+        compositeGraphicComponent.setLayout(new GridLayout(1, true));
+        compositeGraphicComponent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        Composite compositeTabFolder = new Composite(compositeGraphicComponent, SWT.NONE);
+        compositeTabFolder.setLayout(new FillLayout());
+        compositeTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        tabFolder = new CTabFolder(compositeTabFolder, SWT.NONE);
+
+        tabFolder.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                System.out.println(tabFolder.getSelectionIndex());
+            }
+        });
+
+        initGenerateGraphButton(compositeGraphicComponent);
     }
 
     private void initMenuBar() {
@@ -88,16 +147,7 @@ public class MainWindow {
         shell.setMenuBar(menuBar);
     }
 
-    // Initialization methods
-    private void initGraphicComponent(){
-        Composite compositeGraphicComponent = new Composite(shell, SWT.NONE);
-        compositeGraphicComponent.setLayout(new GridLayout(1, false));
-        compositeGraphicComponent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        graphicComponent = new GraphicComponent(compositeGraphicComponent, SWT.BORDER | SWT.DOUBLE_BUFFERED, controller);
-        initGenerateGraphButton(compositeGraphicComponent);
-    }
-
-    private void initGenerateGraphButton(Composite composite){
+    private void initGenerateGraphButton(Composite composite) {
         Button buttonGenerateGraph = new Button(composite, SWT.PUSH);
         buttonGenerateGraph.setText("Сгенерировать граф");
         GridData buttonGenerateGraphData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
@@ -122,7 +172,7 @@ public class MainWindow {
         });
     }
 
-    private void initToolBarFile(){
+    private void initToolBarFile() {
         ToolBar toolBarFile = new ToolBar(shell, SWT.VERTICAL);
         ToolItem itemNew = new ToolItem(toolBarFile, SWT.PUSH);
         itemNew.setText("Новый");
@@ -134,9 +184,17 @@ public class MainWindow {
         itemSave.setText("Сохранить");
         ToolItem itemSaveAs = new ToolItem(toolBarFile, SWT.PUSH);
         itemSaveAs.setText("Сохранить как");
+
+        itemNew.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                createTabItem("Testing");
+                tabFolder.redraw();
+            }
+        });
     }
 
-    private void initToolBarEdit(){
+    private void initToolBarEdit() {
         ToolBar toolBarEdit = new ToolBar(shell, SWT.VERTICAL);
         ToolItem itemCursor = new ToolItem(toolBarEdit, SWT.PUSH);
         itemCursor.setText("Cursor");
@@ -178,12 +236,12 @@ public class MainWindow {
     }
 
     // Create new graph
-    public void createGraph(){
+    public void createGraph() {
         controller.addGraph();
     }
 
     // Methods with default settings for testing the app !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    private void defaultSettings(){
-        createGraph();
+    private void startForm() {
+        createTabItem(null);
     }
 }

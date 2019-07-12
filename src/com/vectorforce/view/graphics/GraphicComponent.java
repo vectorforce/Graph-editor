@@ -371,14 +371,14 @@ public class GraphicComponent extends Canvas {
     }
 
     // Drawing methods
-    private void drawNodeLink(Node node, PaintEvent e){
+    private void drawNodeLink(Node node, PaintEvent e) {
         int correctingShift = 1;
         // Drawing horizontal line
         e.gc.drawLine(node.getX() + origin.x, node.getY() + origin.y + node.getDiameter() / 2 + correctingShift,
                 node.getX() + origin.x + node.getDiameter(), node.getY() + origin.y + node.getDiameter() / 2 + correctingShift);
     }
 
-    private void drawNodeNrel(Node node, PaintEvent e){
+    private void drawNodeNrel(Node node, PaintEvent e) {
         int correctingShift = 2;
         e.gc.drawLine(node.getX() + origin.x + correctingShift, node.getY() + origin.y + correctingShift,
                 node.getX() + origin.x + node.getDiameter() - correctingShift, node.getY() + origin.y + node.getDiameter() - correctingShift);
@@ -386,7 +386,7 @@ public class GraphicComponent extends Canvas {
                 node.getX() + origin.x + correctingShift, node.getY() + origin.y + node.getDiameter() - correctingShift);
     }
 
-    private void drawNodeRrel(Node node, PaintEvent e){
+    private void drawNodeRrel(Node node, PaintEvent e) {
         int correctingShift = 1;
         drawNodeLink(node, e);
         // Drawing vertical line
@@ -409,8 +409,9 @@ public class GraphicComponent extends Canvas {
                         e.gc.drawOval(node.getX() + origin.x, node.getY() + origin.y, node.getDiameter(), node.getDiameter());
                         // Drawing visual ID of type of node
                         e.gc.setLineWidth(3);
-                        switch (node.getStatus()){
-                            case EMPTY: break;
+                        switch (node.getStatus()) {
+                            case EMPTY:
+                                break;
 
                             case LINK:
                                 drawNodeLink(node, e);
@@ -536,10 +537,26 @@ public class GraphicComponent extends Canvas {
             ColorSetupComponent.setDarkTheme();
         }
         for (Node currentNode : controller.getGragh().getNodes()) {
-            currentNode.getGraphicalShell().setColor(ColorSetupComponent.getNodeColor());
+            if (ColorSetupComponent.isDarkTheme() == false) {
+                if (currentNode.getGraphicalShell().getColor().equals(ColorSetupComponent.getDefaultNodeColorDarkTheme()) == true) {
+                    currentNode.getGraphicalShell().setColor(ColorSetupComponent.getNodeColor());
+                }
+            } else {
+                if(currentNode.getGraphicalShell().getColor().equals(ColorSetupComponent.getDefaultObjectColorLightTheme()) == true){
+                    currentNode.getGraphicalShell().setColor(ColorSetupComponent.getNodeColor());
+                }
+            }
         }
         for (Arc currentArc : controller.getGragh().getArcs()) {
-            currentArc.getGraphicalShell().setColor(ColorSetupComponent.getArcColor());
+            if (ColorSetupComponent.isDarkTheme() == false) {
+                if (currentArc.getGraphicalShell().getColor().equals(ColorSetupComponent.getDefaultArcColorDarkTheme()) == true) {
+                    currentArc.getGraphicalShell().setColor(ColorSetupComponent.getArcColor());
+                }
+            } else {
+                if(currentArc.getGraphicalShell().getColor().equals(ColorSetupComponent.getDefaultObjectColorLightTheme()) == true){
+                    currentArc.getGraphicalShell().setColor(ColorSetupComponent.getArcColor());
+                }
+            }
         }
         setBackground(ColorSetupComponent.getBackgroundColor());
         redraw();
