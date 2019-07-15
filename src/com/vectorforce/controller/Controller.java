@@ -18,14 +18,19 @@ public class Controller {
         operationType = new OperationType();
     }
 
-    public void addGraph(){
+    public void createGraph(){
         Graph graph = new Graph();
         graphs.add(graph);
         indexCurrentGraph = graphs.size() - 1;
     }
 
-    public void deleteGraph(){
+    public void deleteCurrentGraph(){
         graphs.remove(indexCurrentGraph);
+        indexCurrentGraph--;
+    }
+
+    public void deleteGraph(Graph graph){
+        graphs.remove(graph);
     }
 
     public void addNode(Node node){
@@ -56,6 +61,14 @@ public class Controller {
 
 
     // Setters
+    public void setCurrentGraph(Graph graph){
+        for(Graph currentGraph : graphs){
+            if(currentGraph == graph){
+                indexCurrentGraph = graphs.indexOf(currentGraph);
+            }
+        }
+    }
+
     public void setWeight(Arc arc, int weight){
         arc.setWeight(weight);
     }
@@ -85,7 +98,7 @@ public class Controller {
     }
 
     // Getters
-    public Graph getGragh(){
+    public Graph getCurrentGragh(){
         return graphs.get(indexCurrentGraph);
     }
 

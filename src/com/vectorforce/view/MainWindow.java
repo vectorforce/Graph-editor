@@ -3,11 +3,12 @@ package com.vectorforce.view;
 import com.vectorforce.controller.Controller;
 import com.vectorforce.controller.common.OperationType;
 import com.vectorforce.model.Arc;
+import com.vectorforce.model.Graph;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.view.graphics.GraphicComponent;
+import javafx.util.Pair;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -18,17 +19,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainWindow {
     private Display display;
     private Shell shell;
 
-    private GraphicComponent graphicComponent;
+    private GraphicComponent currentGraphicComponent;
     private CTabFolder tabFolder;
-    private ArrayList<CTabItem> tabItems;
-    private ArrayList<File> files;
+    private HashMap<Pair, CTabItem> tabItemHashMap;
 
     private Controller controller;
 
@@ -38,8 +38,7 @@ public class MainWindow {
         shell.setText("Графовый редактор");
         shell.setLayout(new GridLayout(5, false));
 
-        tabItems = new ArrayList<>();
-        files = new ArrayList<>();
+        tabItemHashMap = new HashMap<>();
         controller = new Controller();
         initMenuBar();
         initToolBarFile();
@@ -65,7 +64,6 @@ public class MainWindow {
 
     private void createTabItem(String fileName) {
         CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE | SWT.CLOSE);
-        tabItems.add(tabItem);
         if(fileName != null){
             tabItem.setText(fileName);
         } else {
@@ -74,17 +72,13 @@ public class MainWindow {
         Composite compositeTabItem = new Composite(tabFolder, SWT.NONE);
         compositeTabItem.setLayout(new GridLayout(1, false));
         compositeTabItem.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        graphicComponent = new GraphicComponent(compositeTabItem, SWT.BORDER | SWT.DOUBLE_BUFFERED, controller);
-        createGraph();
         tabItem.setControl(compositeTabItem);
-
-        // Adding DisposeListener for every tabItem
-        tabItem.addDisposeListener(new DisposeListener() {
-            @Override
-            public void widgetDisposed(DisposeEvent disposeEvent) {
-                System.out.println("Deleted!!!");
-            }
-        });
+        currentGraphicComponent = new GraphicComponent(compositeTabItem, SWT.BORDER | SWT.DOUBLE_BUFFERED, controller);
+        controller.createGraph();
+        // Creating Pair that will link graphicComponent and their graph
+        Pair<Graph, GraphicComponent> graphGraphicComponentPair = new Pair<>(controller.getCurrentGragh(), currentGraphicComponent);
+        // Creating HashMap that will link previous Pair and appropriate TabItem
+        tabItemHashMap.put(graphGraphicComponentPair, tabItem);
     }
 
     // Initialization methods
@@ -102,7 +96,50 @@ public class MainWindow {
         tabFolder.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                System.out.println(tabFolder.getSelectionIndex());
+                for(HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()){
+                    if(entry.getValue() == tabFolder.getSelection()){
+                        Pair<Graph, GraphicComponent> currentPair = entry.getKey();
+                        currentGraphicComponent = currentPair.getValue();
+                        controller.setCurrentGraph(currentPair.getKey());
+                    }
+                }
+            }
+        });
+
+        tabFolder.addCTabFolder2Listener(new CTabFolder2Listener() {
+            @Override
+            public void close(CTabFolderEvent cTabFolderEvent) {
+                Pair<Graph, GraphicComponent> currentPair = null;
+                for(HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()){
+                    if(entry.getValue() == cTabFolderEvent.item){
+                        currentPair = entry.getKey();
+                    }
+                }
+                if(currentPair != null){
+                    tabItemHashMap.remove(currentPair);
+                    controller.deleteGraph(currentPair.getKey());
+                    currentPair.getValue().dispose();
+                }
+            }
+
+            @Override
+            public void minimize(CTabFolderEvent cTabFolderEvent) {
+
+            }
+
+            @Override
+            public void maximize(CTabFolderEvent cTabFolderEvent) {
+
+            }
+
+            @Override
+            public void restore(CTabFolderEvent cTabFolderEvent) {
+
+            }
+
+            @Override
+            public void showList(CTabFolderEvent cTabFolderEvent) {
+
             }
         });
 
@@ -161,13 +198,13 @@ public class MainWindow {
                 Node node1 = new Node(200, 300);
                 Node node2 = new Node(500, 300);
                 Arc arc = new Arc(node2, node1);
-                controller.getGragh().addNode(node1);
-                controller.getGragh().addNode(node2);
-                controller.getGragh().addArc(arc);
-                graphicComponent.drawNode(node1);
-                graphicComponent.drawNode(node2);
-                graphicComponent.drawArc(arc);
-                graphicComponent.redraw();
+                controller.getCurrentGragh().addNode(node1);
+                controller.getCurrentGragh().addNode(node2);
+                controller.getCurrentGragh().addArc(arc);
+                currentGraphicComponent.drawNode(node1);
+                currentGraphicComponent.drawNode(node2);
+                currentGraphicComponent.drawArc(arc);
+                currentGraphicComponent.redraw();
             }
         });
     }
@@ -211,8 +248,8 @@ public class MainWindow {
                 controller.setStatus(OperationType.operationType.CURSOR);
 //                itemCursor.setSelection(true);
                 controller.removeSelection();
-                graphicComponent.redraw();
-                graphicComponent.setCursor(new Cursor(display, SWT.CURSOR_ARROW));
+                currentGraphicComponent.redraw();
+                currentGraphicComponent.setCursor(new Cursor(display, SWT.CURSOR_ARROW));
             }
         });
 
@@ -222,22 +259,17 @@ public class MainWindow {
                 controller.setStatus(OperationType.operationType.ARC);
 //                itemArc.setSelection(true);
                 controller.removeSelection();
-                graphicComponent.redraw();
-                graphicComponent.setCursor(new Cursor(display, SWT.CURSOR_ARROW));
+                currentGraphicComponent.redraw();
+                currentGraphicComponent.setCursor(new Cursor(display, SWT.CURSOR_ARROW));
             }
         });
 
         itemSetTheme.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {        // !!!CHECK LINKS for colors
-                graphicComponent.changeTheme();
+                currentGraphicComponent.changeTheme();
             }
         });
-    }
-
-    // Create new graph
-    public void createGraph() {
-        controller.addGraph();
     }
 
     // Methods with default settings for testing the app !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
