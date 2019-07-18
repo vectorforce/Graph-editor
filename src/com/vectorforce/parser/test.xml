@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graph ID="" isFull="false" isMixed="false" isOriented="true">
+    <node ID="" color="Color {92, 248, 255, 255}" internalID="238" x="188" y="288">
+        <nodeType>EMPTY</nodeType>
+    </node>
+    <node ID="" color="Color {92, 248, 255, 255}" internalID="8247" x="488" y="288">
+        <nodeType>EMPTY</nodeType>
+    </node>
+    <arc ID="" color="Color {230, 243, 255, 255}" isBinary="false" isOriented="true" weight="0">
+        <fromNode>8247</fromNode>
+        <toNode>238</toNode>
+    </arc>
+</graph>

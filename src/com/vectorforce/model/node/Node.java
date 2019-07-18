@@ -6,9 +6,11 @@ import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.graphics.Point;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 public class Node<Type> {
     private String ID;
+    private String internalID;
     private int x;
     private int y;
     private static int diameter = 25;
@@ -22,6 +24,8 @@ public class Node<Type> {
         ID = null;
         this.x = x - diameter / 2;
         this.y = y - diameter / 2;
+        // Assigning a unique internal identifier
+        internalID = String.valueOf(new Random().nextInt((x * 30) + Math.abs(x - y)));
         graphicalShell = new GraphicalShell();
         graphicalShell.setColor(ColorSetupComponent.getNodeColor());
         nodeType = new NodeType();
@@ -82,6 +86,10 @@ public class Node<Type> {
     }
 
     // Getters
+    public String getInternalID(){
+        return internalID;
+    }
+
     public NodeType.nodeType getStatus() {
         return nodeType.getStatus();
     }

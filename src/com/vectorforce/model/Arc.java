@@ -28,8 +28,8 @@ public class Arc {
         isBinary = false;
         // Connecting nodes with arc
         fromNode.addOutgoingArc(this);
-        fromNode.addIngoingArc(this);
-        toNode.addOutgoingArc(this);
+//        fromNode.addIngoingArc(this);
+//        toNode.addOutgoingArc(this);
         toNode.addIngoingArc(this);
         x1 = 0;
         y1 = 0;

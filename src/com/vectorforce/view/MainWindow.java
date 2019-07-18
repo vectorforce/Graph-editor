@@ -5,12 +5,12 @@ import com.vectorforce.controller.common.OperationType;
 import com.vectorforce.model.Arc;
 import com.vectorforce.model.Graph;
 import com.vectorforce.model.node.Node;
+import com.vectorforce.parser.DOMWriter;
 import com.vectorforce.view.graphics.GraphicComponent;
+import com.vectorforce.view.setup.ColorSetupComponent;
 import javafx.util.Pair;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
@@ -19,7 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.HashMap;
 
 public class MainWindow {
@@ -45,9 +45,6 @@ public class MainWindow {
         initGraphicComponent();
         initToolBarEdit();
 
-        // Start page of MainWindow
-        startForm();
-
         run();
     }
 
@@ -62,23 +59,41 @@ public class MainWindow {
         display.dispose();
     }
 
-    private void createTabItem(String fileName) {
-        CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE | SWT.CLOSE);
-        if(fileName != null){
-            tabItem.setText(fileName);
+    private void createTabItem(String path) {
+        if (path != null) {
+            for (File currentFile : controller.getFiles()) {
+                if (currentFile.getPath().equals(path)) {
+                    MessageBox message = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+                    message.setMessage("Файл уже открыт!");
+                    message.open();
+                    return;
+                }
+            }
         } else {
-            tabItem.setText("Пустой файл");
+            return;
         }
+        CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE | SWT.CLOSE);
         Composite compositeTabItem = new Composite(tabFolder, SWT.NONE);
         compositeTabItem.setLayout(new GridLayout(1, false));
         compositeTabItem.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         tabItem.setControl(compositeTabItem);
         currentGraphicComponent = new GraphicComponent(compositeTabItem, SWT.BORDER | SWT.DOUBLE_BUFFERED, controller);
-        controller.createGraph();
+        controller.createGraph(path);
+        tabItem.setText(controller.getCurrentFile().getName());
         // Creating Pair that will link graphicComponent and their graph
         Pair<Graph, GraphicComponent> graphGraphicComponentPair = new Pair<>(controller.getCurrentGragh(), currentGraphicComponent);
         // Creating HashMap that will link previous Pair and appropriate TabItem
         tabItemHashMap.put(graphGraphicComponentPair, tabItem);
+
+        tabFolder.setSelection(tabItem);
+    }
+
+    private void changeTheme() {
+        if (ColorSetupComponent.isDarkTheme() == true) {
+            ColorSetupComponent.setLightTheme();
+        } else {
+            ColorSetupComponent.setDarkTheme();
+        }
     }
 
     // Initialization methods
@@ -96,11 +111,12 @@ public class MainWindow {
         tabFolder.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                for(HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()){
-                    if(entry.getValue() == tabFolder.getSelection()){
+                for (HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()) {
+                    if (entry.getValue() == tabFolder.getSelection()) {
                         Pair<Graph, GraphicComponent> currentPair = entry.getKey();
                         currentGraphicComponent = currentPair.getValue();
                         controller.setCurrentGraph(currentPair.getKey());
+                        currentGraphicComponent.applyCurrentTheme();
                     }
                 }
             }
@@ -109,17 +125,7 @@ public class MainWindow {
         tabFolder.addCTabFolder2Listener(new CTabFolder2Listener() {
             @Override
             public void close(CTabFolderEvent cTabFolderEvent) {
-                Pair<Graph, GraphicComponent> currentPair = null;
-                for(HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()){
-                    if(entry.getValue() == cTabFolderEvent.item){
-                        currentPair = entry.getKey();
-                    }
-                }
-                if(currentPair != null){
-                    tabItemHashMap.remove(currentPair);
-                    controller.deleteGraph(currentPair.getKey());
-                    currentPair.getValue().dispose();
-                }
+                closeFile(cTabFolderEvent);
             }
 
             @Override
@@ -173,6 +179,41 @@ public class MainWindow {
         fileExitItem.setText("Выход\tCtrl+Q");
         fileExitItem.setAccelerator(SWT.CTRL + 'Q');
 
+        // Listeners
+        fileNewItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                newFile();
+            }
+        });
+
+        fileSaveItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if(controller.getFiles().size() == 0){
+                    return;
+                }
+                saveFile(controller.getCurrentFile());
+            }
+        });
+
+        fileSaveAsItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                saveAsFile();
+            }
+        });
+
+        fileCloseItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if(tabFolder.getItemCount() == 0){
+                    return;
+                }
+                closeFile(tabFolder.getSelection());
+            }
+        });
+
         // Initialization of listeners
         fileExitItem.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -195,6 +236,9 @@ public class MainWindow {
         buttonGenerateGraph.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+                if(tabFolder.getItemCount() == 0){
+                    return;
+                }
                 Node node1 = new Node(200, 300);
                 Node node2 = new Node(500, 300);
                 Arc arc = new Arc(node2, node1);
@@ -222,13 +266,46 @@ public class MainWindow {
         ToolItem itemSaveAs = new ToolItem(toolBarFile, SWT.PUSH);
         itemSaveAs.setText("Сохранить как");
 
-        itemNew.addSelectionListener(new SelectionAdapter() {
+        itemNew.addSelectionListener(new SelectionAdapter() { // A new tabItem and file is created by pressing
             @Override
             public void widgetSelected(SelectionEvent e) {
-                createTabItem("Testing");
-                tabFolder.redraw();
+                newFile();
             }
         });
+
+        itemSave.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if(controller.getFiles().size() == 0){
+                    return;
+                }
+                saveFile(controller.getCurrentFile());
+            }
+        });
+
+        itemSaveAs.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                saveAsFile();
+            }
+        });
+
+        itemClose.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if(tabFolder.getItemCount() == 0){
+                    return;
+                }
+                closeFile(tabFolder.getSelection());
+            }
+        });
+    }
+
+    private FileDialog createFileDialog(){
+        FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+        String extensions[] = {"*.ugff"};
+        dialog.setFilterExtensions(extensions);
+        return dialog;
     }
 
     private void initToolBarEdit() {
@@ -245,6 +322,9 @@ public class MainWindow {
         itemCursor.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+                if(tabFolder.getItemCount() == 0){
+                    return;
+                }
                 controller.setStatus(OperationType.operationType.CURSOR);
 //                itemCursor.setSelection(true);
                 controller.removeSelection();
@@ -256,6 +336,9 @@ public class MainWindow {
         itemArc.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+                if(tabFolder.getItemCount() == 0){
+                    return;
+                }
                 controller.setStatus(OperationType.operationType.ARC);
 //                itemArc.setSelection(true);
                 controller.removeSelection();
@@ -267,13 +350,69 @@ public class MainWindow {
         itemSetTheme.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {        // !!!CHECK LINKS for colors
-                currentGraphicComponent.changeTheme();
+                if(tabFolder.getItemCount() == 0){
+                    return;
+                }
+                changeTheme();
+                currentGraphicComponent.applyCurrentTheme();
             }
         });
     }
 
-    // Methods with default settings for testing the app !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    private void startForm() {
-        createTabItem(null);
+    // Methods for work with files
+    private void newFile() {
+        String path = createFileDialog().open();
+        if(path == null){
+            return;
+        }
+        createTabItem(path);
+        saveFile(controller.getCurrentFile());
+        tabFolder.redraw();
+    }
+
+    private void saveFile(File file) {
+        DOMWriter xmlWriter = new DOMWriter(controller, file);
+        xmlWriter.write();
+    }
+
+    private void saveAsFile(){
+        if(controller.getFiles().size() == 0){
+            return;
+        }
+        String path = createFileDialog().open();
+        if(path == null){
+            return;
+        }
+        File file = new File(path);
+        saveFile(file);
+    }
+
+    private void closeFile(CTabFolderEvent cTabFolderEvent){
+        Pair<Graph, GraphicComponent> currentPair = null;
+        for (HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()) {
+            if (entry.getValue() == cTabFolderEvent.item) {
+                currentPair = entry.getKey();
+            }
+        }
+        if (currentPair != null) {
+            tabItemHashMap.remove(currentPair);
+            controller.deleteGraph(currentPair.getKey());
+            currentPair.getValue().dispose();
+        }
+    }
+
+    private void closeFile(CTabItem tabItem){
+        Pair<Graph, GraphicComponent> currentPair = null;
+        for (HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()) {
+            if (entry.getValue() == tabItem) {
+                currentPair = entry.getKey();
+            }
+        }
+        if (currentPair != null) {
+            tabItemHashMap.remove(currentPair);
+            controller.deleteGraph(currentPair.getKey());
+            currentPair.getValue().dispose();
+        }
+        tabItem.dispose();
     }
 }

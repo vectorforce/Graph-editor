@@ -5,31 +5,39 @@ import com.vectorforce.model.Graph;
 import com.vectorforce.controller.common.OperationType;
 import com.vectorforce.model.node.Node;
 
+import java.io.File;
 import java.util.LinkedList;
 
 public class Controller {
     private LinkedList<Graph> graphs;
+    private LinkedList<File> files;
     private int indexCurrentGraph;
     private OperationType operationType;
 
     public Controller(){
         indexCurrentGraph = 0;
         graphs = new LinkedList<>();
+        files = new LinkedList<>();
         operationType = new OperationType();
     }
 
-    public void createGraph(){
+    public void createGraph(String path){
         Graph graph = new Graph();
         graphs.add(graph);
+        // Creating file for this graph
+        File file = new File(path);
+        files.add(file);
         indexCurrentGraph = graphs.size() - 1;
     }
 
     public void deleteCurrentGraph(){
         graphs.remove(indexCurrentGraph);
+        files.remove(indexCurrentGraph);
         indexCurrentGraph--;
     }
 
     public void deleteGraph(Graph graph){
+        files.remove(files.get(graphs.indexOf(graph)));
         graphs.remove(graph);
     }
 
@@ -98,6 +106,14 @@ public class Controller {
     }
 
     // Getters
+    public LinkedList<File> getFiles(){
+        return files;
+    }
+
+    public File getCurrentFile(){
+        return files.get(indexCurrentGraph);
+    }
+
     public Graph getCurrentGragh(){
         return graphs.get(indexCurrentGraph);
     }

@@ -75,7 +75,7 @@ public class Graph implements IGraph{
     }
 
     // Method for update information of graph
-    private void checkGraph() {
+    public void checkGraph() {
         int counterOriented = 0;
         int counterNonOriented = 0;
         for (int index = 0; index < arcs.size(); index++) {
@@ -98,6 +98,15 @@ public class Graph implements IGraph{
             isOriented = false;
             isMixed = false;
             isFull = false;
+        }
+        // Check on full
+        if(isOriented == false && isMixed == false){
+            int amountNodes = getNodes().size();
+            if((amountNodes * (amountNodes - 1) / 2) == getArcs().size()){
+                isFull = true;
+            } else {
+                isFull = false;
+            }
         }
     }
 

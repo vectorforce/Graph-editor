@@ -530,12 +530,7 @@ public class GraphicComponent extends Canvas {
         });
     }
 
-    public void changeTheme() {
-        if (ColorSetupComponent.isDarkTheme() == true) {
-            ColorSetupComponent.setLightTheme();
-        } else {
-            ColorSetupComponent.setDarkTheme();
-        }
+    public void applyCurrentTheme() {
         for (Node currentNode : controller.getCurrentGragh().getNodes()) {
             if (ColorSetupComponent.isDarkTheme() == false) {
                 if (currentNode.getGraphicalShell().getColor().equals(ColorSetupComponent.getDefaultNodeColorDarkTheme()) == true) {
@@ -623,6 +618,7 @@ public class GraphicComponent extends Canvas {
                 } else if (selectedObject.getObject() instanceof Node) {
                     new ChooseNodeDialog(getDisplay(), controller, graphicComponent, (Node) selectedObject.getObject());
                 }
+                controller.getCurrentGragh().checkGraph();
             }
         });
 
