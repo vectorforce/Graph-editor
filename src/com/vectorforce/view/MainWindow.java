@@ -13,7 +13,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -25,6 +27,7 @@ import java.util.HashMap;
 public class MainWindow {
     private Display display;
     private Shell shell;
+    private Color mainWindowColor;
 
     private GraphicComponent currentGraphicComponent;
     private CTabFolder tabFolder;
@@ -37,6 +40,8 @@ public class MainWindow {
         shell = new Shell(display);
         shell.setText("Графовый редактор");
         shell.setLayout(new GridLayout(5, false));
+        mainWindowColor = ColorSetupComponent.getMainWindowColor();
+        shell.setBackground(mainWindowColor);
 
         tabItemHashMap = new HashMap<>();
         controller = new Controller();
@@ -74,11 +79,13 @@ public class MainWindow {
         }
         CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE | SWT.CLOSE);
         Composite compositeTabItem = new Composite(tabFolder, SWT.NONE);
+        compositeTabItem.setBackground(mainWindowColor);
         compositeTabItem.setLayout(new GridLayout(1, false));
         compositeTabItem.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         tabItem.setControl(compositeTabItem);
-        currentGraphicComponent = new GraphicComponent(compositeTabItem, SWT.BORDER | SWT.DOUBLE_BUFFERED, controller);
+        currentGraphicComponent = new GraphicComponent(compositeTabItem, SWT.DOUBLE_BUFFERED, controller);
         controller.createGraph(path);
+        tabItem.setFont(new Font(display, "Arial", 9, SWT.BOLD));
         tabItem.setText(controller.getCurrentFile().getName());
         // Creating Pair that will link graphicComponent and their graph
         Pair<Graph, GraphicComponent> graphGraphicComponentPair = new Pair<>(controller.getCurrentGragh(), currentGraphicComponent);
@@ -96,17 +103,42 @@ public class MainWindow {
         }
     }
 
+    private void setCursor() {
+        if (tabFolder.getItemCount() == 0) {
+            return;
+        }
+        controller.setStatus(OperationType.operationType.CURSOR);
+        controller.removeSelection();
+        currentGraphicComponent.redraw();
+        currentGraphicComponent.setCursor(new Cursor(display, SWT.CURSOR_ARROW));
+    }
+
+    private void setArc() {
+        if (tabFolder.getItemCount() == 0) {
+            return;
+        }
+        controller.setStatus(OperationType.operationType.ARC);
+        controller.removeSelection();
+        currentGraphicComponent.redraw();
+        currentGraphicComponent.setCursor(new Cursor(display, SWT.CURSOR_ARROW));
+    }
+
     // Initialization methods
     private void initGraphicComponent() {
         Composite compositeGraphicComponent = new Composite(shell, SWT.NONE);
+        compositeGraphicComponent.setBackground(mainWindowColor);
         compositeGraphicComponent.setLayout(new GridLayout(1, true));
         compositeGraphicComponent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         Composite compositeTabFolder = new Composite(compositeGraphicComponent, SWT.NONE);
+        compositeTabFolder.setBackground(mainWindowColor);
         compositeTabFolder.setLayout(new FillLayout());
         compositeTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         tabFolder = new CTabFolder(compositeTabFolder, SWT.NONE);
+        tabFolder.setBackground(mainWindowColor);
+        tabFolder.setSelectionBackground(mainWindowColor);
+        tabFolder.setSelectionForeground(new Color(null, 247, 249, 255));
 
         tabFolder.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -190,7 +222,7 @@ public class MainWindow {
         fileSaveItem.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if(controller.getFiles().size() == 0){
+                if (controller.getFiles().size() == 0) {
                     return;
                 }
                 saveFile(controller.getCurrentFile());
@@ -207,10 +239,32 @@ public class MainWindow {
         fileCloseItem.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if(tabFolder.getItemCount() == 0){
+                if (tabFolder.getItemCount() == 0) {
                     return;
                 }
                 closeFile(tabFolder.getSelection());
+            }
+        });
+
+        MenuItem editCursorItem = new MenuItem(editMenu, SWT.PUSH);
+        editCursorItem.setText("Курсор");
+        editCursorItem.setAccelerator('1');
+        MenuItem editArcItem = new MenuItem(editMenu, SWT.PUSH);
+        editArcItem.setText("Дуга");
+        editArcItem.setAccelerator('2');
+
+        // Listeners
+        editCursorItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setCursor();
+            }
+        });
+
+        editArcItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setArc();
             }
         });
 
@@ -226,7 +280,10 @@ public class MainWindow {
     }
 
     private void initGenerateGraphButton(Composite composite) {
-        Button buttonGenerateGraph = new Button(composite, SWT.PUSH);
+        Button buttonGenerateGraph = new Button(composite, SWT.PUSH | SWT.BORDER);
+        buttonGenerateGraph.setBackground(ColorSetupComponent.getMainWindowColor());
+        buttonGenerateGraph.setFont(new Font(display, "Arial", 10, SWT.BOLD));
+        buttonGenerateGraph.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         buttonGenerateGraph.setText("Сгенерировать граф");
         GridData buttonGenerateGraphData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         buttonGenerateGraphData.widthHint = 200;
@@ -236,7 +293,7 @@ public class MainWindow {
         buttonGenerateGraph.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if(tabFolder.getItemCount() == 0){
+                if (tabFolder.getItemCount() == 0) {
                     return;
                 }
                 Node node1 = new Node(200, 300);
@@ -276,7 +333,7 @@ public class MainWindow {
         itemSave.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if(controller.getFiles().size() == 0){
+                if (controller.getFiles().size() == 0) {
                     return;
                 }
                 saveFile(controller.getCurrentFile());
@@ -293,19 +350,12 @@ public class MainWindow {
         itemClose.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if(tabFolder.getItemCount() == 0){
+                if (tabFolder.getItemCount() == 0) {
                     return;
                 }
                 closeFile(tabFolder.getSelection());
             }
         });
-    }
-
-    private FileDialog createFileDialog(){
-        FileDialog dialog = new FileDialog(shell, SWT.SAVE);
-        String extensions[] = {"*.ugff"};
-        dialog.setFilterExtensions(extensions);
-        return dialog;
     }
 
     private void initToolBarEdit() {
@@ -316,41 +366,26 @@ public class MainWindow {
         itemArc.setText("Arc");
         ToolItem itemSetTheme = new ToolItem(toolBarEdit, SWT.PUSH);
         itemSetTheme.setText("Dark/Light");
-//        toolBar.pack();
 
         // Item listeners
         itemCursor.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if(tabFolder.getItemCount() == 0){
-                    return;
-                }
-                controller.setStatus(OperationType.operationType.CURSOR);
-//                itemCursor.setSelection(true);
-                controller.removeSelection();
-                currentGraphicComponent.redraw();
-                currentGraphicComponent.setCursor(new Cursor(display, SWT.CURSOR_ARROW));
+                setCursor();
             }
         });
 
         itemArc.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if(tabFolder.getItemCount() == 0){
-                    return;
-                }
-                controller.setStatus(OperationType.operationType.ARC);
-//                itemArc.setSelection(true);
-                controller.removeSelection();
-                currentGraphicComponent.redraw();
-                currentGraphicComponent.setCursor(new Cursor(display, SWT.CURSOR_ARROW));
+                setArc();
             }
         });
 
         itemSetTheme.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {        // !!!CHECK LINKS for colors
-                if(tabFolder.getItemCount() == 0){
+                if (tabFolder.getItemCount() == 0) {
                     return;
                 }
                 changeTheme();
@@ -360,9 +395,16 @@ public class MainWindow {
     }
 
     // Methods for work with files
+    private FileDialog createFileDialog() {
+        FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+        String extensions[] = {"*.ugff"};
+        dialog.setFilterExtensions(extensions);
+        return dialog;
+    }
+
     private void newFile() {
         String path = createFileDialog().open();
-        if(path == null){
+        if (path == null) {
             return;
         }
         createTabItem(path);
@@ -375,19 +417,19 @@ public class MainWindow {
         xmlWriter.write();
     }
 
-    private void saveAsFile(){
-        if(controller.getFiles().size() == 0){
+    private void saveAsFile() {
+        if (controller.getFiles().size() == 0) {
             return;
         }
         String path = createFileDialog().open();
-        if(path == null){
+        if (path == null) {
             return;
         }
         File file = new File(path);
         saveFile(file);
     }
 
-    private void closeFile(CTabFolderEvent cTabFolderEvent){
+    private void closeFile(CTabFolderEvent cTabFolderEvent) {
         Pair<Graph, GraphicComponent> currentPair = null;
         for (HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()) {
             if (entry.getValue() == cTabFolderEvent.item) {
@@ -401,7 +443,7 @@ public class MainWindow {
         }
     }
 
-    private void closeFile(CTabItem tabItem){
+    private void closeFile(CTabItem tabItem) {
         Pair<Graph, GraphicComponent> currentPair = null;
         for (HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()) {
             if (entry.getValue() == tabItem) {
