@@ -84,6 +84,7 @@ public class GraphicComponent extends Canvas {
                 if (selectedObject.getObject() instanceof Arc) {
                     new SetWeightDialog(getDisplay(), controller, (Arc) selectedObject.getObject());
                 }
+                setCurrentInformation();
                 redraw();
             }
         });
@@ -566,7 +567,6 @@ public class GraphicComponent extends Canvas {
     }
 
     private void setSelectedObject() {
-        String information = "";
         for (Node currentNode : controller.getCurrentGragh().getNodes()) {
             if (currentNode.getGraphicalShell().isSelected() == true) {
                 selectedObject.setObject(currentNode);
@@ -582,6 +582,7 @@ public class GraphicComponent extends Canvas {
             }
         }
         selectedObject.setObject(null);
+        setCurrentInformation();
     }
 
     private void setCurrentInformation() {

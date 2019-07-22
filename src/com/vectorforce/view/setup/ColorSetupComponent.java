@@ -11,12 +11,12 @@ public class ColorSetupComponent {
     private static Color gridColor;
     private static boolean darkTheme;
     // Default colors
-    private static Color tabFolderSelectionForeground = new Color(null, 89, 154, 184);
+    private static Color tabFolderSelectionForeground = new Color(null, 109, 174, 204);
     private static Color tabFolderForeground = new Color(null, 100, 100, 100);
     private static Color mainWindowsColor = new Color(null, 40, 40, 40);
-    private static Color windowsCompositesColor = new Color(null, 55, 55, 55);
+    private static Color windowsCompositesForegroundColor = new Color(null, 55, 55, 55);
     private static Color buttonsForegroundColor = new Color(null, 199, 199, 199);
-    private static Color textBackgroundColor = new Color(null, 240, 240, 240);
+    private static Color textBackgroundColor = new Color(null, 233, 233, 233);
     private static Color defaultObjectColorLightTheme = new Color(null, 0, 0, 0);
     private static Color defaultNodeColorDarkTheme = new Color(null, 92, 248, 255);
     private static Color defaultArcColorDarkTheme = new Color(null, 230, 243, 255);
@@ -83,8 +83,8 @@ public class ColorSetupComponent {
         return textBackgroundColor;
     }
 
-    public static Color getWindowsCompositesColor(){
-        return windowsCompositesColor;
+    public static Color getWindowsCompositesForegroundColor(){
+        return windowsCompositesForegroundColor;
     }
 
     public static Color getButtonsForegroundColor(){

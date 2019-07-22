@@ -14,7 +14,7 @@ public class SettingForm {
 
     public SettingForm(Shell shell){
         composite = new Group(shell, SWT.NONE);
-        composite.setBackground(ColorSetupComponent.getWindowsCompositesColor());
+        composite.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
         composite.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         composite.setLayout(new GridLayout(1, false));
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

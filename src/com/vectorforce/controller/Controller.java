@@ -35,6 +35,12 @@ public class Controller {
         indexCurrentGraph--;
     }
 
+    public void deleteAllNodes(){
+        for(int index = 0; index < graphs.get(indexCurrentGraph).getNodes().size(); index++){
+            graphs.get(indexCurrentGraph).deleteNode(graphs.get(indexCurrentGraph).getNodes().get(index--));
+        }
+    }
+
     public void deleteGraph(Graph graph){
         files.remove(files.get(graphs.indexOf(graph)));
         graphs.remove(graph);

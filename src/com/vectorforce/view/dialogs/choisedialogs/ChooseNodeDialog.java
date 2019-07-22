@@ -1,6 +1,5 @@
 package com.vectorforce.view.dialogs.choisedialogs;
 
-import com.sun.prism.impl.BufferUtil;
 import com.vectorforce.controller.Controller;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.model.node.NodeType;
@@ -10,14 +9,10 @@ import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-
-import java.util.ArrayList;
 
 public class ChooseNodeDialog {
     private Display display;
@@ -53,7 +48,7 @@ public class ChooseNodeDialog {
 
     private void initButtons(){
         Composite composite = new Group(shell, SWT.NONE);
-        composite.setBackground(ColorSetupComponent.getWindowsCompositesColor());
+        composite.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
         composite.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         ((Group) composite).setText("Тип узла");
         composite.setLayout(new GridLayout(5, false));

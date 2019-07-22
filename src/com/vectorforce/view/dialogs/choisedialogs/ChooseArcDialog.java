@@ -8,7 +8,6 @@ import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -49,10 +48,10 @@ public class ChooseArcDialog {
     private void initButtons() {
         Composite compositeTypesButtons = new Composite(shell, SWT.NONE);
         compositeTypesButtons.setLayout(new GridLayout(2, true));
-        compositeTypesButtons.setBackground(ColorSetupComponent.getWindowsCompositesColor());
+        compositeTypesButtons.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
 
         Composite compositeOriented = new Group(compositeTypesButtons, SWT.NONE);
-        compositeOriented.setBackground(ColorSetupComponent.getWindowsCompositesColor());
+        compositeOriented.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
         compositeOriented.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         ((Group) compositeOriented).setText("Ориентированная");
         compositeOriented.setLayout(new GridLayout(1, false));
@@ -66,7 +65,7 @@ public class ChooseArcDialog {
 
         Composite compositeNonOriented = new Group(compositeTypesButtons, SWT.NONE);
         compositeNonOriented.setForeground(ColorSetupComponent.getButtonsForegroundColor());
-        compositeNonOriented.setBackground(ColorSetupComponent.getWindowsCompositesColor());
+        compositeNonOriented.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
         ((Group) compositeNonOriented).setText("Неориентированная");
         compositeNonOriented.setLayout(new GridLayout(1, true));
 

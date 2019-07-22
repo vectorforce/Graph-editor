@@ -6,6 +6,7 @@ import com.vectorforce.model.Arc;
 import com.vectorforce.model.Graph;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.parser.DOMWriter;
+import com.vectorforce.view.dialogs.GenerateGraphDialog;
 import com.vectorforce.view.graphics.GraphicComponent;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import com.vectorforce.view.setup.FontSetupComponent;
@@ -303,23 +304,23 @@ public class MainWindow {
                 if (tabFolder.getItemCount() == 0) {
                     return;
                 }
-                Node node1 = new Node(200, 300);
-                Node node2 = new Node(500, 300);
-                Arc arc = new Arc(node2, node1);
-                controller.getCurrentGragh().addNode(node1);
-                controller.getCurrentGragh().addNode(node2);
-                controller.getCurrentGragh().addArc(arc);
-                currentGraphicComponent.drawNode(node1);
-                currentGraphicComponent.drawNode(node2);
-                currentGraphicComponent.drawArc(arc);
-                currentGraphicComponent.redraw();
+//                Node node1 = new Node(200, 300);
+//                Node node2 = new Node(500, 300);
+//                Arc arc = new Arc(node2, node1);
+//                controller.getCurrentGragh().addNode(node1);
+//                controller.getCurrentGragh().addNode(node2);
+//                controller.getCurrentGragh().addArc(arc);
+//                currentGraphicComponent.drawNode(node1);
+//                currentGraphicComponent.drawNode(node2);
+//                currentGraphicComponent.drawArc(arc);
+//                currentGraphicComponent.redraw();
+                new GenerateGraphDialog(display, controller);
             }
         });
     }
 
     private void initCurrentGraphicObjectInformationText(Composite composite){
-        textCurrentInformation = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
-        textCurrentInformation.setBackground(ColorSetupComponent.getTextBackgroundColor());
+        textCurrentInformation = new Text(composite, SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL);
         textCurrentInformation.setBackground(ColorSetupComponent.getTextBackgroundColor());
         GridData buttonGenerateGraphData = new GridData(SWT.FILL, SWT.FILL, true, true);
         textCurrentInformation.setLayoutData(buttonGenerateGraphData);
@@ -403,6 +404,7 @@ public class MainWindow {
                 if (tabFolder.getItemCount() == 0) {
                     return;
                 }
+                controller.removeSelection();
                 changeTheme();
                 currentGraphicComponent.applyCurrentTheme();
             }
