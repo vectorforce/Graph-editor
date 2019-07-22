@@ -4,6 +4,7 @@ import com.vectorforce.controller.Controller;
 import com.vectorforce.model.Arc;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.view.graphics.GraphicObject;
+import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,6 +26,7 @@ public class SetIDDialog {
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setLayout(new GridLayout(1, false));
         shell.setText("Установите идентификатор");
+        shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         initForm();
 
         run();

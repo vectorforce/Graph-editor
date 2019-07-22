@@ -52,7 +52,7 @@ public class DOMWriter {
                 node.setAttribute("color", String.valueOf(currentNode.getGraphicalShell().getColor()));
                 Element nodeType = document.createElement("nodeType");
                 String type = "";
-                switch (currentNode.getStatus()){
+                switch (currentNode.getType()){
                     case EMPTY:
                         type = "EMPTY";
                         break;

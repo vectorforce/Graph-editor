@@ -90,7 +90,7 @@ public class Node<Type> {
         return internalID;
     }
 
-    public NodeType.nodeType getStatus() {
+    public NodeType.nodeType getType() {
         return nodeType.getStatus();
     }
 

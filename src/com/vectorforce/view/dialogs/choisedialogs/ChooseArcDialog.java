@@ -3,15 +3,16 @@ package com.vectorforce.view.dialogs.choisedialogs;
 import com.vectorforce.controller.Controller;
 import com.vectorforce.model.Arc;
 import com.vectorforce.view.graphics.GraphicComponent;
+import com.vectorforce.view.setup.ColorSetupComponent;
+import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-
-import java.util.ArrayList;
 
 public class ChooseArcDialog {
     private Display display;
@@ -26,6 +27,7 @@ public class ChooseArcDialog {
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Выберите тип");
         shell.setLayout(new GridLayout(1, true));
+        shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         initButtons();
 
         run();
@@ -47,8 +49,11 @@ public class ChooseArcDialog {
     private void initButtons() {
         Composite compositeTypesButtons = new Composite(shell, SWT.NONE);
         compositeTypesButtons.setLayout(new GridLayout(2, true));
+        compositeTypesButtons.setBackground(ColorSetupComponent.getWindowsCompositesColor());
 
         Composite compositeOriented = new Group(compositeTypesButtons, SWT.NONE);
+        compositeOriented.setBackground(ColorSetupComponent.getWindowsCompositesColor());
+        compositeOriented.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         ((Group) compositeOriented).setText("Ориентированная");
         compositeOriented.setLayout(new GridLayout(1, false));
 
@@ -60,6 +65,8 @@ public class ChooseArcDialog {
         buttonOrientedBinary.setText("========>");
 
         Composite compositeNonOriented = new Group(compositeTypesButtons, SWT.NONE);
+        compositeNonOriented.setForeground(ColorSetupComponent.getButtonsForegroundColor());
+        compositeNonOriented.setBackground(ColorSetupComponent.getWindowsCompositesColor());
         ((Group) compositeNonOriented).setText("Неориентированная");
         compositeNonOriented.setLayout(new GridLayout(1, true));
 
@@ -71,10 +78,14 @@ public class ChooseArcDialog {
         buttonNonOrientedBinary.setText("========");
 
         Composite compositeOK = new Composite(shell, SWT.NONE);
+        compositeOK.setBackground(ColorSetupComponent.getMainWindowsColor());
         compositeOK.setLayout(new GridLayout(1, false));
         compositeOK.setLayoutData(new GridData(SWT.END, SWT.FILL, true, true));
 
-        Button buttonOK = new Button(compositeOK, SWT.PUSH);
+        Button buttonOK = new Button(compositeOK, SWT.PUSH | SWT.BORDER);
+        buttonOK.setBackground(ColorSetupComponent.getMainWindowsColor());
+        buttonOK.setForeground(ColorSetupComponent.getButtonsForegroundColor());
+        buttonOK.setFont(FontSetupComponent.getButtonsFont());
         buttonOK.setText("Выбрать");
         GridData buttonOKData = new GridData(SWT.END, SWT.CENTER, false, false);
         buttonOKData.widthHint = 120;

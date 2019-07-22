@@ -4,7 +4,6 @@ import com.vectorforce.model.Arc;
 import com.vectorforce.model.Graph;
 import com.vectorforce.controller.common.OperationType;
 import com.vectorforce.model.node.Node;
-
 import java.io.File;
 import java.util.LinkedList;
 

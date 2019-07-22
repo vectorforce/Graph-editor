@@ -6,13 +6,17 @@ public class ColorSetupComponent {
     private static Color nodeColor;
     private static Color arcColor;
     private static Color selectColor;
-    private static Color characterColor;
-    private static Color backgroundColor;
+    private static Color graphicComponentCharacterColor;
+    private static Color graphicComponentBackgroundColor;
     private static Color gridColor;
-    private static Color mainWindowColor = new Color(null, 30, 30, 30);
-    private static Color buttonsForegroundColor = new Color(null, 181, 181, 181);
     private static boolean darkTheme;
     // Default colors
+    private static Color tabFolderSelectionForeground = new Color(null, 89, 154, 184);
+    private static Color tabFolderForeground = new Color(null, 100, 100, 100);
+    private static Color mainWindowsColor = new Color(null, 40, 40, 40);
+    private static Color windowsCompositesColor = new Color(null, 55, 55, 55);
+    private static Color buttonsForegroundColor = new Color(null, 199, 199, 199);
+    private static Color textBackgroundColor = new Color(null, 240, 240, 240);
     private static Color defaultObjectColorLightTheme = new Color(null, 0, 0, 0);
     private static Color defaultNodeColorDarkTheme = new Color(null, 92, 248, 255);
     private static Color defaultArcColorDarkTheme = new Color(null, 230, 243, 255);
@@ -27,8 +31,8 @@ public class ColorSetupComponent {
         nodeColor = defaultNodeColorDarkTheme;
         arcColor = defaultArcColorDarkTheme;
         selectColor = new Color(null, 0, 255, 0);
-        characterColor = new Color(null, 255, 255, 255);
-        backgroundColor = new Color(null, 59, 63, 64);
+        graphicComponentCharacterColor = new Color(null, 255, 255, 255);
+        graphicComponentBackgroundColor = new Color(null, 59, 63, 64);
         gridColor = new Color(null, 249, 245, 104);
     }
 
@@ -37,8 +41,8 @@ public class ColorSetupComponent {
         nodeColor = defaultObjectColorLightTheme;
         arcColor = defaultObjectColorLightTheme;
         selectColor = new Color(null, 0, 255, 0);
-        characterColor = new Color(null, 0, 0, 0);
-        backgroundColor = new Color(null, 255, 255, 255);
+        graphicComponentCharacterColor = new Color(null, 0, 0, 0);
+        graphicComponentBackgroundColor = new Color(null, 255, 255, 255);
         gridColor = new Color(null, 0, 163, 20);
     }
 
@@ -46,8 +50,8 @@ public class ColorSetupComponent {
         gridColor = gridColorArg;
     }
 
-    public static void setCharacterColor(Color characterColorArg) {
-        characterColor = characterColorArg;
+    public static void setGraphicComponentCharacterColor(Color characterColorArg) {
+        graphicComponentCharacterColor = characterColorArg;
     }
 
     public static void setArcColor(Color arcColorArg) {
@@ -62,17 +66,33 @@ public class ColorSetupComponent {
         selectColor = selectColorArg;
     }
 
-    public static void setBackgroundColor(Color backgroundColorArg) {
-        backgroundColor = backgroundColorArg;
+    public static void setGraphicComponentBackgroundColor(Color backgroundColorArg) {
+        graphicComponentBackgroundColor = backgroundColorArg;
     }
 
     // Getters
+    public static Color getTabFolderSelectionForeground(){
+        return tabFolderSelectionForeground;
+    }
+
+    public static Color getTabFolderForeground(){
+        return tabFolderForeground;
+    }
+
+    public static Color getTextBackgroundColor(){
+        return textBackgroundColor;
+    }
+
+    public static Color getWindowsCompositesColor(){
+        return windowsCompositesColor;
+    }
+
     public static Color getButtonsForegroundColor(){
         return buttonsForegroundColor;
     }
 
-    public static Color getMainWindowColor(){
-        return mainWindowColor;
+    public static Color getMainWindowsColor(){
+        return mainWindowsColor;
     }
 
     public static Color getDefaultObjectColorLightTheme() {
@@ -103,12 +123,12 @@ public class ColorSetupComponent {
         return selectColor;
     }
 
-    public static Color getBackgroundColor() {
-        return backgroundColor;
+    public static Color getGraphicComponentBackgroundColor() {
+        return graphicComponentBackgroundColor;
     }
 
-    public static Color getCharacterColor() {
-        return characterColor;
+    public static Color getGraphicComponentCharacterColor() {
+        return graphicComponentCharacterColor;
     }
 
     public static Color getGridColor() {

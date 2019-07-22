@@ -5,9 +5,13 @@ import com.vectorforce.controller.Controller;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.model.node.NodeType;
 import com.vectorforce.view.graphics.GraphicComponent;
+import com.vectorforce.view.setup.ColorSetupComponent;
+import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -26,6 +30,7 @@ public class ChooseNodeDialog {
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Выберите тип");
         shell.setLayout(new GridLayout(1, false));
+        shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         this.node = node;
         commonPartChooseDialog = new CommonPartChooseDialog(controller, graphicComponent);
         initButtons();
@@ -48,6 +53,9 @@ public class ChooseNodeDialog {
 
     private void initButtons(){
         Composite composite = new Group(shell, SWT.NONE);
+        composite.setBackground(ColorSetupComponent.getWindowsCompositesColor());
+        composite.setForeground(ColorSetupComponent.getButtonsForegroundColor());
+        ((Group) composite).setText("Тип узла");
         composite.setLayout(new GridLayout(5, false));
 
         Button buttonEmpty = new Button(composite, SWT.TOGGLE);
@@ -67,10 +75,14 @@ public class ChooseNodeDialog {
         commonPartChooseDialog.addButton(buttonLink);
 
         Composite compositeOK = new Composite(shell, SWT.NONE);
+        compositeOK.setBackground(ColorSetupComponent.getMainWindowsColor());
         compositeOK.setLayout(new GridLayout(1, false));
         compositeOK.setLayoutData(new GridData(SWT.END, SWT.FILL, true, true));
 
         Button buttonOK = new Button(compositeOK, SWT.PUSH);
+        buttonOK.setBackground(ColorSetupComponent.getMainWindowsColor());
+        buttonOK.setForeground(ColorSetupComponent.getButtonsForegroundColor());
+        buttonOK.setFont(FontSetupComponent.getButtonsFont());
         buttonOK.setText("Выбрать");
         GridData buttonOKData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         buttonOKData.widthHint = 120;

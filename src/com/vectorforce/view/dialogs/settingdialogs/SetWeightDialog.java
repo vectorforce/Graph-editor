@@ -2,6 +2,7 @@ package com.vectorforce.view.dialogs.settingdialogs;
 
 import com.vectorforce.controller.Controller;
 import com.vectorforce.model.Arc;
+import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,6 +25,7 @@ public class SetWeightDialog {
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Установить вес");
         shell.setLayout(new GridLayout(1, false));
+        shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         initForm();
 
         run();

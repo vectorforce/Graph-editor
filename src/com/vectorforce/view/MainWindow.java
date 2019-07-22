@@ -8,6 +8,7 @@ import com.vectorforce.model.node.Node;
 import com.vectorforce.parser.DOMWriter;
 import com.vectorforce.view.graphics.GraphicComponent;
 import com.vectorforce.view.setup.ColorSetupComponent;
+import com.vectorforce.view.setup.FontSetupComponent;
 import javafx.util.Pair;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
@@ -15,12 +16,10 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-
 import java.io.File;
 import java.util.HashMap;
 
@@ -31,6 +30,7 @@ public class MainWindow {
 
     private GraphicComponent currentGraphicComponent;
     private CTabFolder tabFolder;
+    private Text textCurrentInformation;
     private HashMap<Pair, CTabItem> tabItemHashMap;
 
     private Controller controller;
@@ -40,7 +40,7 @@ public class MainWindow {
         shell = new Shell(display);
         shell.setText("Графовый редактор");
         shell.setLayout(new GridLayout(5, false));
-        mainWindowColor = ColorSetupComponent.getMainWindowColor();
+        mainWindowColor = ColorSetupComponent.getMainWindowsColor();
         shell.setBackground(mainWindowColor);
 
         tabItemHashMap = new HashMap<>();
@@ -83,9 +83,9 @@ public class MainWindow {
         compositeTabItem.setLayout(new GridLayout(1, false));
         compositeTabItem.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         tabItem.setControl(compositeTabItem);
-        currentGraphicComponent = new GraphicComponent(compositeTabItem, SWT.DOUBLE_BUFFERED, controller);
+        currentGraphicComponent = new GraphicComponent(compositeTabItem, textCurrentInformation, SWT.DOUBLE_BUFFERED, controller);
         controller.createGraph(path);
-        tabItem.setFont(new Font(display, "Arial", 9, SWT.BOLD));
+        tabItem.setFont(FontSetupComponent.getTabItemsFont());
         tabItem.setText(controller.getCurrentFile().getName());
         // Creating Pair that will link graphicComponent and their graph
         Pair<Graph, GraphicComponent> graphGraphicComponentPair = new Pair<>(controller.getCurrentGragh(), currentGraphicComponent);
@@ -138,7 +138,8 @@ public class MainWindow {
         tabFolder = new CTabFolder(compositeTabFolder, SWT.NONE);
         tabFolder.setBackground(mainWindowColor);
         tabFolder.setSelectionBackground(mainWindowColor);
-        tabFolder.setSelectionForeground(new Color(null, 247, 249, 255));
+        tabFolder.setSelectionForeground(ColorSetupComponent.getTabFolderSelectionForeground());
+        tabFolder.setForeground(ColorSetupComponent.getTabFolderForeground());
 
         tabFolder.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -280,15 +281,21 @@ public class MainWindow {
     }
 
     private void initGenerateGraphButton(Composite composite) {
-        Button buttonGenerateGraph = new Button(composite, SWT.PUSH | SWT.BORDER);
-        buttonGenerateGraph.setBackground(ColorSetupComponent.getMainWindowColor());
-        buttonGenerateGraph.setFont(new Font(display, "Arial", 10, SWT.BOLD));
+        Composite compositeTextButton = new Composite(composite, SWT.NONE);
+        compositeTextButton.setBackground(ColorSetupComponent.getMainWindowsColor());
+        compositeTextButton.setLayout(new GridLayout(2, false));
+        compositeTextButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+        Button buttonGenerateGraph = new Button(compositeTextButton, SWT.PUSH | SWT.BORDER);
+        buttonGenerateGraph.setBackground(ColorSetupComponent.getMainWindowsColor());
+        buttonGenerateGraph.setFont(FontSetupComponent.getButtonsFont());
         buttonGenerateGraph.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         buttonGenerateGraph.setText("Сгенерировать граф");
-        GridData buttonGenerateGraphData = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+        GridData buttonGenerateGraphData = new GridData(SWT.END, SWT.CENTER, false, false);
         buttonGenerateGraphData.widthHint = 200;
         buttonGenerateGraphData.heightHint = 50;
         buttonGenerateGraph.setLayoutData(buttonGenerateGraphData);
+
+        initCurrentGraphicObjectInformationText(compositeTextButton);
 
         buttonGenerateGraph.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -308,6 +315,14 @@ public class MainWindow {
                 currentGraphicComponent.redraw();
             }
         });
+    }
+
+    private void initCurrentGraphicObjectInformationText(Composite composite){
+        textCurrentInformation = new Text(composite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL);
+        textCurrentInformation.setBackground(ColorSetupComponent.getTextBackgroundColor());
+        textCurrentInformation.setBackground(ColorSetupComponent.getTextBackgroundColor());
+        GridData buttonGenerateGraphData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        textCurrentInformation.setLayoutData(buttonGenerateGraphData);
     }
 
     private void initToolBarFile() {

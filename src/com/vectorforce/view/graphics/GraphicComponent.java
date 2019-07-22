@@ -31,6 +31,7 @@ public class GraphicComponent extends Canvas {
     // Variables for change selected objects
     private GraphicObject selectedObject;
     private Color colorSelectedObject;
+    private Text textCurrentInformation;
     // Variables for scrolling
     private final ScrollBar vBar;
     private final ScrollBar hBar;
@@ -38,14 +39,15 @@ public class GraphicComponent extends Canvas {
     private Rectangle rectangle;
 
     // Constructor
-    public GraphicComponent(Composite parent, int style, Controller controller) {
+    public GraphicComponent(Composite parent, Text text, int style, Controller controller) {
         super(parent, style | SWT.H_SCROLL | SWT.V_SCROLL);
 
         this.controller = controller;
+        this.textCurrentInformation = text;
 
         ColorSetupComponent.setDarkTheme();
         lineWidth = 5;
-        backgroundColor = ColorSetupComponent.getBackgroundColor();
+        backgroundColor = ColorSetupComponent.getGraphicComponentBackgroundColor();
         colorSelectedObject = ColorSetupComponent.getSelectColor();
         selectedObject = new GraphicObject();
         setBackground(backgroundColor);
@@ -409,7 +411,7 @@ public class GraphicComponent extends Canvas {
                         e.gc.drawOval(node.getX() + origin.x, node.getY() + origin.y, node.getDiameter(), node.getDiameter());
                         // Drawing visual ID of type of node
                         e.gc.setLineWidth(3);
-                        switch (node.getStatus()) {
+                        switch (node.getType()) {
                             case EMPTY:
                                 break;
 
@@ -511,7 +513,7 @@ public class GraphicComponent extends Canvas {
                             // Drawing textWeight
                             e.gc.drawText(String.valueOf(arc.getWeight()), xWeight + origin.x, yWeight + origin.y, true);
                             // Drawing center line for separate main line
-                            Color colorSeparateLine = ColorSetupComponent.getBackgroundColor();
+                            Color colorSeparateLine = ColorSetupComponent.getGraphicComponentBackgroundColor();
                             int separateLineWidth = 4;
                             e.gc.setForeground(colorSeparateLine);
                             e.gc.setLineWidth(separateLineWidth);
@@ -537,7 +539,7 @@ public class GraphicComponent extends Canvas {
                     currentNode.getGraphicalShell().setColor(ColorSetupComponent.getNodeColor());
                 }
             } else {
-                if(currentNode.getGraphicalShell().getColor().equals(ColorSetupComponent.getDefaultObjectColorLightTheme()) == true){
+                if (currentNode.getGraphicalShell().getColor().equals(ColorSetupComponent.getDefaultObjectColorLightTheme()) == true) {
                     currentNode.getGraphicalShell().setColor(ColorSetupComponent.getNodeColor());
                 }
             }
@@ -548,12 +550,12 @@ public class GraphicComponent extends Canvas {
                     currentArc.getGraphicalShell().setColor(ColorSetupComponent.getArcColor());
                 }
             } else {
-                if(currentArc.getGraphicalShell().getColor().equals(ColorSetupComponent.getDefaultObjectColorLightTheme()) == true){
+                if (currentArc.getGraphicalShell().getColor().equals(ColorSetupComponent.getDefaultObjectColorLightTheme()) == true) {
                     currentArc.getGraphicalShell().setColor(ColorSetupComponent.getArcColor());
                 }
             }
         }
-        setBackground(ColorSetupComponent.getBackgroundColor());
+        setBackground(ColorSetupComponent.getGraphicComponentBackgroundColor());
         redraw();
     }
 
@@ -564,19 +566,75 @@ public class GraphicComponent extends Canvas {
     }
 
     private void setSelectedObject() {
+        String information = "";
         for (Node currentNode : controller.getCurrentGragh().getNodes()) {
             if (currentNode.getGraphicalShell().isSelected() == true) {
                 selectedObject.setObject(currentNode);
+                setCurrentInformation();
                 return;
             }
         }
         for (Arc currentArc : controller.getCurrentGragh().getArcs()) {
             if (currentArc.isSelected() == true) {
                 selectedObject.setObject(currentArc);
+                setCurrentInformation();
                 return;
             }
         }
         selectedObject.setObject(null);
+    }
+
+    private void setCurrentInformation() {
+        String information = "";
+        if (selectedObject.getObject() != null) {
+            if (selectedObject.getObject() instanceof Node) {
+                // Out information on textComponent
+                Node currentNode = (Node)selectedObject.getObject();
+                information += "ID узла: " + currentNode.getID();
+                information += "\nВнутренний ID узла: " + currentNode.getInternalID();
+                information += "\nКоличество входящих дуг: " + currentNode.getIngoingArcs().size();
+                information += "\nКоличество выходящих дуг: " + currentNode.getOutgoingArcs().size();
+                information += "\nТипа узла: ";
+                switch (currentNode.getType()) {
+                    case EMPTY:
+                        information += "пустой";
+                        break;
+
+                    case LINK:
+                        information += "узел-связка";
+                        break;
+
+                    case CLASS:
+                        information += "класс";
+                        break;
+
+                    case NREL:
+                        information += "узел неролевого отношения";
+                        break;
+
+                    case RREL:
+                        information += "узел ролевого отношения";
+                        break;
+                }
+            } else if (selectedObject.getObject() instanceof Arc) {
+                Arc currentArc = (Arc) selectedObject.getObject();
+                information += "ID дуги: " + currentArc.getID();
+                information += "\nВес дуги: " + currentArc.getWeight();
+                information += "\nОриентированная: ";
+                if (currentArc.isOriented() == true) {
+                    information += "да";
+                } else {
+                    information += "нет";
+                }
+                information += "\nБинарная: ";
+                if (currentArc.isBinary() == true) {
+                    information += "да";
+                } else {
+                    information += "нет";
+                }
+            }
+        }
+        textCurrentInformation.setText(information);
     }
 
     private void setCursor(int style) {
@@ -606,6 +664,7 @@ public class GraphicComponent extends Canvas {
                 } else if (selectedObject.getObject() instanceof Node) {
                     new SetIDDialog(getDisplay(), controller, selectedObject);
                 }
+                setCurrentInformation();
                 redraw();
             }
         });
@@ -618,6 +677,7 @@ public class GraphicComponent extends Canvas {
                 } else if (selectedObject.getObject() instanceof Node) {
                     new ChooseNodeDialog(getDisplay(), controller, graphicComponent, (Node) selectedObject.getObject());
                 }
+                setCurrentInformation();
                 controller.getCurrentGragh().checkGraph();
             }
         });
