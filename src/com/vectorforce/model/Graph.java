@@ -1,10 +1,13 @@
 package com.vectorforce.model;
 
+import com.vectorforce.model.list.AdjacencyList;
+import com.vectorforce.model.matrix.AdjacencyMatrix;
 import com.vectorforce.model.node.Node;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class Graph implements IGraph{
+public class Graph implements IGraph {
     private String ID;
     private LinkedList<Node> nodes;
     private LinkedList<Arc> arcs;
@@ -23,46 +26,46 @@ public class Graph implements IGraph{
 
     public void addNode(Node node) {
         nodes.add(node);
-        checkGraph();
+        updateGraphData();
     }
 
     public void deleteNode(Node node) {
         // Delete all adjacent arcs
-        for(int index = 0; index < node.getIngoingArcs().size(); index++){
-            if(deleteArc((Arc) node.getIngoingArcs().get(index)) == true){
+        for (int index = 0; index < node.getIngoingArcs().size(); index++) {
+            if (deleteArc((Arc) node.getIngoingArcs().get(index)) == true) {
                 index--;
             }
         }
-        for(int index = 0; index < node.getOutgoingArcs().size(); index++){
-            if(deleteArc((Arc) node.getOutgoingArcs().get(index)) == true){
+        for (int index = 0; index < node.getOutgoingArcs().size(); index++) {
+            if (deleteArc((Arc) node.getOutgoingArcs().get(index)) == true) {
                 index--;
             }
         }
         nodes.remove(node);
-        checkGraph();
+        updateGraphData();
     }
 
     public void addArc(Arc arc) {
         arcs.add(arc);
-        checkGraph();
+        updateGraphData();
     }
 
     public boolean deleteArc(Arc arc) {
         boolean deleteFlag = false;
-        if(arcs.contains(arc) == true){
+        if (arcs.contains(arc) == true) {
             deleteFlag = true;
         }
         removeLinks(arc);
         return deleteFlag;
     }
 
-    private void removeLinks(Arc arc){
+    private void removeLinks(Arc arc) {
         arc.getFromNode().getOutgoingArcs().remove(arc);
         arc.getFromNode().getIngoingArcs().remove(arc);
         arc.getToNode().getOutgoingArcs().remove(arc);
         arc.getToNode().getIngoingArcs().remove(arc);
         arcs.remove(arc);
-        checkGraph();
+        updateGraphData();
     }
 
     public void removeSelection() {
@@ -75,7 +78,7 @@ public class Graph implements IGraph{
     }
 
     // Method for update information of graph
-    public void checkGraph() {
+    public void updateGraphData() {
         int counterOriented = 0;
         int counterNonOriented = 0;
         for (int index = 0; index < arcs.size(); index++) {
@@ -100,9 +103,9 @@ public class Graph implements IGraph{
             isFull = false;
         }
         // Check on full
-        if(isOriented == false && isMixed == false){
+        if (isOriented == false && isMixed == false) {
             int amountNodes = getNodes().size();
-            if((amountNodes * (amountNodes - 1) / 2) == getArcs().size()){
+            if ((amountNodes * (amountNodes - 1) / 2) == getArcs().size()) {
                 isFull = true;
             } else {
                 isFull = false;
@@ -111,12 +114,12 @@ public class Graph implements IGraph{
     }
 
     // Setters
-    public void setID(String ID){
+    public void setID(String ID) {
         this.ID = ID;
     }
 
     // Getters
-    public String getID(){
+    public String getID() {
         return ID;
     }
 

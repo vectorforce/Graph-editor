@@ -314,7 +314,7 @@ public class MainWindow {
 //                currentGraphicComponent.drawNode(node2);
 //                currentGraphicComponent.drawArc(arc);
 //                currentGraphicComponent.redraw();
-                new GenerateGraphDialog(display, controller);
+                new GenerateGraphDialog(display, controller, currentGraphicComponent);
             }
         });
     }
@@ -322,8 +322,9 @@ public class MainWindow {
     private void initCurrentGraphicObjectInformationText(Composite composite){
         textCurrentInformation = new Text(composite, SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL);
         textCurrentInformation.setBackground(ColorSetupComponent.getTextBackgroundColor());
-        GridData buttonGenerateGraphData = new GridData(SWT.FILL, SWT.FILL, true, true);
-        textCurrentInformation.setLayoutData(buttonGenerateGraphData);
+        GridData textCurrentInformationData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        textCurrentInformationData.heightHint = 50;
+        textCurrentInformation.setLayoutData(textCurrentInformationData);
     }
 
     private void initToolBarFile() {

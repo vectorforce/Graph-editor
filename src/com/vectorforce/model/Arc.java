@@ -18,18 +18,16 @@ public class Arc {
     private boolean isBinary;
 
     public Arc(Node fromNode, Node toNode) {
-        ID = null;
         graphicalShell = new GraphicalShell();
         graphicalShell.setColor(ColorSetupComponent.getArcColor());
         this.fromNode = fromNode;
         this.toNode = toNode;
-        weight = 0;
+        ID = String.valueOf(fromNode.getInternalID()) + "Xabf" + String.valueOf(toNode.getInternalID());
+        weight = 1;
         isOriented = true;
         isBinary = false;
         // Connecting nodes with arc
         fromNode.addOutgoingArc(this);
-//        fromNode.addIngoingArc(this);
-//        toNode.addOutgoingArc(this);
         toNode.addIngoingArc(this);
         x1 = 0;
         y1 = 0;

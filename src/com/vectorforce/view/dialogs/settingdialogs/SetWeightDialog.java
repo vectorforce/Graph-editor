@@ -42,7 +42,7 @@ public class SetWeightDialog {
                 char[] chars = new char[string.length()];
                 string.getChars(0, chars.length, chars, 0);
                 for (int i = 0; i < chars.length; i++) {
-                    if (!('0' <= chars[i] && chars[i] <= '9') == true) {
+                    if (('0' <= chars[i] && chars[i] <= '9') == false) {
                         e.doit = false;
                         return;
                     }
@@ -54,7 +54,9 @@ public class SetWeightDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 if (settingForm.getText().getText().isEmpty() == false) {
-                    controller.setWeight(arc, Integer.valueOf(settingForm.getText().getText()));
+                    if (Integer.valueOf(settingForm.getText().getText()) != 0) {
+                        controller.setWeight(arc, Integer.valueOf(settingForm.getText().getText()));
+                    }
                 }
                 shell.close();
             }

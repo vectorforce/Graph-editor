@@ -679,7 +679,7 @@ public class GraphicComponent extends Canvas {
                     new ChooseNodeDialog(getDisplay(), controller, graphicComponent, (Node) selectedObject.getObject());
                 }
                 setCurrentInformation();
-                controller.getCurrentGragh().checkGraph();
+                controller.getCurrentGragh().updateGraphData();
             }
         });
 

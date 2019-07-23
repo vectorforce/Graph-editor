@@ -1,6 +1,7 @@
 package com.vectorforce.view.dialogs;
 
 import com.vectorforce.controller.Controller;
+import com.vectorforce.view.graphics.GraphicComponent;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
@@ -16,9 +17,11 @@ public class GenerateGraphDialog {
     private Shell shell;
 
     private Controller controller;
+    private GraphicComponent graphicComponent;
 
-    public GenerateGraphDialog(Display display, Controller controller){
+    public GenerateGraphDialog(Display display, Controller controller, GraphicComponent graphicComponent){
         this.controller = controller;
+        this.graphicComponent = graphicComponent;
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Генерация графа");
@@ -67,7 +70,7 @@ public class GenerateGraphDialog {
         listCombo.setText("Выберите список");
         listCombo.setLayoutData(gridDataComboList);
         // Combo items
-        String itemsList[] = {"Список смежности", "Список инцидентности"};
+        String itemsList[] = {"Список смежности"};
         listCombo.setItems(itemsList);
 
         // Listeners
@@ -102,7 +105,7 @@ public class GenerateGraphDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 controller.deleteAllNodes();
-
+                graphicComponent.redraw();
                 shell.close();
             }
         });
