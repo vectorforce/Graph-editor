@@ -4,9 +4,12 @@ import com.vectorforce.controller.Controller;
 import com.vectorforce.controller.common.OperationType;
 import com.vectorforce.model.Arc;
 import com.vectorforce.model.Graph;
+import com.vectorforce.model.matrix.AdjacencyMatrix;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.parser.DOMWriter;
 import com.vectorforce.view.dialogs.GenerateGraphDialog;
+import com.vectorforce.view.dialogs.optionsdialogs.AnalysisDialog;
+import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.MatrixDialog;
 import com.vectorforce.view.graphics.GraphicComponent;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import com.vectorforce.view.setup.FontSetupComponent;
@@ -189,13 +192,17 @@ public class MainWindow {
     private void initMenuBar() {
         Menu menuBar = new Menu(shell, SWT.BAR);
         Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
-        Menu editMenu = new Menu(shell, SWT.DROP_DOWN);
         MenuItem fileMenuItem = new MenuItem(menuBar, SWT.CASCADE);
         fileMenuItem.setText("Файл");
         fileMenuItem.setMenu(fileMenu);
+        Menu editMenu = new Menu(shell, SWT.DROP_DOWN);
         MenuItem editMenuItem = new MenuItem(menuBar, SWT.CASCADE);
         editMenuItem.setText("Редактировать");
         editMenuItem.setMenu(editMenu);
+        Menu optionsMenu = new Menu(shell, SWT.DROP_DOWN);
+        MenuItem optionsMenuItem = new MenuItem(menuBar, SWT.CASCADE);
+        optionsMenuItem.setText("Опции");
+        optionsMenuItem.setMenu(optionsMenu);
 
         MenuItem fileNewItem = new MenuItem(fileMenu, SWT.PUSH);
         fileNewItem.setText("Новый");
@@ -209,6 +216,7 @@ public class MainWindow {
         MenuItem fileSaveAsItem = new MenuItem(fileMenu, SWT.PUSH);
         fileSaveAsItem.setText("Сохранить как\tCtrl+Shift+S");
         fileSaveAsItem.setAccelerator(SWT.CTRL + SWT.SHIFT + 'S');
+        final MenuItem separator = new MenuItem(fileMenu, SWT.SEPARATOR);
         MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
         fileExitItem.setText("Выход\tCtrl+Q");
         fileExitItem.setAccelerator(SWT.CTRL + 'Q');
@@ -248,6 +256,13 @@ public class MainWindow {
             }
         });
 
+        fileExitItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                shell.close();
+            }
+        });
+
         MenuItem editCursorItem = new MenuItem(editMenu, SWT.PUSH);
         editCursorItem.setText("Курсор");
         editCursorItem.setAccelerator('1');
@@ -270,11 +285,46 @@ public class MainWindow {
             }
         });
 
-        // Initialization of listeners
-        fileExitItem.addSelectionListener(new SelectionAdapter() {
+        MenuItem optionsAnalysisItem = new MenuItem(optionsMenu, SWT.PUSH);
+        optionsAnalysisItem.setText("Анализ");
+        MenuItem optionsAlgorithmItem = new MenuItem(optionsMenu, SWT.CASCADE);
+        optionsAlgorithmItem.setText("Алгоритмы");
+        Menu menuAlgorithms = new Menu(shell, SWT.DROP_DOWN);
+        optionsAlgorithmItem.setMenu(menuAlgorithms);
+        MenuItem buildMatrix = new MenuItem(menuAlgorithms, SWT.CASCADE);
+        buildMatrix.setText("Построить матрицу");
+        Menu menuMatrix = new Menu(shell, SWT.DROP_DOWN);
+        buildMatrix.setMenu(menuMatrix);
+        MenuItem adjacencyMatrixItem = new MenuItem(menuMatrix, SWT.PUSH);
+        adjacencyMatrixItem.setText("Матрица смежности");
+        MenuItem incidenceMatrixItem = new MenuItem(menuMatrix, SWT.PUSH);
+        incidenceMatrixItem.setText("Матрица инцидентности");
+
+        // Listeners
+        optionsAnalysisItem.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                shell.close();
+                if (controller.getFiles().size() == 0) {
+                    return;
+                }
+                new AnalysisDialog(display, controller);
+            }
+        });
+
+        adjacencyMatrixItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (controller.getFiles().size() == 0) {
+                    return;
+                }
+                new MatrixDialog<Integer>(display, AdjacencyMatrix.buildMatrix(controller.getCurrentGragh()));
+            }
+        });
+
+        incidenceMatrixItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+
             }
         });
 

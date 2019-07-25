@@ -11,6 +11,8 @@ public class ColorSetupComponent {
     private static Color gridColor;
     private static boolean darkTheme;
     // Default colors
+    private static Color tableHeaderBackgroundColor = new Color(null, 80, 80, 80);
+    private static Color tableHeaderForegroundColor = new Color(null, 179, 179, 255);
     private static Color tabFolderSelectionForeground = new Color(null, 109, 174, 204);
     private static Color tabFolderForeground = new Color(null, 100, 100, 100);
     private static Color mainWindowsColor = new Color(null, 40, 40, 40);
@@ -71,6 +73,14 @@ public class ColorSetupComponent {
     }
 
     // Getters
+    public static Color getTableHeaderForegroundColor(){
+        return tableHeaderForegroundColor;
+    }
+
+    public static Color getTableHeaderBackgroundColor(){
+        return tableHeaderBackgroundColor;
+    }
+
     public static Color getTabFolderSelectionForeground(){
         return tabFolderSelectionForeground;
     }

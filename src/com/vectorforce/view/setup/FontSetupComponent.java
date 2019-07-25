@@ -7,17 +7,22 @@ import org.eclipse.swt.widgets.Display;
 public class FontSetupComponent {
     private static Font buttonsFont = new Font(Display.getCurrent(), "Arial", 10, SWT.BOLD);
     private static Font tabItemsFont = new Font(Display.getCurrent(), "Arial", 9, SWT.BOLD);
+    private static Font labelsFont = new Font(Display.getCurrent(), "Arial", 10, SWT.BOLD);
 
-    public FontSetupComponent(){
+    public FontSetupComponent() {
 
     }
 
     // Getters
-    public static Font getButtonsFont(){
+    public static Font getButtonsFont() {
         return buttonsFont;
     }
 
-    public static Font getTabItemsFont(){
+    public static Font getTabItemsFont() {
         return tabItemsFont;
+    }
+
+    public static Font getLabelsFont(){
+        return labelsFont;
     }
 }
