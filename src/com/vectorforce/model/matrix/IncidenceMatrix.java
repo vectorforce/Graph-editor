@@ -14,7 +14,7 @@ public class IncidenceMatrix {
         ArrayList<String> firstLine = new ArrayList<>();
         for (int indexArc = 0; indexArc <= graph.getArcs().size(); indexArc++) {
             if (indexArc == 0) {
-                firstLine.add(indexArc, String.valueOf(-1000)); // matrix[0][0] = -1000
+                firstLine.add(indexArc, ""); // matrix[0][0] = -1000
             } else {
                 firstLine.add(indexArc, graph.getArcs().get(indexArc - 1).getID());
             }

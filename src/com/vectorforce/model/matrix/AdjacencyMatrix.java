@@ -15,7 +15,7 @@ public class AdjacencyMatrix {
         ArrayList<Integer> firstLine = new ArrayList<>();
         for (int indexNode = 0; indexNode <= graph.getNodes().size(); indexNode++) {
             if (indexNode == 0) {
-                firstLine.add(indexNode, -100); // matrix[0][0] = -1000
+                firstLine.add(indexNode, -1); // matrix[0][0] = -1
             } else {
                 firstLine.add(indexNode, Integer.valueOf(graph.getNodes().get(indexNode - 1).getInternalID()));
             }

@@ -7,6 +7,9 @@ import java.util.ArrayList;
 
 public class AdjacencyList {
     public static ArrayList<ArrayList<Integer>> buildList(Graph graph){
+        if(graph.getNodes().size() == 0){
+            return null;
+        }
         ArrayList<ArrayList<Integer>> list = new ArrayList<>();
         ArrayList<ArrayList<Integer>> matrix = AdjacencyMatrix.buildMatrix(graph);
         for(int indexLine = 1; indexLine < matrix.size(); indexLine++){

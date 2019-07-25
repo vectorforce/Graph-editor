@@ -26,10 +26,14 @@ public class MatrixTable {
         column.setText(string);
     }
 
+    public void addColumn(String string, int width){
+        TableColumn column = new TableColumn(table, SWT.NONE);
+        column.setWidth(width);
+        column.setText(string);
+    }
+
     public void addItem(String[] strings) {
         TableItem item = new TableItem(table, SWT.NONE);
-        item.setBackground(0, ColorSetupComponent.getTableHeaderBackgroundColor());
-        item.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         item.setText(strings);
     }
 }

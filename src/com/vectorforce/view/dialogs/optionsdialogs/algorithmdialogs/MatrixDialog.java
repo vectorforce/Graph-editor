@@ -15,17 +15,17 @@ public class MatrixDialog<Type> {
     private ArrayList<ArrayList<Type>> matrix;
 
     public MatrixDialog(Display display, ArrayList<ArrayList<Type>> matrix) {
-        if(matrix == null){
+        if (matrix == null) {
             return;
         }
         this.display = display;
-        shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
+        shell = new Shell(display, SWT.CLOSE | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
         shell.setSize(1024, 768);
-//        if(matrix.get(0).get(0) instanceof Integer){
-//            shell.setText("Матрица смежности");
-//        } else {
-//            shell.setText("Матрица инцидентности");
-//        }
+        if(matrix.get(0).get(0) instanceof Integer){
+            shell.setText("Матрица смежности");
+        } else if(matrix.get(0).get(0) instanceof  String) {
+            shell.setText("Матрица инцидентности");
+        }
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         shell.setLayout(new FillLayout());
         this.matrix = matrix;
@@ -52,10 +52,14 @@ public class MatrixDialog<Type> {
             String[] strings = new String[matrix.get(indexLine).size()];
             for (int indexRow = 0; indexRow < matrix.get(indexLine).size(); indexRow++) {
                 if (indexLine == 0) {
-                    matrixTable.addColumn(String.valueOf(matrix.get(indexLine).get(indexRow)));
+                    if (indexRow == 0) {
+                        matrixTable.addColumn("");
+                    } else {
+                        matrixTable.addColumn(String.valueOf(matrix.get(indexLine).get(indexRow)));
+                    }
                 } else {
                     strings[indexRow] = String.valueOf(matrix.get(indexLine).get(indexRow));
-                    if(indexRow == matrix.get(indexLine).size() - 1){
+                    if (indexRow == matrix.get(indexLine).size() - 1) {
                         matrixTable.addItem(strings);
                     }
                 }

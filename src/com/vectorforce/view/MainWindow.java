@@ -4,11 +4,14 @@ import com.vectorforce.controller.Controller;
 import com.vectorforce.controller.common.OperationType;
 import com.vectorforce.model.Arc;
 import com.vectorforce.model.Graph;
+import com.vectorforce.model.list.AdjacencyList;
 import com.vectorforce.model.matrix.AdjacencyMatrix;
+import com.vectorforce.model.matrix.IncidenceMatrix;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.parser.DOMWriter;
 import com.vectorforce.view.dialogs.GenerateGraphDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.AnalysisDialog;
+import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.ListDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.MatrixDialog;
 import com.vectorforce.view.graphics.GraphicComponent;
 import com.vectorforce.view.setup.ColorSetupComponent;
@@ -299,6 +302,8 @@ public class MainWindow {
         adjacencyMatrixItem.setText("Матрица смежности");
         MenuItem incidenceMatrixItem = new MenuItem(menuMatrix, SWT.PUSH);
         incidenceMatrixItem.setText("Матрица инцидентности");
+        MenuItem buildList = new MenuItem(menuAlgorithms, SWT.PUSH);
+        buildList.setText("Построить список смежности");
 
         // Listeners
         optionsAnalysisItem.addSelectionListener(new SelectionAdapter() {
@@ -321,10 +326,23 @@ public class MainWindow {
             }
         });
 
+        buildList.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (controller.getFiles().size() == 0) {
+                    return;
+                }
+                new ListDialog(display, AdjacencyList.buildList(controller.getCurrentGragh()));
+            }
+        });
+
         incidenceMatrixItem.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-
+                if (controller.getFiles().size() == 0) {
+                    return;
+                }
+                new MatrixDialog<String>(display, IncidenceMatrix.buildMatrix(controller.getCurrentGragh()));
             }
         });
 
