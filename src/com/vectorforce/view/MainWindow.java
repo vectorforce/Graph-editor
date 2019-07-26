@@ -9,6 +9,7 @@ import com.vectorforce.model.matrix.AdjacencyMatrix;
 import com.vectorforce.model.matrix.IncidenceMatrix;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.parser.DOMWriter;
+import com.vectorforce.parser.SAXReader;
 import com.vectorforce.view.dialogs.GenerateGraphDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.AnalysisDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.ListDialog;
@@ -27,6 +28,9 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.util.HashMap;
 
@@ -90,11 +94,13 @@ public class MainWindow {
         compositeTabItem.setLayout(new GridLayout(1, false));
         compositeTabItem.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         tabItem.setControl(compositeTabItem);
+        // Creating new GraphicComponent
         currentGraphicComponent = new GraphicComponent(compositeTabItem, textCurrentInformation, SWT.DOUBLE_BUFFERED, controller);
+        // Creating new graph
         controller.createGraph(path);
         tabItem.setFont(FontSetupComponent.getTabItemsFont());
         tabItem.setText(controller.getCurrentFile().getName());
-        // Creating Pair that will link graphicComponent and their graph
+        // Creating Pair that will link graphicComponent and graph
         Pair<Graph, GraphicComponent> graphGraphicComponentPair = new Pair<>(controller.getCurrentGragh(), currentGraphicComponent);
         // Creating HashMap that will link previous Pair and appropriate TabItem
         tabItemHashMap.put(graphGraphicComponentPair, tabItem);
@@ -387,7 +393,7 @@ public class MainWindow {
         });
     }
 
-    private void initCurrentGraphicObjectInformationText(Composite composite){
+    private void initCurrentGraphicObjectInformationText(Composite composite) {
         textCurrentInformation = new Text(composite, SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL);
         textCurrentInformation.setBackground(ColorSetupComponent.getTextBackgroundColor());
         GridData textCurrentInformationData = new GridData(SWT.FILL, SWT.CENTER, true, false);
@@ -415,6 +421,13 @@ public class MainWindow {
             }
         });
 
+        itemOpen.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                openFile();
+            }
+        });
+
         itemSave.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -422,6 +435,7 @@ public class MainWindow {
                     return;
                 }
                 saveFile(controller.getCurrentFile());
+//                textCurrentInformation.setText("Файл сохранен.");
             }
         });
 
@@ -481,21 +495,46 @@ public class MainWindow {
     }
 
     // Methods for work with files
-    private FileDialog createFileDialog() {
-        FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+    private FileDialog createFileDialog(int style) {
+        FileDialog dialog = new FileDialog(shell, style);
         String extensions[] = {"*.ugff"};
         dialog.setFilterExtensions(extensions);
         return dialog;
     }
 
     private void newFile() {
-        String path = createFileDialog().open();
+        String path = createFileDialog(SWT.SAVE).open();
         if (path == null) {
             return;
         }
         createTabItem(path);
         saveFile(controller.getCurrentFile());
         tabFolder.redraw();
+    }
+
+    private void openFile() {
+        String path = createFileDialog(SWT.OPEN).open();
+        if (path == null) {
+            return;
+        }
+        createTabItem(path);
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser saxParser = factory.newSAXParser();
+            SAXReader saxReader = new SAXReader(controller);
+            saxParser.parse(controller.getCurrentFile(), saxReader);
+            // Drawing graph
+            for(Node currentNode : controller.getCurrentGragh().getNodes()){
+                currentGraphicComponent.drawNode(currentNode);
+            }
+            for(Arc currentArc : controller.getCurrentGragh().getArcs()){
+                currentGraphicComponent.drawArc(currentArc);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        tabFolder.redraw();
+        currentGraphicComponent.redraw();
     }
 
     private void saveFile(File file) {
@@ -507,7 +546,7 @@ public class MainWindow {
         if (controller.getFiles().size() == 0) {
             return;
         }
-        String path = createFileDialog().open();
+        String path = createFileDialog(SWT.SAVE).open();
         if (path == null) {
             return;
         }

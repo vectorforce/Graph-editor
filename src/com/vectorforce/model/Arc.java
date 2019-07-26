@@ -66,6 +66,14 @@ public class Arc {
     }
 
     //Setters
+    public void setFromNode(Node node){
+        this.fromNode = node;
+    }
+
+    public void setToNode(Node node){
+        this.toNode = node;
+    }
+
     public void setWeight(int weight){
         this.weight = weight;
     }

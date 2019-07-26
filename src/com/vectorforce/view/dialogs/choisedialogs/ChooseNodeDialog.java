@@ -131,15 +131,15 @@ public class ChooseNodeDialog {
                 for (Button currentButton : commonPartChooseDialog.getButtons()) {
                     if (currentButton.getSelection() == true) {
                         if(currentButton == buttonEmpty){
-                            node.setStatus(NodeType.nodeType.EMPTY);
+                            node.setType(NodeType.nodeType.EMPTY);
                         } else if(currentButton == buttonNrel){
-                            node.setStatus(NodeType.nodeType.NREL);
+                            node.setType(NodeType.nodeType.NREL);
                         } else if(currentButton == buttonRrel){
-                            node.setStatus(NodeType.nodeType.RREL);
+                            node.setType(NodeType.nodeType.RREL);
                         } else if(currentButton == buttonLink){
-                            node.setStatus(NodeType.nodeType.LINK);
+                            node.setType(NodeType.nodeType.LINK);
                         } else if(currentButton == buttonClass){
-                            node.setStatus(NodeType.nodeType.CLASS);
+                            node.setType(NodeType.nodeType.CLASS);
                         }
                     }
                 }

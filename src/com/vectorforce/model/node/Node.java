@@ -61,7 +61,11 @@ public class Node<Type> {
     }
 
     // Setters
-    public void setStatus(NodeType.nodeType status){
+    public void setInternalID(String internalID){
+        this.internalID = internalID;
+    }
+
+    public void setType(NodeType.nodeType status){
         nodeType.setStatus(status);
     }
 
