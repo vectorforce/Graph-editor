@@ -62,6 +62,8 @@ public class SAXReader extends DefaultHandler {
         } else if (qName.equals("arc")) { // Creating arc
             // Temporarily take two random nodes for creating arc
             arc = new Arc(controller.getCurrentGragh().getNodes().get(0), controller.getCurrentGragh().getNodes().get(1));
+            controller.getCurrentGragh().getNodes().get(0).getOutgoingArcs().remove(arc);
+            controller.getCurrentGragh().getNodes().get(1).getIngoingArcs().remove(arc);
             String ID = attributes.getValue("ID");
             boolean isBinary = false;
             boolean isOriented = false;
