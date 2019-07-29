@@ -14,6 +14,8 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
+import javax.management.StringValueExp;
+
 public class GraphicComponent extends Canvas {
     // Data for graphic component
     private int lineWidth;
@@ -35,7 +37,7 @@ public class GraphicComponent extends Canvas {
     // Variables for scrolling
     private final ScrollBar vBar;
     private final ScrollBar hBar;
-    private final Point origin = new Point(0, 0); // Point showing the origin and offset by scrolling(using only for drawing objects)
+    private Point origin = new Point(0, 0); // Point showing the origin and offset by scrolling(using only for drawing objects)
     private Rectangle rectangle;
 
     // Constructor
@@ -275,7 +277,6 @@ public class GraphicComponent extends Canvas {
                             break;
 
                         case ARC:
-                            controller.removeSelection();
                             selectObject(e);
                             if (selectedObject.getObject() instanceof Node && selectedObject.getObject() != fromNode) {   // !!!!Change for drawing loops
                                 if (startDrawArc == false) {
@@ -561,6 +562,10 @@ public class GraphicComponent extends Canvas {
     }
 
     // Setters
+    public void setOrigin(Point origin){
+        this.origin = origin;
+    }
+
     private void setGC(GC gc) {
         gc.setAntialias(SWT.ON);
         gc.setLineWidth(lineWidth);
@@ -709,5 +714,10 @@ public class GraphicComponent extends Canvas {
                 redraw();
             }
         });
+    }
+
+    // Getters
+    public Point getOrigin(){
+        return origin;
     }
 }

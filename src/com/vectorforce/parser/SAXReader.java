@@ -4,6 +4,8 @@ import com.vectorforce.controller.Controller;
 import com.vectorforce.model.Arc;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.model.node.NodeType;
+import com.vectorforce.view.setup.ColorSetupComponent;
+import org.eclipse.swt.graphics.Color;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -21,6 +23,19 @@ public class SAXReader extends DefaultHandler {
         this.controller = controller;
     }
 
+    private Color getColor(String string) {
+        String[] colorString = string.split(" ");
+        for (int index = 1; index < colorString.length - 1; index++) {
+            if (index == 1) {
+                colorString[index] = colorString[index].substring(1, colorString[index].length() - 1);
+            } else {
+                colorString[index] = colorString[index].substring(0, colorString[index].length() - 1);
+            }
+
+        }
+        return new Color(null, Integer.valueOf(colorString[1]), Integer.valueOf(colorString[2]), Integer.valueOf(colorString[3]));
+    }
+
     @Override
     public void startElement(
             String uri, String localName, String qName, Attributes attributes)
@@ -35,8 +50,13 @@ public class SAXReader extends DefaultHandler {
             node = new Node(x, y);
             node.setID(ID);
             node.setInternalID(internalID);
-
-            controller.addNode(node);
+            Color color = getColor(attributes.getValue("color"));
+            if (color.equals(ColorSetupComponent.getDefaultNodeColorDarkTheme()) == false &&
+                    color.equals(ColorSetupComponent.getDefaultObjectColorLightTheme()) == false) {
+                node.getGraphicalShell().setColor(color);
+            } else {
+                node.getGraphicalShell().setColor(ColorSetupComponent.getDefaultNodeColorDarkTheme());
+            }
         } else if (qName.equals("nodeType")) {
             bType = true;
         } else if (qName.equals("arc")) { // Creating arc
@@ -55,9 +75,16 @@ public class SAXReader extends DefaultHandler {
             arc.setWeight(weight);
             arc.setBinary(isBinary);
             arc.setOriented(isOriented);
-        } else if(qName.equals("fromNode")){
+            Color color = getColor(attributes.getValue("color"));
+            if (color.equals(ColorSetupComponent.getDefaultArcColorDarkTheme()) == false &&
+                    color.equals(ColorSetupComponent.getDefaultObjectColorLightTheme()) == false) {
+                arc.getGraphicalShell().setColor(color);
+            } else {
+                arc.getGraphicalShell().setColor(ColorSetupComponent.getDefaultArcColorDarkTheme());
+            }
+        } else if (qName.equals("fromNode")) {
             bFromNode = true;
-        } else if(qName.equals("toNode")){
+        } else if (qName.equals("toNode")) {
             bToNode = true;
         }
     }
@@ -101,15 +128,15 @@ public class SAXReader extends DefaultHandler {
             }
             bType = false;
         } else if (bToNode) {
-            for(Node currentNode : controller.getCurrentGragh().getNodes()){
-                if(currentNode.getInternalID().equals(new String(ch, start, length))){
+            for (Node currentNode : controller.getCurrentGragh().getNodes()) {
+                if (currentNode.getInternalID().equals(new String(ch, start, length))) {
                     arc.setToNode(currentNode);
                 }
             }
             bToNode = false;
         } else if (bFromNode) {
-            for(Node currentNode : controller.getCurrentGragh().getNodes()){
-                if(currentNode.getInternalID().equals(new String(ch, start, length))){
+            for (Node currentNode : controller.getCurrentGragh().getNodes()) {
+                if (currentNode.getInternalID().equals(new String(ch, start, length))) {
                     arc.setFromNode(currentNode);
                 }
             }

@@ -538,6 +538,7 @@ public class MainWindow {
     }
 
     private void saveFile(File file) {
+        controller.removeSelection();
         DOMWriter xmlWriter = new DOMWriter(controller, file);
         xmlWriter.write();
     }
