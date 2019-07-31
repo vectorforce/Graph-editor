@@ -36,4 +36,8 @@ public class MatrixTable {
         TableItem item = new TableItem(table, SWT.NONE);
         item.setText(strings);
     }
+
+    public Table getTable(){
+        return table;
+    }
 }

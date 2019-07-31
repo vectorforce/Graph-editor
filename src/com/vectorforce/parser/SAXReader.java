@@ -24,6 +24,7 @@ public class SAXReader extends DefaultHandler {
     }
 
     private Color getColor(String string) {
+        // Split the string for getting necessary RGB codes
         String[] colorString = string.split(" ");
         for (int index = 1; index < colorString.length - 1; index++) {
             if (index == 1) {

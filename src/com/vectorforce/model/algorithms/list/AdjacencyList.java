@@ -1,7 +1,7 @@
-package com.vectorforce.model.list;
+package com.vectorforce.model.algorithms.list;
 
 import com.vectorforce.model.Graph;
-import com.vectorforce.model.matrix.AdjacencyMatrix;
+import com.vectorforce.model.algorithms.matrix.AdjacencyMatrix;
 
 import java.util.ArrayList;
 

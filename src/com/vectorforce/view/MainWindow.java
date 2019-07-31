@@ -4,16 +4,16 @@ import com.vectorforce.controller.Controller;
 import com.vectorforce.controller.common.OperationType;
 import com.vectorforce.model.Arc;
 import com.vectorforce.model.Graph;
-import com.vectorforce.model.list.AdjacencyList;
-import com.vectorforce.model.matrix.AdjacencyMatrix;
-import com.vectorforce.model.matrix.IncidenceMatrix;
+import com.vectorforce.model.algorithms.list.AdjacencyList;
+import com.vectorforce.model.algorithms.matrix.AdjacencyMatrix;
+import com.vectorforce.model.algorithms.matrix.IncidenceMatrix;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.parser.DOMWriter;
 import com.vectorforce.parser.SAXReader;
-import com.vectorforce.view.dialogs.GenerateGraphDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.AnalysisDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.ListDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.MatrixDialog;
+import com.vectorforce.view.dialogs.settingdialogs.generategraph.GraphAdjacencyMatrixDialog;
 import com.vectorforce.view.graphics.GraphicComponent;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import com.vectorforce.view.setup.FontSetupComponent;
@@ -375,20 +375,11 @@ public class MainWindow {
         buttonGenerateGraph.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if (tabFolder.getItemCount() == 0) {
-                    return;
-                }
-//                Node node1 = new Node(200, 300);
-//                Node node2 = new Node(500, 300);
-//                Arc arc = new Arc(node2, node1);
-//                controller.getCurrentGragh().addNode(node1);
-//                controller.getCurrentGragh().addNode(node2);
-//                controller.getCurrentGragh().addArc(arc);
-//                currentGraphicComponent.drawNode(node1);
-//                currentGraphicComponent.drawNode(node2);
-//                currentGraphicComponent.drawArc(arc);
-//                currentGraphicComponent.redraw();
-                new GenerateGraphDialog(display, controller, currentGraphicComponent);
+                new GraphAdjacencyMatrixDialog();
+//                if (tabFolder.getItemCount() == 0) {
+//                    return;
+//                }
+//                new GenerateGraphDialog(display, controller, currentGraphicComponent);
             }
         });
     }

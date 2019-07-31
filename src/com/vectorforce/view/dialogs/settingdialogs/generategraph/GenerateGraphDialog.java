@@ -1,4 +1,4 @@
-package com.vectorforce.view.dialogs;
+package com.vectorforce.view.dialogs.settingdialogs.generategraph;
 
 import com.vectorforce.controller.Controller;
 import com.vectorforce.view.graphics.GraphicComponent;

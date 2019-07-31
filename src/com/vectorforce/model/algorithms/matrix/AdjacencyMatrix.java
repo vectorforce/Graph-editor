@@ -1,4 +1,4 @@
-package com.vectorforce.model.matrix;
+package com.vectorforce.model.algorithms.matrix;
 
 import com.vectorforce.model.Arc;
 import com.vectorforce.model.Graph;
