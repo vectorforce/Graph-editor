@@ -1,6 +1,10 @@
 package com.vectorforce.view.dialogs.settingdialogs.generategraph;
 
+import com.vectorforce.controller.Controller;
+import com.vectorforce.model.Arc;
+import com.vectorforce.model.node.Node;
 import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.MatrixTable;
+import com.vectorforce.view.graphics.GraphicComponent;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
@@ -22,11 +26,14 @@ public class GraphAdjacencyMatrixDialog {
     private Display display;
     private Shell shell;
     private MatrixTable table;
-    private int nodesCounter = 0;
+    private Controller controller;
+    private GraphicComponent graphicComponent;
 
-    public GraphAdjacencyMatrixDialog() {
+    public GraphAdjacencyMatrixDialog(Controller controller, GraphicComponent graphicComponent) {
+        this.controller = controller;
+        this.graphicComponent = graphicComponent;
         display = Display.getCurrent();
-        shell = new Shell(display);
+        shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.MAX | SWT.MIN);
         shell.setSize(1024, 768);
         shell.setText("Задать граф");
         shell.setLayout(new GridLayout(1, false));
@@ -55,6 +62,8 @@ public class GraphAdjacencyMatrixDialog {
         composite.setLayout(new FillLayout());
         table = new MatrixTable(shell);
         table.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+        // Adding empty first cell
+        table.addColumn("");
 
         TableEditor editor = new TableEditor(table.getTable());
         editor.horizontalAlignment = SWT.CENTER;
@@ -70,34 +79,51 @@ public class GraphAdjacencyMatrixDialog {
                 while (index < table.getTable().getItemCount()) {
                     boolean visible = false;
                     TableItem item = table.getTable().getItem(index);
-                    for (int indexNodes = 0; indexNodes < nodesCounter; indexNodes++) {
+                    for (int indexNodes = 0; indexNodes < table.getTable().getColumnCount(); indexNodes++) {
                         Rectangle rect = item.getBounds(indexNodes);
                         if (rect.contains(point)) {
-                            if (indexNodes != 0) {
+                            if (indexNodes != 0 && indexNodes != index + 1) {
                                 // Clean up any previous editor control
                                 Control oldEditor = editor.getEditor();
-                                if (oldEditor != null){
+                                if (oldEditor != null) {
                                     oldEditor.dispose();
                                 }
                                 // Identify the selected row
-                                TableItem itemm = (TableItem) item;
-                                if (itemm == null){
+                                TableItem currentItem = (TableItem) item;
+                                if (currentItem == null) {
                                     return;
                                 }
 
                                 Text newEditor = new Text(table.getTable(), SWT.NONE);
+                                // Protection against incorrect input
+                                newEditor.addListener(SWT.Verify, new Listener() {
+                                    public void handleEvent(Event e) {
+                                        String string = e.text;
+                                        char[] chars = new char[string.length()];
+                                        string.getChars(0, chars.length, chars, 0);
+                                        for (int i = 0; i < chars.length; i++) {
+                                            if (('0' <= chars[i] && chars[i] <= '9') == false) {
+                                                e.doit = false;
+                                                return;
+                                            }
+                                        }
+                                    }
+                                });
                                 newEditor.setText(item.getText(indexNodes));
-                                int q = indexNodes;
+                                int currentIndex = indexNodes;
                                 newEditor.addModifyListener(new ModifyListener() {
                                     public void modifyText(ModifyEvent me) {
                                         Text text = (Text) editor.getEditor();
-
-                                        editor.getItem().setText(q, text.getText());
+                                        if (text.getText().equals("") || text.getText() == null) {
+                                            editor.getItem().setText(currentIndex, "0");
+                                        } else {
+                                            editor.getItem().setText(currentIndex, text.getText());
+                                        }
                                     }
                                 });
                                 newEditor.selectAll();
                                 newEditor.setFocus();
-                                editor.setEditor(newEditor, itemm, indexNodes);
+                                editor.setEditor(newEditor, currentItem, indexNodes);
                             }
                         }
                         if (!visible && rect.intersects(clientArea)) {
@@ -114,24 +140,46 @@ public class GraphAdjacencyMatrixDialog {
     }
 
     private void initButtonAddNode() {
-        Button buttonAddNode = new Button(shell, SWT.PUSH);
-        buttonAddNode.setText("+");
+        Composite compositeButtons = new Composite(shell, SWT.NONE);
+        compositeButtons.setLayout(new GridLayout(2, false));
+        compositeButtons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+        compositeButtons.setBackground(ColorSetupComponent.getMainWindowsColor());
+        Button buttonAddNode = new Button(compositeButtons, SWT.PUSH);
+        buttonAddNode.setText("Добавить вершину");
         buttonAddNode.setBackground(ColorSetupComponent.getMainWindowsColor());
         buttonAddNode.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         buttonAddNode.setFont(FontSetupComponent.getButtonsFont());
+        // GridData buttonAddNodeData
+        int width = 200;
+        int height = 60;
+        GridData buttonAddNodeData = new GridData(SWT.BEGINNING, SWT.CENTER, true, false);
+        buttonAddNodeData.widthHint = width;
+        buttonAddNodeData.heightHint = height;
+        buttonAddNode.setLayoutData(buttonAddNodeData);
 
+        Button buttonGenerate = new Button(compositeButtons, SWT.PUSH);
+        buttonGenerate.setText("Построить граф");
+        buttonGenerate.setBackground(ColorSetupComponent.getMainWindowsColor());
+        buttonGenerate.setForeground(ColorSetupComponent.getButtonsForegroundColor());
+        buttonGenerate.setFont(FontSetupComponent.getButtonsFont());
+        // GridData buttonGenerateData
+        GridData buttonGenerateData = new GridData(SWT.END, SWT.CENTER, true, false);
+        buttonGenerateData.widthHint = width;
+        buttonGenerateData.heightHint = height;
+        buttonGenerate.setLayoutData(buttonGenerateData);
+
+        // Listeners
         buttonAddNode.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 // Generating internal ID of node
                 String stringID = String.valueOf(new Random().nextInt(1 + 125000));
                 table.addColumn(stringID);
-                nodesCounter++;
                 // Filling the cells
-                String[] strings = new String[nodesCounter];
-                for (int index = 0; index < nodesCounter; index++) {
-                    if (index != nodesCounter - 1) {
-                        table.getTable().getItem(index).setText(nodesCounter - 1, "0");
+                String[] strings = new String[table.getTable().getColumnCount()];
+                for (int index = 0; index < table.getTable().getColumnCount(); index++) {
+                    if (table.getTable().getItemCount() > 0 && index < table.getTable().getItemCount()) {
+                        table.getTable().getItem(index).setText(table.getTable().getColumnCount() - 1, "0");
                     }
                     if (index == 0) {
                         strings[index] = stringID;
@@ -141,6 +189,58 @@ public class GraphAdjacencyMatrixDialog {
                 }
                 table.addItem(strings);
                 table.getTable().update();
+            }
+        });
+
+        buttonGenerate.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                int nodesXCounter = 0;
+                int nodesYCounter = 0;
+                int startX = 100;
+                int startY = 50;
+                int stepX = 100;
+                int stepY = 150;
+                for (TableItem currentItem : table.getTable().getItems()) {
+                    if (nodesXCounter == 17) {
+                        nodesXCounter = 0;
+                        nodesYCounter++;
+                    }
+                    Node node = new Node((startX + nodesXCounter++ * stepX), (startY + nodesYCounter * stepY));
+                    node.setInternalID(currentItem.getText(0));
+                    controller.addNode(node);
+                    graphicComponent.drawNode(node);
+                }
+                for (int indexItem = 0; indexItem < table.getTable().getItemCount(); indexItem++) {
+                    for (int indexColumn = 1; indexColumn < table.getTable().getItemCount(); indexColumn++) {
+                        String weight = table.getTable().getItem(indexItem).getText(indexColumn);
+                        if (weight.equals("0") == false) {
+                            Node fromNode = controller.searchNode(table.getTable().getItem(indexItem).getText(0));
+                            Node toNode = controller.searchNode(table.getTable().getItem(indexColumn - 1).getText(0));
+                            if (fromNode != null && toNode != null) {
+                                // Check on arc between these nodes
+                                boolean isArc = false;
+                                for (Arc currentArc : controller.getCurrentGragh().getArcs()) {
+                                    if (currentArc.getFromNode() == fromNode
+                                            && currentArc.getToNode() == toNode) {
+                                        isArc = true;
+                                    } else if (currentArc.getToNode() == fromNode
+                                            && currentArc.getFromNode() == toNode) {
+                                        isArc = true;
+                                    }
+                                }
+                                if (isArc == false) {
+                                    Arc arc = new Arc(fromNode, toNode);
+                                    controller.addArc(arc);
+                                    arc.setWeight(Integer.valueOf(weight));
+                                    graphicComponent.drawArc(arc);
+                                }
+                            }
+                        }
+                    }
+                }
+                graphicComponent.redraw();
+                shell.close();
             }
         });
     }

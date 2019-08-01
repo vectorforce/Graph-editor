@@ -55,6 +55,11 @@ public class Controller {
         graphs.get(indexCurrentGraph).deleteNode(node);
     }
 
+    public Node searchNode(String internalID){
+        Node node = getCurrentGragh().searchNode(internalID);
+        return node;
+    }
+
     public void addArc(Arc arc) {
         graphs.get(indexCurrentGraph).addArc(arc);
     }

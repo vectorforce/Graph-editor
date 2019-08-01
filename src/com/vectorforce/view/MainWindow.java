@@ -375,7 +375,7 @@ public class MainWindow {
         buttonGenerateGraph.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                new GraphAdjacencyMatrixDialog();
+                new GraphAdjacencyMatrixDialog(controller, currentGraphicComponent);
 //                if (tabFolder.getItemCount() == 0) {
 //                    return;
 //                }

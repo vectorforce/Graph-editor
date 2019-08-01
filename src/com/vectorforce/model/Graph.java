@@ -41,6 +41,15 @@ public class Graph implements IGraph {
         updateGraphData();
     }
 
+    public Node searchNode(String internalID){
+        for(Node currentNode : getNodes()){
+            if(currentNode.getInternalID().equals(internalID)){
+                return currentNode;
+            }
+        }
+        return null;
+    }
+
     public void addArc(Arc arc) {
         arcs.add(arc);
         updateGraphData();
