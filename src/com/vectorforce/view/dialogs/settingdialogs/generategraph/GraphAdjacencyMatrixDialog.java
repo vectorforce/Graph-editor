@@ -212,7 +212,7 @@ public class GraphAdjacencyMatrixDialog {
                     graphicComponent.drawNode(node);
                 }
                 for (int indexItem = 0; indexItem < table.getTable().getItemCount(); indexItem++) {
-                    for (int indexColumn = 1; indexColumn < table.getTable().getItemCount(); indexColumn++) {
+                    for (int indexColumn = 1; indexColumn < table.getTable().getColumnCount(); indexColumn++) {
                         String weight = table.getTable().getItem(indexItem).getText(indexColumn);
                         if (weight.equals("0") == false) {
                             Node fromNode = controller.searchNode(table.getTable().getItem(indexItem).getText(0));
