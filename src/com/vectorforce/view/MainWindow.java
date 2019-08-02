@@ -13,7 +13,7 @@ import com.vectorforce.parser.SAXReader;
 import com.vectorforce.view.dialogs.optionsdialogs.AnalysisDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.ListDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.MatrixDialog;
-import com.vectorforce.view.dialogs.settingdialogs.generategraph.GraphAdjacencyMatrixDialog;
+import com.vectorforce.view.dialogs.generategraph.GenerateGraphDialog;
 import com.vectorforce.view.graphics.GraphicComponent;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import com.vectorforce.view.setup.FontSetupComponent;
@@ -375,11 +375,10 @@ public class MainWindow {
         buttonGenerateGraph.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                new GraphAdjacencyMatrixDialog(controller, currentGraphicComponent);
-//                if (tabFolder.getItemCount() == 0) {
-//                    return;
-//                }
-//                new GenerateGraphDialog(display, controller, currentGraphicComponent);
+                if (tabFolder.getItemCount() == 0) {
+                    return;
+                }
+                new GenerateGraphDialog(display, controller, currentGraphicComponent);
             }
         });
     }

@@ -1,4 +1,4 @@
-package com.vectorforce.view.dialogs.settingdialogs.generategraph;
+package com.vectorforce.view.dialogs.generategraph;
 
 import com.vectorforce.controller.Controller;
 import com.vectorforce.view.graphics.GraphicComponent;
@@ -18,8 +18,9 @@ public class GenerateGraphDialog {
 
     private Controller controller;
     private GraphicComponent graphicComponent;
+    private Combo[] combos;
 
-    public GenerateGraphDialog(Display display, Controller controller, GraphicComponent graphicComponent){
+    public GenerateGraphDialog(Display display, Controller controller, GraphicComponent graphicComponent) {
         this.controller = controller;
         this.graphicComponent = graphicComponent;
         this.display = display;
@@ -34,26 +35,29 @@ public class GenerateGraphDialog {
         run();
     }
 
-    private void run(){
+    private void run() {
         shell.pack();
         Rectangle screenSize = display.getPrimaryMonitor().getBounds();
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 
-        while(shell.isDisposed() == false){
-            if(display.readAndDispatch() == true){
+        while (shell.isDisposed() == false) {
+            if (display.readAndDispatch() == true) {
                 display.sleep();
             }
         }
     }
 
-    private void initCombos(){
+    private void initCombos() {
+        combos = new Combo[2];
+
         Composite compositeMatrixCombo = new Group(shell, SWT.NONE);
         compositeMatrixCombo.setLayout(new GridLayout(1, false));
         compositeMatrixCombo.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
         compositeMatrixCombo.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         ((Group) compositeMatrixCombo).setText("Задать матрицей");
         Combo matrixCombo = new Combo(compositeMatrixCombo, SWT.DROP_DOWN | SWT.READ_ONLY);
+        combos[0] = matrixCombo;
         matrixCombo.setText("Выберите матрицу");
         // Combo items
         String itemsMatrix[] = {"Матрица смежности", "Матрица инцидентности"};
@@ -67,6 +71,7 @@ public class GenerateGraphDialog {
         GridData gridDataComboList = new GridData(SWT.FILL, SWT.FILL, true, true);
         compositeListsCombo.setLayoutData(gridDataComboList);
         Combo listCombo = new Combo(compositeListsCombo, SWT.DROP_DOWN | SWT.READ_ONLY);
+        combos[1] = listCombo;
         listCombo.setText("Выберите список");
         listCombo.setLayoutData(gridDataComboList);
         // Combo items
@@ -90,7 +95,7 @@ public class GenerateGraphDialog {
 
     }
 
-    private void initButtonNext(){
+    private void initButtonNext() {
         Button button = new Button(shell, SWT.PUSH | SWT.BORDER);
         button.setBackground(ColorSetupComponent.getMainWindowsColor());
         button.setForeground(ColorSetupComponent.getButtonsForegroundColor());
@@ -104,9 +109,31 @@ public class GenerateGraphDialog {
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                controller.deleteAllNodes();
-                graphicComponent.redraw();
-                shell.close();
+                for (int index = 0; index < combos.length; index++) {
+                    String stringComboText = combos[index].getText();
+                    if (!stringComboText.equals("")) {
+                        controller.deleteAllNodes();
+                        switch (stringComboText) {
+                            case "Матрица смежности":
+                                shell.close();
+                                new GraphAdjMatrixListDialog(controller, graphicComponent, 1);
+                                return;
+
+                            case "Матрица инцидентности":
+                                shell.close();
+
+                                return;
+
+                            case "Список смежности":
+                                shell.close();
+                                new GraphAdjMatrixListDialog(controller, graphicComponent, 2);
+                                return;
+
+                            default:
+                                return;
+                        }
+                    }
+                }
             }
         });
     }

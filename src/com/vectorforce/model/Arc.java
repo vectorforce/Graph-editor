@@ -18,6 +18,9 @@ public class Arc {
     private boolean isBinary;
 
     public Arc(Node fromNode, Node toNode) {
+        if(fromNode.getInternalID().equals(toNode.getInternalID())){
+            return;
+        }
         graphicalShell = new GraphicalShell();
         graphicalShell.setColor(ColorSetupComponent.getArcColor());
         this.fromNode = fromNode;

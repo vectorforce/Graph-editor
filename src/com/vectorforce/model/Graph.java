@@ -84,6 +84,12 @@ public class Graph implements IGraph {
 
     // Method for update information of graph
     public void updateGraphData() {
+        if(nodes.size() == 0){
+            isMixed = false;
+            isFull = false;
+            isOriented = false;
+            return;
+        }
         int counterOriented = 0;
         int counterNonOriented = 0;
         for (int index = 0; index < arcs.size(); index++) {
