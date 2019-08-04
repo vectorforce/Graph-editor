@@ -12,7 +12,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class GenerateGraphDialog {
+public class BuildGraphDialog {
     private Display display;
     private Shell shell;
 
@@ -20,7 +20,7 @@ public class GenerateGraphDialog {
     private GraphicComponent graphicComponent;
     private Combo[] combos;
 
-    public GenerateGraphDialog(Display display, Controller controller, GraphicComponent graphicComponent) {
+    public BuildGraphDialog(Display display, Controller controller, GraphicComponent graphicComponent) {
         this.controller = controller;
         this.graphicComponent = graphicComponent;
         this.display = display;
@@ -103,7 +103,7 @@ public class GenerateGraphDialog {
         button.setText("Далее");
         GridData buttonGenerateGraphData = new GridData(SWT.CENTER, SWT.CENTER, false, false);
         buttonGenerateGraphData.widthHint = 100;
-        buttonGenerateGraphData.heightHint = 50;
+        buttonGenerateGraphData.heightHint = 45;
         button.setLayoutData(buttonGenerateGraphData);
 
         button.addSelectionListener(new SelectionAdapter() {
@@ -112,24 +112,33 @@ public class GenerateGraphDialog {
                 for (int index = 0; index < combos.length; index++) {
                     String stringComboText = combos[index].getText();
                     if (!stringComboText.equals("")) {
-                        controller.deleteAllNodes();
-                        switch (stringComboText) {
-                            case "Матрица смежности":
-                                shell.close();
-                                new GraphAdjMatrixListDialog(controller, graphicComponent, 1);
-                                return;
+                        MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+                        messageBox.setMessage("При продолжении текущий граф будет удален.\nПродолжить?");
+                        int buttonID = messageBox.open();
+                        switch (buttonID) {
+                            case SWT.YES:
+                                controller.deleteAllNodes();
+                                switch (stringComboText) {
+                                    case "Матрица смежности":
+                                        shell.close();
+                                        new BuildGraphAdjMatrixListDialog(controller, graphicComponent, 1);
+                                        return;
 
-                            case "Матрица инцидентности":
-                                shell.close();
+                                    case "Матрица инцидентности":
+                                        shell.close();
+                                        new BuildGraphIncMatrixDialog(controller, graphicComponent);
+                                        return;
 
-                                return;
+                                    case "Список смежности":
+                                        shell.close();
+                                        new BuildGraphAdjMatrixListDialog(controller, graphicComponent, 2);
+                                        return;
 
-                            case "Список смежности":
-                                shell.close();
-                                new GraphAdjMatrixListDialog(controller, graphicComponent, 2);
-                                return;
+                                    default:
+                                        return;
+                                }
 
-                            default:
+                            case SWT.NO:
                                 return;
                         }
                     }

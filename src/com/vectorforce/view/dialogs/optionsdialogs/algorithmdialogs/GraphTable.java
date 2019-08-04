@@ -7,10 +7,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-public class MatrixTable {
+public class GraphTable {
     private Table table;
 
-    public MatrixTable(Composite composite) {
+    public GraphTable(Composite composite) {
         table = new Table(composite, SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER | SWT.FULL_SELECTION);
         table.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
         table.setForeground(ColorSetupComponent.getButtonsForegroundColor());

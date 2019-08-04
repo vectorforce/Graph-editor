@@ -10,10 +10,11 @@ import com.vectorforce.model.algorithms.matrix.IncidenceMatrix;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.parser.DOMWriter;
 import com.vectorforce.parser.SAXReader;
+import com.vectorforce.view.dialogs.generategraph.BuildGraphIncMatrixDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.AnalysisDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.ListDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.MatrixDialog;
-import com.vectorforce.view.dialogs.generategraph.GenerateGraphDialog;
+import com.vectorforce.view.dialogs.generategraph.BuildGraphDialog;
 import com.vectorforce.view.graphics.GraphicComponent;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import com.vectorforce.view.setup.FontSetupComponent;
@@ -364,7 +365,7 @@ public class MainWindow {
         buttonGenerateGraph.setBackground(ColorSetupComponent.getMainWindowsColor());
         buttonGenerateGraph.setFont(FontSetupComponent.getButtonsFont());
         buttonGenerateGraph.setForeground(ColorSetupComponent.getButtonsForegroundColor());
-        buttonGenerateGraph.setText("Сгенерировать граф");
+        buttonGenerateGraph.setText("Построить граф");
         GridData buttonGenerateGraphData = new GridData(SWT.END, SWT.CENTER, false, false);
         buttonGenerateGraphData.widthHint = 200;
         buttonGenerateGraphData.heightHint = 50;
@@ -375,10 +376,11 @@ public class MainWindow {
         buttonGenerateGraph.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if (tabFolder.getItemCount() == 0) {
-                    return;
-                }
-                new GenerateGraphDialog(display, controller, currentGraphicComponent);
+                new BuildGraphIncMatrixDialog(controller, currentGraphicComponent);
+//                if (tabFolder.getItemCount() == 0) {
+//                    return;
+//                }
+//                new BuildGraphDialog(display, controller, currentGraphicComponent);
             }
         });
     }

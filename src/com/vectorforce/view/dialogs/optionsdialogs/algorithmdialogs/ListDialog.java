@@ -43,7 +43,7 @@ public class ListDialog {
     }
 
     private void initTable(){
-        MatrixTable table = new MatrixTable(shell);
+        GraphTable table = new GraphTable(shell);
         table.addColumn("Узел");
         table.addColumn("Смежные узлы", 350);
 

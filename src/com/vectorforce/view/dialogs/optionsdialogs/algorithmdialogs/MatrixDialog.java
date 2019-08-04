@@ -47,20 +47,20 @@ public class MatrixDialog<Type> {
     }
 
     private void initTable() {
-        MatrixTable matrixTable = new MatrixTable(shell);
+        GraphTable graphTable = new GraphTable(shell);
         for (int indexLine = 0; indexLine < matrix.size(); indexLine++) {
             String[] strings = new String[matrix.get(indexLine).size()];
             for (int indexRow = 0; indexRow < matrix.get(indexLine).size(); indexRow++) {
                 if (indexLine == 0) {
                     if (indexRow == 0) {
-                        matrixTable.addColumn("");
+                        graphTable.addColumn("");
                     } else {
-                        matrixTable.addColumn(String.valueOf(matrix.get(indexLine).get(indexRow)));
+                        graphTable.addColumn(String.valueOf(matrix.get(indexLine).get(indexRow)));
                     }
                 } else {
                     strings[indexRow] = String.valueOf(matrix.get(indexLine).get(indexRow));
                     if (indexRow == matrix.get(indexLine).size() - 1) {
-                        matrixTable.addItem(strings);
+                        graphTable.addItem(strings);
                     }
                 }
             }

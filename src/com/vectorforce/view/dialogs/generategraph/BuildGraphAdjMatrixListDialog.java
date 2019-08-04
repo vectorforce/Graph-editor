@@ -3,11 +3,10 @@ package com.vectorforce.view.dialogs.generategraph;
 import com.vectorforce.controller.Controller;
 import com.vectorforce.model.Arc;
 import com.vectorforce.model.node.Node;
-import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.MatrixTable;
+import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.GraphTable;
 import com.vectorforce.view.graphics.GraphicComponent;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import com.vectorforce.view.setup.FontSetupComponent;
-import javafx.util.Pair;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
@@ -23,10 +22,10 @@ import org.eclipse.swt.widgets.*;
 
 import java.util.Random;
 
-public class GraphAdjMatrixListDialog {
+public class BuildGraphAdjMatrixListDialog {
     private Display display;
     private Shell shell;
-    private MatrixTable table;
+    private GraphTable table;
     private Controller controller;
     private GraphicComponent graphicComponent;
     private int windowType = 0;
@@ -35,7 +34,7 @@ public class GraphAdjMatrixListDialog {
     private Button buttonDeleteNode;
     private Button buttonBuildGraph;
 
-    public GraphAdjMatrixListDialog(Controller controller, GraphicComponent graphicComponent, int windowType) {
+    public BuildGraphAdjMatrixListDialog(Controller controller, GraphicComponent graphicComponent, int windowType) {
         this.windowType = windowType;
         if (windowType != 1 && windowType != 2) {
             return;
@@ -211,7 +210,7 @@ public class GraphAdjMatrixListDialog {
         Composite composite = new Composite(shell, SWT.NONE);
         composite.setBackground(ColorSetupComponent.getMainWindowsColor());
         composite.setLayout(new FillLayout());
-        table = new MatrixTable(shell);
+        table = new GraphTable(shell);
         table.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
         // Adding main columns
         table.addColumn("Узел");
@@ -224,7 +223,7 @@ public class GraphAdjMatrixListDialog {
         Composite composite = new Composite(shell, SWT.NONE);
         composite.setBackground(ColorSetupComponent.getMainWindowsColor());
         composite.setLayout(new FillLayout());
-        table = new MatrixTable(shell);
+        table = new GraphTable(shell);
         table.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
         // Adding empty first cell
         table.addColumn("");
@@ -251,7 +250,7 @@ public class GraphAdjMatrixListDialog {
         buttonAddNode.setLayoutData(buttonAddNodeData);
 
         buttonDeleteNode = new Button(compositeButtons, SWT.PUSH);
-        buttonDeleteNode.setText("Удалить вершину");
+        buttonDeleteNode.setText("Удалить узел");
         buttonDeleteNode.setBackground(ColorSetupComponent.getMainWindowsColor());
         buttonDeleteNode.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         buttonDeleteNode.setFont(FontSetupComponent.getButtonsFont());
@@ -346,6 +345,7 @@ public class GraphAdjMatrixListDialog {
                 String[] strings = new String[table.getTable().getColumnCount()];
                 for (int index = 0; index < table.getTable().getColumnCount(); index++) {
                     if (table.getTable().getItemCount() > 0 && index < table.getTable().getItemCount()) {
+                        // Filling new empty cells of previous items
                         table.getTable().getItem(index).setText(table.getTable().getColumnCount() - 1, "0");
                     }
                     if (index == 0) {
