@@ -297,6 +297,7 @@ public class GraphicComponent extends Canvas {
                                         }
                                     }
                                     Arc arc = new Arc(fromNode, ((Node) selectedObject.getObject()));
+                                    fromNode = null;
                                     controller.addArc(arc);
                                     drawArc(arc);
                                 }

@@ -311,8 +311,34 @@ public class MainWindow {
         incidenceMatrixItem.setText("Матрица инцидентности");
         MenuItem buildList = new MenuItem(menuAlgorithms, SWT.PUSH);
         buildList.setText("Построить список смежности");
+        MenuItem buildFullGraph = new MenuItem(menuAlgorithms, SWT.PUSH);
+        buildFullGraph.setText("Построить полный граф");
+
 
         // Listeners
+        buildFullGraph.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if(controller.getCurrentGragh().getNodes().size() > 1){
+                        MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+                        messageBox.setMessage("Приведение к полному графу сделает его неориентированным.\nПродолжить?");
+                        int buttonID = messageBox.open();
+                        switch (buttonID){
+                            case SWT.YES:
+                                controller.buildFullGraph();
+                                for(Arc currentArc : controller.getCurrentGragh().getArcs()){
+                                    currentGraphicComponent.drawArc(currentArc);
+                                }
+                                currentGraphicComponent.redraw();
+                                break;
+
+                            case SWT.NO:
+                                break;
+                        }
+                }
+            }
+        });
+
         optionsAnalysisItem.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -376,11 +402,10 @@ public class MainWindow {
         buttonGenerateGraph.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                new BuildGraphIncMatrixDialog(controller, currentGraphicComponent);
-//                if (tabFolder.getItemCount() == 0) {
-//                    return;
-//                }
-//                new BuildGraphDialog(display, controller, currentGraphicComponent);
+                if (tabFolder.getItemCount() == 0) {
+                    return;
+                }
+                new BuildGraphDialog(display, controller, currentGraphicComponent);
             }
         });
     }

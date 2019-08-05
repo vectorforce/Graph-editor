@@ -21,6 +21,10 @@ public class Controller {
         operationType = new OperationType();
     }
 
+    public void buildFullGraph(){
+        getCurrentGragh().buildFullGraph();
+    }
+
     public void createGraph(String path) {
         Graph graph = new Graph();
         graphs.add(graph);
@@ -37,9 +41,11 @@ public class Controller {
     }
 
     public void deleteAllNodes() {
-        for (int index = 0; index < graphs.get(indexCurrentGraph).getNodes().size(); index++) {
-            graphs.get(indexCurrentGraph).deleteNode(graphs.get(indexCurrentGraph).getNodes().get(index--));
-        }
+        getCurrentGragh().deleteAllNodes();
+    }
+
+    public void deleteAllArcs(){
+        graphs.get(indexCurrentGraph).deleteAllArcs();
     }
 
     public void deleteGraph(Graph graph) {

@@ -1,6 +1,7 @@
 package com.vectorforce.model;
 
 import com.vectorforce.model.node.Node;
+
 import java.util.LinkedList;
 
 public class Graph implements IGraph {
@@ -18,6 +19,37 @@ public class Graph implements IGraph {
         isOriented = false;
         isMixed = false;
         isFull = false;
+    }
+
+    public void buildFullGraph() {
+        if (nodes.size() > 2) {
+            deleteAllArcs();
+            for (int indexFrom = 0; indexFrom < nodes.size() - 1; indexFrom++) {
+                for (int indexTo = 1; indexTo < nodes.size(); indexTo++) {
+                    // Check the link
+                    boolean isLink = false;
+                    for (int index = 0; index < nodes.get(indexFrom).getIngoingArcs().size(); index++) {
+                        Arc currentArc = (Arc) nodes.get(indexFrom).getIngoingArcs().get(index);
+                        if (currentArc.getFromNode().getInternalID().equals(nodes.get(indexTo).getInternalID())) {
+                            isLink = true;
+                        }
+                    }
+                    for (int index = 0; index < nodes.get(indexFrom).getOutgoingArcs().size(); index++) {
+                        Arc currentArc = (Arc) nodes.get(indexFrom).getOutgoingArcs().get(index);
+                        if (currentArc.getToNode().getInternalID().equals(nodes.get(indexTo).getInternalID())) {
+                            isLink = true;
+                        }
+                    }
+                    if (isLink == false) {
+                        Arc arc = new Arc(nodes.get(indexFrom), nodes.get(indexTo));
+                        arc.setOriented(false);
+                        if (arc.getID() != null) {
+                            arcs.add(arc);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public void addNode(Node node) {
@@ -41,9 +73,9 @@ public class Graph implements IGraph {
         updateGraphData();
     }
 
-    public Node searchNode(String internalID){
-        for(Node currentNode : getNodes()){
-            if(currentNode.getInternalID().equals(internalID)){
+    public Node searchNode(String internalID) {
+        for (Node currentNode : getNodes()) {
+            if (currentNode.getInternalID().equals(internalID)) {
                 return currentNode;
             }
         }
@@ -62,6 +94,20 @@ public class Graph implements IGraph {
         }
         removeLinks(arc);
         return deleteFlag;
+    }
+
+    public void deleteAllArcs() {
+        if (arcs.size() > 0) {
+            for (int index = 0; index < arcs.size(); index++) {
+                deleteArc(arcs.get(index--));
+            }
+        }
+    }
+
+    public void deleteAllNodes() {
+        for (int index = 0; index < nodes.size(); index++) {
+            deleteNode(nodes.get(index--));
+        }
     }
 
     private void removeLinks(Arc arc) {
@@ -84,7 +130,7 @@ public class Graph implements IGraph {
 
     // Method for update information of graph
     public void updateGraphData() {
-        if(nodes.size() == 0){
+        if (nodes.size() == 0) {
             isMixed = false;
             isFull = false;
             isOriented = false;
