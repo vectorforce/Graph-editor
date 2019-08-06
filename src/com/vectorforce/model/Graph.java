@@ -26,27 +26,11 @@ public class Graph implements IGraph {
             deleteAllArcs();
             for (int indexFrom = 0; indexFrom < nodes.size() - 1; indexFrom++) {
                 for (int indexTo = 1; indexTo < nodes.size(); indexTo++) {
-                    // Check the link
-                    boolean isLink = false;
-                    for (int index = 0; index < nodes.get(indexFrom).getIngoingArcs().size(); index++) {
-                        Arc currentArc = (Arc) nodes.get(indexFrom).getIngoingArcs().get(index);
-                        if (currentArc.getFromNode().getInternalID().equals(nodes.get(indexTo).getInternalID())) {
-                            isLink = true;
-                        }
-                    }
-                    for (int index = 0; index < nodes.get(indexFrom).getOutgoingArcs().size(); index++) {
-                        Arc currentArc = (Arc) nodes.get(indexFrom).getOutgoingArcs().get(index);
-                        if (currentArc.getToNode().getInternalID().equals(nodes.get(indexTo).getInternalID())) {
-                            isLink = true;
-                        }
-                    }
-                    if (isLink == false) {
                         Arc arc = new Arc(nodes.get(indexFrom), nodes.get(indexTo));
                         arc.setOriented(false);
                         if (arc.getID() != null) {
                             arcs.add(arc);
                         }
-                    }
                 }
             }
         }
