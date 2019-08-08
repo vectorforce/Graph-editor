@@ -6,6 +6,7 @@ import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
@@ -18,12 +19,15 @@ public class SetWeightDialog {
     private Arc arc;
     private SettingForm settingForm;
 
+    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
+
     public SetWeightDialog(Display display, Controller controller, Arc arc) {
         this.controller = controller;
         this.display = display;
         this.arc = arc;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Установить вес");
+        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         initForm();

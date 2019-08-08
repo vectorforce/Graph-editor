@@ -8,6 +8,7 @@ import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -19,12 +20,15 @@ public class ChooseArcDialog {
     private CommonPartChooseDialog commonPartChooseDialog;
     private Arc arc;
 
+    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
+
     public ChooseArcDialog(Display display, Controller controller,  GraphicComponent graphicComponent, Arc arc) {
         commonPartChooseDialog = new CommonPartChooseDialog(controller, graphicComponent);
         this.arc = arc;
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Выберите тип");
+        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
         shell.setLayout(new GridLayout(1, true));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         initButtons();

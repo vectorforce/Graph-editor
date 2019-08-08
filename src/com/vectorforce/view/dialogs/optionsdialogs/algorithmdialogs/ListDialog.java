@@ -2,6 +2,7 @@ package com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs;
 
 import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -14,6 +15,8 @@ public class ListDialog {
     private Shell shell;
     private ArrayList<ArrayList<Integer>> list;
 
+    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
+
     public ListDialog(Display display, ArrayList<ArrayList<Integer>> list){
         if(list == null){
             return;
@@ -25,6 +28,7 @@ public class ListDialog {
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         shell.setSize(450, 480);
         shell.setText("Список смежности");
+        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
         initTable();
 
         run();

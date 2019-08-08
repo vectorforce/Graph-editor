@@ -13,6 +13,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -30,12 +31,16 @@ public class BuildGraphIncMatrixDialog {
     private GraphicComponent graphicComponent;
     private int arcCounter = 0;
 
+    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
+
+
     public BuildGraphIncMatrixDialog(Controller controller, GraphicComponent graphicComponent) {
         this.controller = controller;
         this.graphicComponent = graphicComponent;
         this.display = Display.getCurrent();
         shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.MAX | SWT.MIN);
         shell.setText("Задать граф");
+        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
         shell.setSize(1044, 768);
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         shell.setLayout(new GridLayout(1, false));

@@ -2,6 +2,7 @@ package com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs;
 
 import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -13,6 +14,8 @@ public class MatrixDialog<Type> {
     private Display display;
     private Shell shell;
     private ArrayList<ArrayList<Type>> matrix;
+
+    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
 
     public MatrixDialog(Display display, ArrayList<ArrayList<Type>> matrix) {
         if (matrix == null) {
@@ -26,6 +29,7 @@ public class MatrixDialog<Type> {
         } else if(matrix.get(0).get(0) instanceof  String) {
             shell.setText("Матрица инцидентности");
         }
+        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         shell.setLayout(new FillLayout());
         this.matrix = matrix;

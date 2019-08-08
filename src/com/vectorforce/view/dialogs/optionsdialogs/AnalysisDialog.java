@@ -4,6 +4,7 @@ import com.vectorforce.controller.Controller;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
@@ -17,11 +18,14 @@ public class AnalysisDialog {
     private Shell shell;
     private Controller controller;
 
+    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
+
     public AnalysisDialog(Display display, Controller controller) {
         this.controller = controller;
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Анализ графа");
+        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         initForm();

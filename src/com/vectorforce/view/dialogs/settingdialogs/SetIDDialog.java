@@ -8,6 +8,7 @@ import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -19,6 +20,8 @@ public class SetIDDialog {
     private GraphicObject graphicObject;
     private SettingForm settingForm;
 
+    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
+
     public SetIDDialog(Display display, Controller controller, GraphicObject graphicObject) {
         this.controller = controller;
         this.graphicObject = graphicObject;
@@ -26,6 +29,7 @@ public class SetIDDialog {
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setLayout(new GridLayout(1, false));
         shell.setText("Установите идентификатор");
+        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         initForm();
 

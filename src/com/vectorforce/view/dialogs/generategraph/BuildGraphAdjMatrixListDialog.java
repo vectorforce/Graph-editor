@@ -13,6 +13,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -34,6 +35,8 @@ public class BuildGraphAdjMatrixListDialog {
     private Button buttonDeleteNode;
     private Button buttonBuildGraph;
 
+    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
+
     public BuildGraphAdjMatrixListDialog(Controller controller, GraphicComponent graphicComponent, int windowType) {
         this.windowType = windowType;
         if (windowType != 1 && windowType != 2) {
@@ -44,6 +47,7 @@ public class BuildGraphAdjMatrixListDialog {
         display = Display.getCurrent();
         shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.MAX | SWT.MIN);
         shell.setText("Задать граф");
+        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         if (windowType == 1) {

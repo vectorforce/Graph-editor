@@ -10,7 +10,6 @@ import com.vectorforce.model.algorithms.matrix.IncidenceMatrix;
 import com.vectorforce.model.node.Node;
 import com.vectorforce.parser.DOMWriter;
 import com.vectorforce.parser.SAXReader;
-import com.vectorforce.view.dialogs.generategraph.BuildGraphIncMatrixDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.AnalysisDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.ListDialog;
 import com.vectorforce.view.dialogs.optionsdialogs.algorithmdialogs.MatrixDialog;
@@ -25,6 +24,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -45,12 +45,15 @@ public class MainWindow {
     private Text textCurrentInformation;
     private HashMap<Pair, CTabItem> tabItemHashMap;
 
+    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
+
     private Controller controller;
 
     public MainWindow() {
         display = new Display();
         shell = new Shell(display);
         shell.setText("Графовый редактор");
+        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
         shell.setLayout(new GridLayout(5, false));
         mainWindowColor = ColorSetupComponent.getMainWindowsColor();
         shell.setBackground(mainWindowColor);
@@ -420,16 +423,17 @@ public class MainWindow {
 
     private void initToolBarFile() {
         ToolBar toolBarFile = new ToolBar(shell, SWT.VERTICAL);
+        toolBarFile.setBackground(ColorSetupComponent.getMainWindowsColor());
         ToolItem itemNew = new ToolItem(toolBarFile, SWT.PUSH);
-        itemNew.setText("Новый");
+        itemNew.setImage(new Image(display, imagePath + "addFile.png"));
         ToolItem itemOpen = new ToolItem(toolBarFile, SWT.PUSH);
-        itemOpen.setText("Открыть");
+        itemOpen.setImage(new Image(display, imagePath + "openFile.png"));
         ToolItem itemClose = new ToolItem(toolBarFile, SWT.PUSH);
-        itemClose.setText("Закрыть");
+        itemClose.setImage(new Image(display, imagePath + "closeFile.png"));
         ToolItem itemSave = new ToolItem(toolBarFile, SWT.PUSH);
-        itemSave.setText("Сохранить");
+        itemSave.setImage(new Image(display, imagePath + "saveFile.png"));
         ToolItem itemSaveAs = new ToolItem(toolBarFile, SWT.PUSH);
-        itemSaveAs.setText("Сохранить как");
+        itemSaveAs.setImage(new Image(display, imagePath + "saveAsFile.png"));
 
         itemNew.addSelectionListener(new SelectionAdapter() { // A new tabItem and file is created by pressing
             @Override
@@ -476,12 +480,13 @@ public class MainWindow {
 
     private void initToolBarEdit() {
         ToolBar toolBarEdit = new ToolBar(shell, SWT.VERTICAL);
+        toolBarEdit.setBackground(ColorSetupComponent.getMainWindowsColor());
         ToolItem itemCursor = new ToolItem(toolBarEdit, SWT.PUSH);
-        itemCursor.setText("Cursor");
+        itemCursor.setImage(new Image(display, imagePath + "cursor.png"));
         ToolItem itemArc = new ToolItem(toolBarEdit, SWT.PUSH);
-        itemArc.setText("Arc");
+        itemArc.setImage(new Image(display, imagePath + "arrow.png"));
         ToolItem itemSetTheme = new ToolItem(toolBarEdit, SWT.PUSH);
-        itemSetTheme.setText("Dark/Light");
+        itemSetTheme.setImage(new Image(display, imagePath + "themeColor.png"));
 
         // Item listeners
         itemCursor.addSelectionListener(new SelectionAdapter() {

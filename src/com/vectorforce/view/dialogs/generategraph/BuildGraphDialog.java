@@ -7,6 +7,7 @@ import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,12 +21,15 @@ public class BuildGraphDialog {
     private GraphicComponent graphicComponent;
     private Combo[] combos;
 
+    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
+
     public BuildGraphDialog(Display display, Controller controller, GraphicComponent graphicComponent) {
         this.controller = controller;
         this.graphicComponent = graphicComponent;
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Генерация графа");
+        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
 

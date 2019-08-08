@@ -9,6 +9,7 @@ import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,10 +21,14 @@ public class ChooseNodeDialog {
     private Node node;
     private CommonPartChooseDialog commonPartChooseDialog;
 
+    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
+
+
     public ChooseNodeDialog(Display display, Controller controller,  GraphicComponent graphicComponent, Node node){
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Выберите тип");
+        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         this.node = node;
