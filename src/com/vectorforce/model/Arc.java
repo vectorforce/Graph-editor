@@ -23,22 +23,22 @@ public class Arc {
         }
 
         // Check the link
-        boolean isLink = false;
-        for (int index = 0; index < fromNode.getIngoingArcs().size(); index++) {
-            Arc currentArc = (Arc) fromNode.getIngoingArcs().get(index);
-            if (currentArc.getFromNode().getInternalID().equals(toNode.getInternalID())) {
-                isLink = true;
-            }
-        }
-        for (int index = 0; index < fromNode.getOutgoingArcs().size(); index++) {
-            Arc currentArc = (Arc) fromNode.getOutgoingArcs().get(index);
-            if (currentArc.getToNode().getInternalID().equals(toNode.getInternalID())) {
-                isLink = true;
-            }
-        }
-        if(isLink == true){
-            return;
-        }
+//        boolean isLink = false;
+//        for (int index = 0; index < fromNode.getIngoingArcs().size(); index++) {
+//            Arc currentArc = (Arc) fromNode.getIngoingArcs().get(index);
+//            if (currentArc.getFromNode().getInternalID().equals(toNode.getInternalID())) {
+//                isLink = true;
+//            }
+//        }
+//        for (int index = 0; index < fromNode.getOutgoingArcs().size(); index++) {
+//            Arc currentArc = (Arc) fromNode.getOutgoingArcs().get(index);
+//            if (currentArc.getToNode().getInternalID().equals(toNode.getInternalID())) {
+//                isLink = true;
+//            }
+//        }
+//        if(isLink == true){
+//            return;
+//        }
 
         graphicalShell = new GraphicalShell();
         graphicalShell.setColor(ColorSetupComponent.getArcColor());

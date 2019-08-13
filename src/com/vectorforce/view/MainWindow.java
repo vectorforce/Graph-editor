@@ -242,6 +242,13 @@ public class MainWindow {
             }
         });
 
+        fileOpenItem.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                openFile();
+            }
+        });
+
         fileSaveItem.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -536,7 +543,16 @@ public class MainWindow {
 
     private void openFile() {
         String path = createFileDialog(SWT.OPEN).open();
-        if (path == null) {
+        if (path != null) {
+            for (File currentFile : controller.getFiles()) {
+                if (currentFile.getPath().equals(path)) {
+                    MessageBox message = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+                    message.setMessage("Файл уже открыт!");
+                    message.open();
+                    return;
+                }
+            }
+        } else {
             return;
         }
         createTabItem(path);
