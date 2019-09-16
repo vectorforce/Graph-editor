@@ -70,7 +70,8 @@ public class SAXReader extends DefaultHandler {
             boolean isOriented = false;
             if (attributes.getValue("isBinary").equals("true")) {
                 isBinary = true;
-            } else if (attributes.getValue("isOriented").equals("true")) {
+            }
+            if (attributes.getValue("isOriented").equals("true")) {
                 isOriented = true;
             }
             int weight = Integer.valueOf(attributes.getValue("weight"));

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<graph ID="" isFull="true" isMixed="false" isOriented="false">
-    <node ID="" color="Color {92, 248, 255, 255}" internalID="6186" x="327" y="98">
+<graph ID="" isFull="false" isMixed="false" isOriented="true">
+    <node ID="" color="Color {92, 248, 255, 255}" internalID="6345" x="223" y="158">
         <nodeType>EMPTY</nodeType>
     </node>
-    <node ID="" color="Color {92, 248, 255, 255}" internalID="7980" x="296" y="352">
+    <node ID="" color="Color {92, 248, 255, 255}" internalID="2536" x="462" y="385">
         <nodeType>EMPTY</nodeType>
     </node>
-    <node ID="" color="Color {92, 248, 255, 255}" internalID="12671" x="726" y="211">
+    <node ID="" color="Color {92, 248, 255, 255}" internalID="4419" x="632" y="185">
         <nodeType>EMPTY</nodeType>
     </node>
-    <arc ID="12671Xabf6186" color="Color {230, 243, 255, 255}" isBinary="false" isOriented="false" weight="1">
-        <fromNode>12671</fromNode>
-        <toNode>6186</toNode>
+    <arc ID="6345Xabf4419" color="Color {230, 243, 255, 255}" isBinary="true" isOriented="true" weight="1">
+        <fromNode>6345</fromNode>
+        <toNode>4419</toNode>
     </arc>
-    <arc ID="6186Xabf7980" color="Color {230, 243, 255, 255}" isBinary="false" isOriented="false" weight="1">
-        <fromNode>6186</fromNode>
-        <toNode>7980</toNode>
+    <arc ID="2536Xabf6345" color="Color {230, 243, 255, 255}" isBinary="true" isOriented="true" weight="1">
+        <fromNode>2536</fromNode>
+        <toNode>6345</toNode>
     </arc>
-    <arc ID="7980Xabf12671" color="Color {230, 243, 255, 255}" isBinary="false" isOriented="false" weight="1">
-        <fromNode>7980</fromNode>
-        <toNode>12671</toNode>
+    <arc ID="4419Xabf2536" color="Color {230, 243, 255, 255}" isBinary="true" isOriented="true" weight="1">
+        <fromNode>4419</fromNode>
+        <toNode>2536</toNode>
     </arc>
 </graph>
