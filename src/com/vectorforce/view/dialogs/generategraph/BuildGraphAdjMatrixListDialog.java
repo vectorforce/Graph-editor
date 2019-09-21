@@ -241,7 +241,7 @@ public class BuildGraphAdjMatrixListDialog {
         compositeButtons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         compositeButtons.setBackground(ColorSetupComponent.getMainWindowsColor());
         buttonAddNode = new Button(compositeButtons, SWT.PUSH);
-        buttonAddNode.setText("Добавить вершину");
+        buttonAddNode.setText("Добавить узел");
         buttonAddNode.setBackground(ColorSetupComponent.getMainWindowsColor());
         buttonAddNode.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         buttonAddNode.setFont(FontSetupComponent.getButtonsFont());
@@ -311,20 +311,9 @@ public class BuildGraphAdjMatrixListDialog {
                     Node fromNode = controller.searchNode(currentItem.getText(0));
                     for (int index = 0; index < nodes.length; index++) {
                         Node toNode = controller.searchNode(nodes[index]);
-                        if(toNode != null && fromNode != null){
-                            // Check on arc between these nodes
-                            boolean isArc = false;
-                            for (Arc currentArc : controller.getCurrentGragh().getArcs()) {
-                                if (currentArc.getFromNode() == fromNode
-                                        && currentArc.getToNode() == toNode) {
-                                    isArc = true;
-                                } else if (currentArc.getToNode() == fromNode
-                                        && currentArc.getFromNode() == toNode) {
-                                    isArc = true;
-                                }
-                            }
-                            if (isArc == false) {
-                                Arc arc = new Arc(fromNode, toNode);
+                        if (toNode != null && fromNode != null) {
+                            Arc arc = new Arc(fromNode, toNode);
+                            if (arc.getID() != null) {
                                 controller.addArc(arc);
                                 graphicComponent.drawArc(arc);
                             }
@@ -389,23 +378,10 @@ public class BuildGraphAdjMatrixListDialog {
                             Node fromNode = controller.searchNode(table.getTable().getItem(indexItem).getText(0));
                             Node toNode = controller.searchNode(table.getTable().getItem(indexColumn - 1).getText(0));
                             if (fromNode != null && toNode != null) {
-                                // Check on arc between these nodes
-                                boolean isArc = false;
-                                for (Arc currentArc : controller.getCurrentGragh().getArcs()) {
-                                    if (currentArc.getFromNode() == fromNode
-                                            && currentArc.getToNode() == toNode) {
-                                        isArc = true;
-                                    } else if (currentArc.getToNode() == fromNode
-                                            && currentArc.getFromNode() == toNode) {
-                                        isArc = true;
-                                    }
-                                }
-                                if (isArc == false) {
-                                    Arc arc = new Arc(fromNode, toNode);
-                                    controller.addArc(arc);
-                                    arc.setWeight(Integer.valueOf(weight));
-                                    graphicComponent.drawArc(arc);
-                                }
+                                Arc arc = new Arc(fromNode, toNode);
+                                controller.addArc(arc);
+                                arc.setWeight(Integer.valueOf(weight));
+                                graphicComponent.drawArc(arc);
                             }
                         }
                     }

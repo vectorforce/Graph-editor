@@ -18,27 +18,27 @@ public class Arc {
     private boolean isBinary;
 
     public Arc(Node fromNode, Node toNode) {
-        if(fromNode.getInternalID().equals(toNode.getInternalID())){
+        if (fromNode.getInternalID().equals(toNode.getInternalID())) {
             return;
         }
 
         // Check the link
-//        boolean isLink = false;
-//        for (int index = 0; index < fromNode.getIngoingArcs().size(); index++) {
-//            Arc currentArc = (Arc) fromNode.getIngoingArcs().get(index);
-//            if (currentArc.getFromNode().getInternalID().equals(toNode.getInternalID())) {
-//                isLink = true;
-//            }
-//        }
-//        for (int index = 0; index < fromNode.getOutgoingArcs().size(); index++) {
-//            Arc currentArc = (Arc) fromNode.getOutgoingArcs().get(index);
-//            if (currentArc.getToNode().getInternalID().equals(toNode.getInternalID())) {
-//                isLink = true;
-//            }
-//        }
-//        if(isLink == true){
-//            return;
-//        }
+        boolean isLink = false;
+        for (int index = 0; index < fromNode.getIngoingArcs().size(); index++) {
+            Arc currentArc = (Arc) fromNode.getIngoingArcs().get(index);
+            if (currentArc.getFromNode().getInternalID().equals(toNode.getInternalID())) {
+                isLink = true;
+            }
+        }
+        for (int index = 0; index < fromNode.getOutgoingArcs().size(); index++) {
+            Arc currentArc = (Arc) fromNode.getOutgoingArcs().get(index);
+            if (currentArc.getToNode().getInternalID().equals(toNode.getInternalID())) {
+                isLink = true;
+            }
+        }
+        if (isLink == true) {
+            return;
+        }
 
         graphicalShell = new GraphicalShell();
         graphicalShell.setColor(ColorSetupComponent.getArcColor());
@@ -75,8 +75,8 @@ public class Arc {
         return distance;
     }
 
-    public void changeDirection(){
-        if(isOriented == true){
+    public void changeDirection() {
+        if (isOriented == true) {
             fromNode.getOutgoingArcs().remove(this);
             toNode.getIngoingArcs().remove(this);
             Node changingNode = toNode;
@@ -88,21 +88,21 @@ public class Arc {
     }
 
     //Setters
-    public void setFromNode(Node node){
+    public void setFromNode(Node node) {
         this.fromNode = node;
         node.addOutgoingArc(this);
     }
 
-    public void setToNode(Node node){
+    public void setToNode(Node node) {
         this.toNode = node;
         node.addIngoingArc(this);
     }
 
-    public void setWeight(int weight){
+    public void setWeight(int weight) {
         this.weight = weight;
     }
 
-    public void setID(String ID){
+    public void setID(String ID) {
         this.ID = ID;
     }
 
@@ -124,7 +124,7 @@ public class Arc {
 
     public void setOriented(boolean isOriented) {
         if (isOriented == true) {
-            if(this.isOriented == false){
+            if (this.isOriented == false) {
                 fromNode.addIngoingArc(this);
                 toNode.addOutgoingArc(this);
             }
@@ -137,16 +137,16 @@ public class Arc {
         this.isOriented = isOriented;
     }
 
-    public void setBinary(boolean binary){
+    public void setBinary(boolean binary) {
         isBinary = binary;
     }
 
     // Getters
-    public int getWeight(){
+    public int getWeight() {
         return weight;
     }
 
-    public String getID(){
+    public String getID() {
         return ID;
     }
 
@@ -170,7 +170,7 @@ public class Arc {
         return isOriented;
     }
 
-    public boolean isBinary(){
+    public boolean isBinary() {
         return isBinary;
     }
 
@@ -186,7 +186,7 @@ public class Arc {
         return toNode;
     }
 
-    public GraphicalShell getGraphicalShell(){
+    public GraphicalShell getGraphicalShell() {
         return graphicalShell;
     }
 }

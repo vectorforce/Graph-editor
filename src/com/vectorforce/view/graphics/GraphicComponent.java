@@ -14,8 +14,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-import javax.management.StringValueExp;
-
 public class GraphicComponent extends Canvas {
     // Data for graphic component
     private int lineWidth;
@@ -278,7 +276,7 @@ public class GraphicComponent extends Canvas {
 
                         case ARC:
                             selectObject(e);
-                            if (selectedObject.getObject() instanceof Node && selectedObject.getObject() != fromNode) {   // !!!!Change for drawing loops
+                            if (selectedObject.getObject() instanceof Node && selectedObject.getObject() != fromNode) {
                                 if (startDrawArc == false) {
                                     fromNode = ((Node) selectedObject.getObject());
                                     startDrawArc = true;
@@ -286,22 +284,15 @@ public class GraphicComponent extends Canvas {
                                 } else {
                                     startDrawArc = false;
                                     setCursor(SWT.CURSOR_ARROW);
-                                    // Check on arc between these nodes
-                                    for (Arc currentArc : controller.getCurrentGragh().getArcs()) {
-                                        if (currentArc.getFromNode() == fromNode
-                                                && currentArc.getToNode() == ((Node) selectedObject.getObject())) {
-                                            return;
-                                        } else if (currentArc.getToNode() == fromNode
-                                                && currentArc.getFromNode() == ((Node) selectedObject.getObject())) {
-                                            return;
-                                        }
-                                    }
                                     Arc arc = new Arc(fromNode, ((Node) selectedObject.getObject()));
                                     fromNode = null;
+                                    if(arc.getID() == null){
+                                        return;             // Link is between nodes yet
+                                    }
                                     controller.addArc(arc);
                                     drawArc(arc);
                                 }
-                            } else if (selectedObject.getObject() == null || selectedObject.getObject() instanceof Arc) {  // !!!!Change for drawing loops
+                            } else if (selectedObject.getObject() == null || selectedObject.getObject() instanceof Arc) {
                                 if (fromNode != null) {
                                     fromNode = null;
                                     startDrawArc = false;

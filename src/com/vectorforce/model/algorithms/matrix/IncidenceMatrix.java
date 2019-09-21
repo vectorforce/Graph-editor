@@ -21,7 +21,6 @@ public class IncidenceMatrix {
         }
         matrix.add(firstLine);
         // Building other lines
-        int rowCounter = 1;
         for (int index = 0; index < graph.getNodes().size(); index++) {
             ArrayList<String> currentLine = new ArrayList<>();
             currentLine.add(0, String.valueOf(graph.getNodes().get(index).getInternalID()));
