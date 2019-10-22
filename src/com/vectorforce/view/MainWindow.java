@@ -329,6 +329,9 @@ public class MainWindow {
         buildFullGraph.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+                if (controller.getFiles().size() == 0) {
+                    return;
+                }
                 if(controller.getCurrentGragh().getNodes().size() > 1){
                         MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
                         messageBox.setMessage("Приведение к полному графу сделает его неориентированным.\nПродолжить?");
