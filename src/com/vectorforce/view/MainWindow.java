@@ -43,7 +43,7 @@ public class MainWindow {
     private GraphicComponent currentGraphicComponent;
     private CTabFolder tabFolder;
     private Text textCurrentInformation;
-    private HashMap<Pair, CTabItem> tabItemHashMap;
+    private HashMap<Pair<Graph, GraphicComponent>, CTabItem> tabItemHashMap;
 
     private String imagePath = "src/resources/";
 
@@ -161,7 +161,7 @@ public class MainWindow {
         tabFolder.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                for (HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()) {
+                for (java.util.Map.Entry<Pair<Graph, GraphicComponent>, CTabItem> entry : tabItemHashMap.entrySet()) {
                     if (entry.getValue() == tabFolder.getSelection()) {
                         Pair<Graph, GraphicComponent> currentPair = entry.getKey();
                         currentGraphicComponent = currentPair.getValue();
@@ -229,7 +229,6 @@ public class MainWindow {
         MenuItem fileSaveAsItem = new MenuItem(fileMenu, SWT.PUSH);
         fileSaveAsItem.setText("Сохранить как\tCtrl+Shift+S");
         fileSaveAsItem.setAccelerator(SWT.CTRL + SWT.SHIFT + 'S');
-        final MenuItem separator = new MenuItem(fileMenu, SWT.SEPARATOR);
         MenuItem fileExitItem = new MenuItem(fileMenu, SWT.PUSH);
         fileExitItem.setText("Выход\tCtrl+Q");
         fileExitItem.setAccelerator(SWT.CTRL + 'Q');
@@ -598,7 +597,7 @@ public class MainWindow {
 
     private void closeFile(CTabFolderEvent cTabFolderEvent) {
         Pair<Graph, GraphicComponent> currentPair = null;
-        for (HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()) {
+        for (java.util.Map.Entry<Pair<Graph, GraphicComponent>, CTabItem> entry : tabItemHashMap.entrySet()) {
             if (entry.getValue() == cTabFolderEvent.item) {
                 currentPair = entry.getKey();
             }
@@ -612,7 +611,7 @@ public class MainWindow {
 
     private void closeFile(CTabItem tabItem) {
         Pair<Graph, GraphicComponent> currentPair = null;
-        for (HashMap.Entry<Pair, CTabItem> entry : tabItemHashMap.entrySet()) {
+        for (java.util.Map.Entry<Pair<Graph, GraphicComponent>, CTabItem> entry : tabItemHashMap.entrySet()) {
             if (entry.getValue() == tabItem) {
                 currentPair = entry.getKey();
             }
