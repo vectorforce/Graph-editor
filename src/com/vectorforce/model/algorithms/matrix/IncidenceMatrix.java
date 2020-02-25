@@ -34,10 +34,10 @@ public class IncidenceMatrix {
             int fromIndex = 0;
             int toIndex = 0;
             for (int indexLine = 0; indexLine < matrix.size(); indexLine++) {
-                if (matrix.get(indexLine).get(0).equals(String.valueOf(graph.getArcs().get(indexArc).getFromNode().getInternalID())) == true) {
+                if (matrix.get(indexLine).get(0).equals(String.valueOf(graph.getArcs().get(indexArc).getFromNode().getInternalID()))) {
                     fromIndex = indexLine;
                 }
-                if (matrix.get(indexLine).get(0).equals(String.valueOf(graph.getArcs().get(indexArc).getToNode().getInternalID())) == true) {
+                if (matrix.get(indexLine).get(0).equals(String.valueOf(graph.getArcs().get(indexArc).getToNode().getInternalID()))) {
                     toIndex = indexLine;
                 }
             }

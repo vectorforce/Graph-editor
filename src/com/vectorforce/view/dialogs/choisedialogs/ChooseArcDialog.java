@@ -20,15 +20,14 @@ public class ChooseArcDialog {
     private CommonPartChooseDialog commonPartChooseDialog;
     private Arc arc;
 
-    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
-
     public ChooseArcDialog(Display display, Controller controller,  GraphicComponent graphicComponent, Arc arc) {
         commonPartChooseDialog = new CommonPartChooseDialog(controller, graphicComponent);
         this.arc = arc;
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Выберите тип");
-        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
+        String imagePath = "src/resources/";
+        shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(1, true));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         initButtons();
@@ -42,8 +41,8 @@ public class ChooseArcDialog {
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 
-        while (shell.isDisposed() == false) {
-            if (display.readAndDispatch() == true) {
+        while (!shell.isDisposed()) {
+            if (display.readAndDispatch()) {
                 display.sleep();
             }
         }
@@ -54,10 +53,10 @@ public class ChooseArcDialog {
         compositeTypesButtons.setLayout(new GridLayout(2, true));
         compositeTypesButtons.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
 
-        Composite compositeOriented = new Group(compositeTypesButtons, SWT.NONE);
+        Group compositeOriented = new Group(compositeTypesButtons, SWT.NONE);
         compositeOriented.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
         compositeOriented.setForeground(ColorSetupComponent.getButtonsForegroundColor());
-        ((Group) compositeOriented).setText("Ориентированная");
+        compositeOriented.setText("Ориентированная");
         compositeOriented.setLayout(new GridLayout(1, false));
 
         Button buttonOriented = new Button(compositeOriented, SWT.TOGGLE);
@@ -67,10 +66,10 @@ public class ChooseArcDialog {
         commonPartChooseDialog.addButton(buttonOrientedBinary);
         buttonOrientedBinary.setText("========>");
 
-        Composite compositeNonOriented = new Group(compositeTypesButtons, SWT.NONE);
+        Group compositeNonOriented = new Group(compositeTypesButtons, SWT.NONE);
         compositeNonOriented.setForeground(ColorSetupComponent.getButtonsForegroundColor());
         compositeNonOriented.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
-        ((Group) compositeNonOriented).setText("Неориентированная");
+        compositeNonOriented.setText("Неориентированная");
         compositeNonOriented.setLayout(new GridLayout(1, true));
 
         Button buttonNonOriented = new Button(compositeNonOriented, SWT.TOGGLE);
@@ -132,7 +131,7 @@ public class ChooseArcDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 for (Button currentButton : commonPartChooseDialog.getButtons()) {
-                    if (currentButton.getSelection() == true) {
+                    if (currentButton.getSelection()) {
                         if (currentButton == buttonOriented) {
                             commonPartChooseDialog.getController().setOriented(arc, true);
                             commonPartChooseDialog.getController().setBinary(arc, false);

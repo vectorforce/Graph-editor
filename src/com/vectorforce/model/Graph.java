@@ -44,12 +44,12 @@ public class Graph implements IGraph {
     public void deleteNode(Node node) {
         // Delete all adjacent arcs
         for (int index = 0; index < node.getIngoingArcs().size(); index++) {
-            if (deleteArc((Arc) node.getIngoingArcs().get(index)) == true) {
+            if (deleteArc(node.getIngoingArcs().get(index))) {
                 index--;
             }
         }
         for (int index = 0; index < node.getOutgoingArcs().size(); index++) {
-            if (deleteArc((Arc) node.getOutgoingArcs().get(index)) == true) {
+            if (deleteArc(node.getOutgoingArcs().get(index))) {
                 index--;
             }
         }
@@ -73,14 +73,14 @@ public class Graph implements IGraph {
 
     public boolean deleteArc(Arc arc) {
         boolean deleteFlag = false;
-        if (arcs.contains(arc) == true) {
+        if (arcs.contains(arc)) {
             deleteFlag = true;
         }
         removeLinks(arc);
         return deleteFlag;
     }
 
-    public void deleteAllArcs() {
+    private void deleteAllArcs() {
         if (arcs.size() > 0) {
             for (int index = 0; index < arcs.size(); index++) {
                 deleteArc(arcs.get(index--));
@@ -122,8 +122,8 @@ public class Graph implements IGraph {
         }
         int counterOriented = 0;
         int counterNonOriented = 0;
-        for (int index = 0; index < arcs.size(); index++) {
-            if (arcs.get(index).isOriented() == true) {
+        for (Arc arc : arcs) {
+            if (arc.isOriented()) {
                 counterOriented++;
             } else {
                 counterNonOriented++;
@@ -144,13 +144,9 @@ public class Graph implements IGraph {
             isFull = false;
         }
         // Check on full
-        if (isOriented == false && isMixed == false) {
+        if (!isOriented && !isMixed) {
             int amountNodes = getNodes().size();
-            if ((amountNodes * (amountNodes - 1) / 2) == getArcs().size()) {
-                isFull = true;
-            } else {
-                isFull = false;
-            }
+            isFull = (amountNodes * (amountNodes - 1) / 2) == getArcs().size();
         }
     }
 

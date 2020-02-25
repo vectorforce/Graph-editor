@@ -9,8 +9,6 @@ import com.vectorforce.view.setup.ColorSetupComponent;
 import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -22,7 +20,7 @@ import org.eclipse.swt.widgets.*;
 
 import java.util.Random;
 
-public class BuildGraphIncMatrixDialog {
+class BuildGraphIncMatrixDialog {
     private Display display;
     private Shell shell;
 
@@ -31,16 +29,15 @@ public class BuildGraphIncMatrixDialog {
     private GraphicComponent graphicComponent;
     private int arcCounter = 0;
 
-    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
 
-
-    public BuildGraphIncMatrixDialog(Controller controller, GraphicComponent graphicComponent) {
+    BuildGraphIncMatrixDialog(Controller controller, GraphicComponent graphicComponent) {
         this.controller = controller;
         this.graphicComponent = graphicComponent;
         this.display = Display.getCurrent();
         shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.MAX | SWT.MIN);
         shell.setText("Задать граф");
-        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
+        String imagePath = "src/resources/";
+        shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setSize(1044, 768);
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         shell.setLayout(new GridLayout(1, false));
@@ -70,62 +67,54 @@ public class BuildGraphIncMatrixDialog {
             oldEditor.dispose();
         }
         // Identify the selected row
-        TableItem currentItem = (TableItem) item;
-        if (currentItem == null) {
+        if (item == null) {
             return;
         }
         Text newEditor = new Text(table.getTable(), SWT.NONE);
-        Listener textListener = new Listener() {
-            public void handleEvent(final Event e) {
-                switch (e.type) {
-                    case SWT.FocusOut:
-                        item.setText(indexNodes, newEditor.getText());
-                        newEditor.dispose();
-                        break;
-                    case SWT.Traverse:
-                        switch (e.detail) {
-                            case SWT.TRAVERSE_RETURN:
-                                item.setText(indexNodes, newEditor.getText());
-                                // FALL THROUGH
-                            case SWT.TRAVERSE_ESCAPE:
-                                newEditor.dispose();
-                                e.doit = false;
-                        }
-                        break;
-                }
+        Listener textListener = e -> {
+            switch (e.type) {
+                case SWT.FocusOut:
+                    item.setText(indexNodes, newEditor.getText());
+                    newEditor.dispose();
+                    break;
+                case SWT.Traverse:
+                    switch (e.detail) {
+                        case SWT.TRAVERSE_RETURN:
+                            item.setText(indexNodes, newEditor.getText());
+                            // FALL THROUGH
+                        case SWT.TRAVERSE_ESCAPE:
+                            newEditor.dispose();
+                            e.doit = false;
+                    }
+                    break;
             }
         };
         newEditor.addListener(SWT.FocusOut, textListener);
         newEditor.addListener(SWT.Traverse, textListener);
         // Protection against incorrect input
-        newEditor.addListener(SWT.Verify, new Listener() {
-            public void handleEvent(Event e) {
-                String string = e.text;
-                char[] chars = new char[string.length()];
-                string.getChars(0, chars.length, chars, 0);
-                for (int i = 0; i < chars.length; i++) {
-                    if (!('0' <= chars[i] && chars[i] <= '9' || chars[i] == '-')) {
-                        e.doit = false;
-                        return;
-                    }
+        newEditor.addListener(SWT.Verify, e -> {
+            String string = e.text;
+            char[] chars = new char[string.length()];
+            string.getChars(0, chars.length, chars, 0);
+            for (char aChar : chars) {
+                if (!('0' <= aChar && aChar <= '9' || aChar == '-')) {
+                    e.doit = false;
+                    return;
                 }
             }
         });
         newEditor.setText(item.getText(indexNodes));
-        int currentIndex = indexNodes;
-        newEditor.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent me) {
-                Text text = (Text) editor.getEditor();
-                if (text.getText().equals("") || text.getText() == null) {
-                    editor.getItem().setText(currentIndex, "0");
-                } else {
-                    editor.getItem().setText(currentIndex, text.getText());
-                }
+        newEditor.addModifyListener(me -> {
+            Text text = (Text) editor.getEditor();
+            if (text.getText().equals("") || text.getText() == null) {
+                editor.getItem().setText(indexNodes, "0");
+            } else {
+                editor.getItem().setText(indexNodes, text.getText());
             }
         });
         newEditor.selectAll();
         newEditor.setFocus();
-        editor.setEditor(newEditor, currentItem, indexNodes);
+        editor.setEditor(newEditor, item, indexNodes);
     }
 
     private void addNodes() {
@@ -163,29 +152,27 @@ public class BuildGraphIncMatrixDialog {
         editor.minimumWidth = 50;
 
         // Set editor for table
-        table.getTable().addListener(SWT.MouseDown, new Listener() {
-            public void handleEvent(Event event) {
-                Rectangle clientArea = table.getTable().getClientArea();
-                Point point = new Point(event.x, event.y);
-                int index = table.getTable().getTopIndex();
-                while (index < table.getTable().getItemCount()) {
-                    boolean visible = false;
-                    TableItem item = table.getTable().getItem(index);
-                    for (int indexNodes = 0; indexNodes < table.getTable().getColumnCount(); indexNodes++) {
-                        Rectangle rect = item.getBounds(indexNodes);
-                        if (rect.contains(point)) {
-                            if (indexNodes != 0) {
-                                addCellsEditor(item, editor, indexNodes);
-                            }
-                        }
-                        if (!visible && rect.intersects(clientArea)) {
-                            visible = true;
+        table.getTable().addListener(SWT.MouseDown, event -> {
+            Rectangle clientArea = table.getTable().getClientArea();
+            Point point = new Point(event.x, event.y);
+            int index = table.getTable().getTopIndex();
+            while (index < table.getTable().getItemCount()) {
+                boolean visible = false;
+                TableItem item = table.getTable().getItem(index);
+                for (int indexNodes = 0; indexNodes < table.getTable().getColumnCount(); indexNodes++) {
+                    Rectangle rect = item.getBounds(indexNodes);
+                    if (rect.contains(point)) {
+                        if (indexNodes != 0) {
+                            addCellsEditor(item, editor, indexNodes);
                         }
                     }
-                    if (!visible)
-                        return;
-                    index++;
+                    if (!visible && rect.intersects(clientArea)) {
+                        visible = true;
+                    }
                 }
+                if (!visible)
+                    return;
+                index++;
             }
         });
     }
@@ -299,10 +286,11 @@ public class BuildGraphIncMatrixDialog {
                                 fromNode = controller.searchNode(table.getTable().getItem(indexRow).getText(0));
                             } else {
                                 String[] strings = string.split("-");
-                                string = "";
+                                StringBuilder stringBuilder = new StringBuilder();
                                 for (String currentString : strings) {
-                                    string += currentString;
+                                    stringBuilder.append(currentString);
                                 }
+                                string = stringBuilder.toString();
                                 toNode = controller.searchNode(table.getTable().getItem(indexRow).getText(0));
                                 weight = Integer.valueOf(string);
                             }

@@ -7,7 +7,6 @@ import com.vectorforce.model.node.NodeType;
 import com.vectorforce.view.setup.ColorSetupComponent;
 import org.eclipse.swt.graphics.Color;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class SAXReader extends DefaultHandler {
@@ -39,63 +38,70 @@ public class SAXReader extends DefaultHandler {
 
     @Override
     public void startElement(
-            String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+            String uri, String localName, String qName, Attributes attributes) {
 
-        if (qName.equals("node")) { // Creating node
-            String ID = attributes.getValue("ID");
-            String internalID = attributes.getValue("internalID");
-            int x = Integer.valueOf(attributes.getValue("x"));
-            int y = Integer.valueOf(attributes.getValue("y"));
+        switch (qName) {
+            case "node": { // Creating node
+                String ID = attributes.getValue("ID");
+                String internalID = attributes.getValue("internalID");
+                int x = Integer.valueOf(attributes.getValue("x"));
+                int y = Integer.valueOf(attributes.getValue("y"));
 
-            node = new Node(x, y);
-            node.setID(ID);
-            node.setInternalID(internalID);
-            Color color = getColor(attributes.getValue("color"));
-            if (color.equals(ColorSetupComponent.getDefaultNodeColorDarkTheme()) == false &&
-                    color.equals(ColorSetupComponent.getDefaultObjectColorLightTheme()) == false) {
-                node.getGraphicalShell().setColor(color);
-            } else {
-                node.getGraphicalShell().setColor(ColorSetupComponent.getDefaultNodeColorDarkTheme());
+                node = new Node(x, y);
+                node.setID(ID);
+                node.setInternalID(internalID);
+                Color color = getColor(attributes.getValue("color"));
+                if (!color.equals(ColorSetupComponent.getDefaultNodeColorDarkTheme()) &&
+                        !color.equals(ColorSetupComponent.getDefaultObjectColorLightTheme())) {
+                    node.getGraphicalShell().setColor(color);
+                } else {
+                    node.getGraphicalShell().setColor(ColorSetupComponent.getDefaultNodeColorDarkTheme());
+                }
+                break;
             }
-        } else if (qName.equals("nodeType")) {
-            bType = true;
-        } else if (qName.equals("arc")) { // Creating arc
-            // Temporarily take two random nodes for creating arc
-            arc = new Arc(new Node(30, 20), new Node(70, 50));
-            controller.getCurrentGragh().getNodes().get(0).getOutgoingArcs().remove(arc);
-            controller.getCurrentGragh().getNodes().get(1).getIngoingArcs().remove(arc);
-            String ID = attributes.getValue("ID");
-            boolean isBinary = false;
-            boolean isOriented = false;
-            if (attributes.getValue("isBinary").equals("true")) {
-                isBinary = true;
+            case "nodeType":
+                bType = true;
+                break;
+            case "arc": { // Creating arc
+                // Temporarily take two random nodes for creating arc
+                arc = new Arc(new Node(30, 20), new Node(70, 50));
+                controller.getCurrentGragh().getNodes().get(0).getOutgoingArcs().remove(arc);
+                controller.getCurrentGragh().getNodes().get(1).getIngoingArcs().remove(arc);
+                String ID = attributes.getValue("ID");
+                boolean isBinary = false;
+                boolean isOriented = false;
+                if (attributes.getValue("isBinary").equals("true")) {
+                    isBinary = true;
+                }
+                if (attributes.getValue("isOriented").equals("true")) {
+                    isOriented = true;
+                }
+                int weight = Integer.valueOf(attributes.getValue("weight"));
+                arc.setID(ID);
+                arc.setWeight(weight);
+                arc.setBinary(isBinary);
+                arc.setOriented(isOriented);
+                Color color = getColor(attributes.getValue("color"));
+                if (!color.equals(ColorSetupComponent.getDefaultArcColorDarkTheme()) &&
+                        !color.equals(ColorSetupComponent.getDefaultObjectColorLightTheme())) {
+                    arc.getGraphicalShell().setColor(color);
+                } else {
+                    arc.getGraphicalShell().setColor(ColorSetupComponent.getDefaultArcColorDarkTheme());
+                }
+                break;
             }
-            if (attributes.getValue("isOriented").equals("true")) {
-                isOriented = true;
-            }
-            int weight = Integer.valueOf(attributes.getValue("weight"));
-            arc.setID(ID);
-            arc.setWeight(weight);
-            arc.setBinary(isBinary);
-            arc.setOriented(isOriented);
-            Color color = getColor(attributes.getValue("color"));
-            if (color.equals(ColorSetupComponent.getDefaultArcColorDarkTheme()) == false &&
-                    color.equals(ColorSetupComponent.getDefaultObjectColorLightTheme()) == false) {
-                arc.getGraphicalShell().setColor(color);
-            } else {
-                arc.getGraphicalShell().setColor(ColorSetupComponent.getDefaultArcColorDarkTheme());
-            }
-        } else if (qName.equals("fromNode")) {
-            bFromNode = true;
-        } else if (qName.equals("toNode")) {
-            bToNode = true;
+            case "fromNode":
+                bFromNode = true;
+                break;
+            case "toNode":
+                bToNode = true;
+                break;
         }
     }
 
     @Override
     public void endElement(String uri,
-                           String localName, String qName) throws SAXException {
+                           String localName, String qName) {
 
         if (qName.equalsIgnoreCase("node")) {
             controller.addNode(node);
@@ -106,9 +112,9 @@ public class SAXReader extends DefaultHandler {
     }
 
     @Override
-    public void characters(char ch[], int start, int length) throws SAXException {
+    public void characters(char ch[], int start, int length) {
 
-        if (bType == true) {
+        if (bType) {
             switch (new String(ch, start, length)) {
                 case "EMPTY":
                     node.setType(NodeType.nodeType.EMPTY);

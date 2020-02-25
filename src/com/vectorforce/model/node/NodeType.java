@@ -4,17 +4,15 @@ public class NodeType {
     public enum nodeType {EMPTY, CLASS, NREL, RREL, LINK}
     private nodeType status;
 
-    public NodeType(){
+    NodeType(){
         status = nodeType.EMPTY;
     }
 
-    // Setters
-    public void setStatus(nodeType status){
-        this.status = status;
+    nodeType getStatus() {
+        return status;
     }
 
-    // Getters
-    public nodeType getStatus(){
-        return status;
+    void setStatus(nodeType status) {
+        this.status = status;
     }
 }

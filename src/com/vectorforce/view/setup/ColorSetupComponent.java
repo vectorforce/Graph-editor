@@ -6,9 +6,7 @@ public class ColorSetupComponent {
     private static Color nodeColor;
     private static Color arcColor;
     private static Color selectColor;
-    private static Color graphicComponentCharacterColor;
     private static Color graphicComponentBackgroundColor;
-    private static Color gridColor;
     private static boolean darkTheme;
     // Default colors
     private static Color tableHeaderBackgroundColor = new Color(null, 80, 80, 80);
@@ -33,9 +31,7 @@ public class ColorSetupComponent {
         nodeColor = defaultNodeColorDarkTheme;
         arcColor = defaultArcColorDarkTheme;
         selectColor = new Color(null, 0, 255, 0);
-        graphicComponentCharacterColor = new Color(null, 255, 255, 255);
         graphicComponentBackgroundColor = new Color(null, 59, 63, 64);
-        gridColor = new Color(null, 249, 245, 104);
     }
 
     public static void setLightTheme() {
@@ -43,33 +39,7 @@ public class ColorSetupComponent {
         nodeColor = defaultObjectColorLightTheme;
         arcColor = defaultObjectColorLightTheme;
         selectColor = new Color(null, 0, 255, 0);
-        graphicComponentCharacterColor = new Color(null, 0, 0, 0);
         graphicComponentBackgroundColor = new Color(null, 255, 255, 255);
-        gridColor = new Color(null, 0, 163, 20);
-    }
-
-    public static void setGridColor(Color gridColorArg) {
-        gridColor = gridColorArg;
-    }
-
-    public static void setGraphicComponentCharacterColor(Color characterColorArg) {
-        graphicComponentCharacterColor = characterColorArg;
-    }
-
-    public static void setArcColor(Color arcColorArg) {
-        arcColor = arcColorArg;
-    }
-
-    public static void setNodeColor(Color nodeColorArg) {
-        nodeColor = nodeColorArg;
-    }
-
-    public static void setSelectColor(Color selectColorArg) {
-        selectColor = selectColorArg;
-    }
-
-    public static void setGraphicComponentBackgroundColor(Color backgroundColorArg) {
-        graphicComponentBackgroundColor = backgroundColorArg;
     }
 
     // Getters
@@ -135,13 +105,5 @@ public class ColorSetupComponent {
 
     public static Color getGraphicComponentBackgroundColor() {
         return graphicComponentBackgroundColor;
-    }
-
-    public static Color getGraphicComponentCharacterColor() {
-        return graphicComponentCharacterColor;
-    }
-
-    public static Color getGridColor() {
-        return gridColor;
     }
 }

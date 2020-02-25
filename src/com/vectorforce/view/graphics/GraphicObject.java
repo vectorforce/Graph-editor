@@ -4,12 +4,12 @@ package com.vectorforce.view.graphics;
 public class GraphicObject<Type> {
     private Type object;
 
-    public GraphicObject(){
+    GraphicObject(){
         object = null;
     }
 
     // Setters
-    public void setObject(Type object){
+    void setObject(Type object){
         this.object = object;
     }
 

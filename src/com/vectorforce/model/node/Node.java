@@ -8,7 +8,7 @@ import org.eclipse.swt.graphics.Point;
 import java.util.LinkedList;
 import java.util.Random;
 
-public class Node<Type> {
+public class Node {
     private String ID;
     private String internalID;
     private int x;
@@ -18,7 +18,6 @@ public class Node<Type> {
     private LinkedList<Arc> outgoingArcs;
     private GraphicalShell graphicalShell;
     private NodeType nodeType;
-    private Type data;
 
     public Node(int x, int y) {
         ID = null;
@@ -31,15 +30,12 @@ public class Node<Type> {
         nodeType = new NodeType();
         ingoingArcs = new LinkedList<>();
         outgoingArcs = new LinkedList<>();
-        data = null;
     }
 
     // Check for the presence of a point on the arc
     public boolean contains(Point point) {
         if ((point.x > x) && (point.x < x + diameter)) {
-            if ((point.y > y) && (point.y < y + diameter)) {
-                return true;
-            }
+            return (point.y > y) && (point.y < y + diameter);
         }
         return false;
     }
@@ -73,20 +69,12 @@ public class Node<Type> {
         this.ID = ID;
     }
 
-    public void setData(Type data) {
-        this.data = data;
-    }
-
     public void setX(int x) {
         this.x = x;
     }
 
     public void setY(int y) {
         this.y = y;
-    }
-
-    public void setDiameter(int diameter) {
-        this.diameter = diameter;
     }
 
     // Getters
@@ -100,10 +88,6 @@ public class Node<Type> {
 
     public String getID(){
         return ID;
-    }
-
-    public Type getData() {
-        return data;
     }
 
     public int getX() {

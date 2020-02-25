@@ -7,12 +7,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public class SettingForm {
+class SettingForm {
     private Composite composite;
     private Text text;
     private Button button;
 
-    public SettingForm(Shell shell){
+    SettingForm(Shell shell){
         composite = new Group(shell, SWT.NONE);
         composite.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
         composite.setForeground(ColorSetupComponent.getButtonsForegroundColor());
@@ -37,24 +37,19 @@ public class SettingForm {
     }
 
     // Setters
-    public void setCompositeText(String compositeText){
+    void setCompositeText(String compositeText){
         ((Group) composite).setText(compositeText);
     }
 
-    public void setButtonText(String buttonText){
+    void setButtonText(String buttonText){
         button.setText(buttonText);
     }
 
-    // Getters
-    public Composite getComposite(){
-        return composite;
-    }
-
-    public Text getText(){
+    Text getText(){
         return text;
     }
 
-    public Button getButton(){
+    Button getButton(){
         return button;
     }
 }

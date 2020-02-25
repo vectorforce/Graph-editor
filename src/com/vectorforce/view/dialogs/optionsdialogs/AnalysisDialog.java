@@ -18,14 +18,13 @@ public class AnalysisDialog {
     private Shell shell;
     private Controller controller;
 
-    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
-
     public AnalysisDialog(Display display, Controller controller) {
         this.controller = controller;
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Анализ графа");
-        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
+        String imagePath = "src/resources/";
+        shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         initForm();
@@ -39,8 +38,8 @@ public class AnalysisDialog {
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 
-        while(shell.isDisposed() == false){
-            if(display.readAndDispatch() == true){
+        while(!shell.isDisposed()){
+            if(display.readAndDispatch()){
                 display.sleep();
             }
         }
@@ -66,8 +65,8 @@ public class AnalysisDialog {
 
         Label labelIsOriented = new Label(shell, SWT.NONE);
         labels.add(labelIsOriented);
-        String isOriented = "";
-        if(controller.getCurrentGragh().isOriented() == true){
+        String isOriented;
+        if(controller.getCurrentGragh().isOriented()){
             isOriented = "да";
         } else {
             isOriented = "нет";
@@ -76,8 +75,8 @@ public class AnalysisDialog {
 
         Label labelIsMixed = new Label(shell, SWT.NONE);
         labels.add(labelIsMixed);
-        String isMixed = "";
-        if(controller.getCurrentGragh().isMixed() == true){
+        String isMixed;
+        if(controller.getCurrentGragh().isMixed()){
             isMixed = "да";
         } else {
             isMixed = "нет";
@@ -86,8 +85,8 @@ public class AnalysisDialog {
 
         Label labelIsFull = new Label(shell, SWT.NONE);
         labels.add(labelIsFull);
-        String isFull=  "";
-        if(controller.getCurrentGragh().isFull() == true){
+        String isFull;
+        if(controller.getCurrentGragh().isFull()){
             isFull = "да";
         } else {
             isFull = "нет";

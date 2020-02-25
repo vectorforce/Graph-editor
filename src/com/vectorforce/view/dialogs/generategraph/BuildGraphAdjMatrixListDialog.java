@@ -9,8 +9,6 @@ import com.vectorforce.view.setup.ColorSetupComponent;
 import com.vectorforce.view.setup.FontSetupComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -23,21 +21,19 @@ import org.eclipse.swt.widgets.*;
 
 import java.util.Random;
 
-public class BuildGraphAdjMatrixListDialog {
+class BuildGraphAdjMatrixListDialog {
     private Display display;
     private Shell shell;
     private GraphTable table;
     private Controller controller;
     private GraphicComponent graphicComponent;
-    private int windowType = 0;
+    private int windowType;
     // Main buttons
     private Button buttonAddNode;
     private Button buttonDeleteNode;
     private Button buttonBuildGraph;
 
-    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
-
-    public BuildGraphAdjMatrixListDialog(Controller controller, GraphicComponent graphicComponent, int windowType) {
+    BuildGraphAdjMatrixListDialog(Controller controller, GraphicComponent graphicComponent, int windowType) {
         this.windowType = windowType;
         if (windowType != 1 && windowType != 2) {
             return;
@@ -47,7 +43,8 @@ public class BuildGraphAdjMatrixListDialog {
         display = Display.getCurrent();
         shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.MAX | SWT.MIN);
         shell.setText("Задать граф");
-        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
+        String imagePath = "src/resources/";
+        shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         if (windowType == 1) {
@@ -55,13 +52,11 @@ public class BuildGraphAdjMatrixListDialog {
             initMatrixTable();
             initButtons();
             initMatrixButtonsListeners();
-        } else if (windowType == 2) {
+        } else {
             shell.setSize(680, 550);
             initListTable();
             initButtons();
             initListButtonsListeners();
-        } else {
-            return;
         }
         run();
     }
@@ -71,8 +66,8 @@ public class BuildGraphAdjMatrixListDialog {
         Rectangle screenSize = display.getPrimaryMonitor().getBounds();
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
 
-        while (shell.isDisposed() == false) {
-            if (display.readAndDispatch() == true) {
+        while (!shell.isDisposed()) {
+            if (display.readAndDispatch()) {
                 display.sleep();
             }
         }
@@ -85,69 +80,61 @@ public class BuildGraphAdjMatrixListDialog {
             oldEditor.dispose();
         }
         // Identify the selected row
-        TableItem currentItem = (TableItem) item;
-        if (currentItem == null) {
+        if (item == null) {
             return;
         }
         Text newEditor = new Text(table.getTable(), SWT.NONE);
-        Listener textListener = new Listener() {
-            public void handleEvent(final Event e) {
-                switch (e.type) {
-                    case SWT.FocusOut:
-                        item.setText(indexNodes, newEditor.getText());
-                        newEditor.dispose();
-                        break;
-                    case SWT.Traverse:
-                        switch (e.detail) {
-                            case SWT.TRAVERSE_RETURN:
-                                item.setText(indexNodes, newEditor.getText());
-                                // FALL THROUGH
-                            case SWT.TRAVERSE_ESCAPE:
-                                newEditor.dispose();
-                                e.doit = false;
-                        }
-                        break;
-                }
+        Listener textListener = e -> {
+            switch (e.type) {
+                case SWT.FocusOut:
+                    item.setText(indexNodes, newEditor.getText());
+                    newEditor.dispose();
+                    break;
+                case SWT.Traverse:
+                    switch (e.detail) {
+                        case SWT.TRAVERSE_RETURN:
+                            item.setText(indexNodes, newEditor.getText());
+                            // FALL THROUGH
+                        case SWT.TRAVERSE_ESCAPE:
+                            newEditor.dispose();
+                            e.doit = false;
+                    }
+                    break;
             }
         };
         newEditor.addListener(SWT.FocusOut, textListener);
         newEditor.addListener(SWT.Traverse, textListener);
         // Protection against incorrect input
-        newEditor.addListener(SWT.Verify, new Listener() {
-            public void handleEvent(Event e) {
-                String string = e.text;
-                char[] chars = new char[string.length()];
-                string.getChars(0, chars.length, chars, 0);
-                for (int i = 0; i < chars.length; i++) {
-                    if (windowType == 1) {
-                        if (!('0' <= chars[i] && chars[i] <= '9')) {
-                            e.doit = false;
-                            return;
-                        }
-                    } else if (windowType == 2) {
-                        if (!('0' <= chars[i] && chars[i] <= '9' || chars[i] == ' ')) {
-                            e.doit = false;
-                            return;
-                        }
+        newEditor.addListener(SWT.Verify, e -> {
+            String string = e.text;
+            char[] chars = new char[string.length()];
+            string.getChars(0, chars.length, chars, 0);
+            for (char aChar : chars) {
+                if (windowType == 1) {
+                    if (!('0' <= aChar && aChar <= '9')) {
+                        e.doit = false;
+                        return;
+                    }
+                } else if (windowType == 2) {
+                    if (!('0' <= aChar && aChar <= '9' || aChar == ' ')) {
+                        e.doit = false;
+                        return;
                     }
                 }
             }
         });
         newEditor.setText(item.getText(indexNodes));
-        int currentIndex = indexNodes;
-        newEditor.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent me) {
-                Text text = (Text) editor.getEditor();
-                if (text.getText().equals("") || text.getText() == null) {
-                    editor.getItem().setText(currentIndex, "0");
-                } else {
-                    editor.getItem().setText(currentIndex, text.getText());
-                }
+        newEditor.addModifyListener(me -> {
+            Text text = (Text) editor.getEditor();
+            if (text.getText().equals("") || text.getText() == null) {
+                editor.getItem().setText(indexNodes, "0");
+            } else {
+                editor.getItem().setText(indexNodes, text.getText());
             }
         });
         newEditor.selectAll();
         newEditor.setFocus();
-        editor.setEditor(newEditor, currentItem, indexNodes);
+        editor.setEditor(newEditor, item, indexNodes);
     }
 
     private void addNodes() {
@@ -177,35 +164,33 @@ public class BuildGraphAdjMatrixListDialog {
         editor.minimumWidth = 50;
 
         // Set editor for table
-        table.getTable().addListener(SWT.MouseDown, new Listener() {
-            public void handleEvent(Event event) {
-                Rectangle clientArea = table.getTable().getClientArea();
-                Point point = new Point(event.x, event.y);
-                int index = table.getTable().getTopIndex();
-                while (index < table.getTable().getItemCount()) {
-                    boolean visible = false;
-                    TableItem item = table.getTable().getItem(index);
-                    for (int indexNodes = 0; indexNodes < table.getTable().getColumnCount(); indexNodes++) {
-                        Rectangle rect = item.getBounds(indexNodes);
-                        if (rect.contains(point)) {
-                            if (indexNodes != 0) {
-                                if (windowType == 1) {
-                                    if (indexNodes != index + 1) {
-                                        addCellsEditor(item, editor, indexNodes);
-                                    }
-                                } else if (windowType == 2) {
+        table.getTable().addListener(SWT.MouseDown, event -> {
+            Rectangle clientArea = table.getTable().getClientArea();
+            Point point = new Point(event.x, event.y);
+            int index = table.getTable().getTopIndex();
+            while (index < table.getTable().getItemCount()) {
+                boolean visible = false;
+                TableItem item = table.getTable().getItem(index);
+                for (int indexNodes = 0; indexNodes < table.getTable().getColumnCount(); indexNodes++) {
+                    Rectangle rect = item.getBounds(indexNodes);
+                    if (rect.contains(point)) {
+                        if (indexNodes != 0) {
+                            if (windowType == 1) {
+                                if (indexNodes != index + 1) {
                                     addCellsEditor(item, editor, indexNodes);
                                 }
+                            } else if (windowType == 2) {
+                                addCellsEditor(item, editor, indexNodes);
                             }
                         }
-                        if (!visible && rect.intersects(clientArea)) {
-                            visible = true;
-                        }
                     }
-                    if (!visible)
-                        return;
-                    index++;
+                    if (!visible && rect.intersects(clientArea)) {
+                        visible = true;
+                    }
                 }
+                if (!visible)
+                    return;
+                index++;
             }
         });
     }
@@ -296,8 +281,6 @@ public class BuildGraphAdjMatrixListDialog {
                 if (table.getTable().getItemCount() > 0) {
                     table.getTable().getItem(table.getTable().getItemCount() - 1).dispose();
                     table.getTable().update();
-                } else {
-                    return;
                 }
             }
         });
@@ -309,8 +292,8 @@ public class BuildGraphAdjMatrixListDialog {
                 for (TableItem currentItem : table.getTable().getItems()) {
                     String[] nodes = currentItem.getText(1).split(" ");
                     Node fromNode = controller.searchNode(currentItem.getText(0));
-                    for (int index = 0; index < nodes.length; index++) {
-                        Node toNode = controller.searchNode(nodes[index]);
+                    for (String node : nodes) {
+                        Node toNode = controller.searchNode(node);
                         if (toNode != null && fromNode != null) {
                             Arc arc = new Arc(fromNode, toNode);
                             if (arc.getID() != null) {
@@ -374,7 +357,7 @@ public class BuildGraphAdjMatrixListDialog {
                 for (int indexItem = 0; indexItem < table.getTable().getItemCount(); indexItem++) {
                     for (int indexColumn = 1; indexColumn < table.getTable().getColumnCount(); indexColumn++) {
                         String weight = table.getTable().getItem(indexItem).getText(indexColumn);
-                        if (weight.equals("0") == false) {
+                        if (!weight.equals("0")) {
                             Node fromNode = controller.searchNode(table.getTable().getItem(indexItem).getText(0));
                             Node toNode = controller.searchNode(table.getTable().getItem(indexColumn - 1).getText(0));
                             if (fromNode != null && toNode != null) {

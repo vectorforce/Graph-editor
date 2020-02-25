@@ -15,8 +15,6 @@ public class ListDialog {
     private Shell shell;
     private ArrayList<ArrayList<Integer>> list;
 
-    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
-
     public ListDialog(Display display, ArrayList<ArrayList<Integer>> list){
         if(list == null){
             return;
@@ -28,7 +26,8 @@ public class ListDialog {
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         shell.setSize(450, 480);
         shell.setText("Список смежности");
-        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
+        String imagePath = "src/resources/";
+        shell.setImage(new Image(display, imagePath + "graph.png"));
         initTable();
 
         run();
@@ -39,8 +38,8 @@ public class ListDialog {
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 
-        while(shell.isDisposed() == false){
-            if(display.readAndDispatch() == true){
+        while(!shell.isDisposed()){
+            if(display.readAndDispatch()){
                 display.sleep();
             }
         }
@@ -51,14 +50,14 @@ public class ListDialog {
         table.addColumn("Узел");
         table.addColumn("Смежные узлы", 350);
 
-        for(int indexLine = 0; indexLine < list.size(); indexLine++){
+        for (ArrayList<Integer> aList : list) {
             String[] strings = new String[2];
             strings[1] = "";
-            for(int indexRow = 0; indexRow < list.get(indexLine).size(); indexRow++){
-                if(indexRow == 0){
-                    strings[indexRow] = String.valueOf(list.get(indexLine).get(indexRow));
+            for (int indexRow = 0; indexRow < aList.size(); indexRow++) {
+                if (indexRow == 0) {
+                    strings[indexRow] = String.valueOf(aList.get(indexRow));
                 } else {
-                    strings[1] += "  " + String.valueOf(list.get(indexLine).get(indexRow));
+                    strings[1] += "  " + String.valueOf(aList.get(indexRow));
                 }
             }
             table.addItem(strings);

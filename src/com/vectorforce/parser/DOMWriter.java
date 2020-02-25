@@ -13,14 +13,12 @@ import javax.xml.transform.stream.StreamResult;
 
 import com.vectorforce.model.Arc;
 import com.vectorforce.model.node.Node;
-import org.eclipse.swt.graphics.Point;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class DOMWriter {
     private Controller controller;
     private File file;
-    private Point origin;
 
     public DOMWriter(Controller controller, File file) {
         this.controller = controller;
@@ -104,10 +102,8 @@ public class DOMWriter {
             StreamResult streamResult = new StreamResult(file);
             transformer.transform(domSource, streamResult);
 
-        } catch (ParserConfigurationException pce) {
+        } catch (ParserConfigurationException | TransformerException pce) {
             pce.printStackTrace();
-        } catch (TransformerException tfe) {
-            tfe.printStackTrace();
         }
     }
 }

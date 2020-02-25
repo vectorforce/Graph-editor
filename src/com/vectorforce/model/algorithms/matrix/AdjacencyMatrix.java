@@ -36,7 +36,7 @@ public class AdjacencyMatrix {
             if (graph.getNodes().get(indexNode).getOutgoingArcs().size() != 0) {
                 int lineIndex = 0;
                 for (int currentLineIndex = 0; currentLineIndex < matrix.size(); currentLineIndex++) {
-                    if (matrix.get(currentLineIndex).get(0).equals(Integer.valueOf(graph.getNodes().get(indexNode).getInternalID())) == true) {
+                    if (matrix.get(currentLineIndex).get(0).equals(Integer.valueOf(graph.getNodes().get(indexNode).getInternalID()))) {
                         lineIndex = currentLineIndex;
                     }
                 }

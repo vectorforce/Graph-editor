@@ -15,8 +15,6 @@ public class MatrixDialog<Type> {
     private Shell shell;
     private ArrayList<ArrayList<Type>> matrix;
 
-    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
-
     public MatrixDialog(Display display, ArrayList<ArrayList<Type>> matrix) {
         if (matrix == null) {
             return;
@@ -29,7 +27,8 @@ public class MatrixDialog<Type> {
         } else if(matrix.get(0).get(0) instanceof  String) {
             shell.setText("Матрица инцидентности");
         }
-        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
+        String imagePath = "src/resources/";
+        shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         shell.setLayout(new FillLayout());
         this.matrix = matrix;
@@ -43,8 +42,8 @@ public class MatrixDialog<Type> {
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 
-        while (shell.isDisposed() == false) {
-            if (display.readAndDispatch() == true) {
+        while (!shell.isDisposed()) {
+            if (display.readAndDispatch()) {
                 display.sleep();
             }
         }

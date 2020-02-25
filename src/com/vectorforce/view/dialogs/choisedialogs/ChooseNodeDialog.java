@@ -21,14 +21,13 @@ public class ChooseNodeDialog {
     private Node node;
     private CommonPartChooseDialog commonPartChooseDialog;
 
-    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
-
 
     public ChooseNodeDialog(Display display, Controller controller,  GraphicComponent graphicComponent, Node node){
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Выберите тип");
-        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
+        String imagePath = "src/resources/";
+        shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         this.node = node;
@@ -44,18 +43,18 @@ public class ChooseNodeDialog {
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 
-        while(shell.isDisposed() == false){
-            if(display.readAndDispatch() == true){
+        while(!shell.isDisposed()){
+            if(display.readAndDispatch()){
                 display.sleep();
             }
         }
     }
 
     private void initButtons(){
-        Composite composite = new Group(shell, SWT.NONE);
+        Group composite = new Group(shell, SWT.NONE);
         composite.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
         composite.setForeground(ColorSetupComponent.getButtonsForegroundColor());
-        ((Group) composite).setText("Тип узла");
+        composite.setText("Тип узла");
         composite.setLayout(new GridLayout(5, false));
 
         Button buttonEmpty = new Button(composite, SWT.TOGGLE);
@@ -134,7 +133,7 @@ public class ChooseNodeDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 for (Button currentButton : commonPartChooseDialog.getButtons()) {
-                    if (currentButton.getSelection() == true) {
+                    if (currentButton.getSelection()) {
                         if(currentButton == buttonEmpty){
                             node.setType(NodeType.nodeType.EMPTY);
                         } else if(currentButton == buttonNrel){

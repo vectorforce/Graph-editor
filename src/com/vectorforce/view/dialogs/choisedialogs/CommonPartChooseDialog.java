@@ -11,28 +11,28 @@ public class CommonPartChooseDialog {
     private ArrayList<Button> buttons;
     private GraphicComponent graphicComponent;
 
-    public CommonPartChooseDialog(Controller controller, GraphicComponent graphicComponent){
+    CommonPartChooseDialog(Controller controller, GraphicComponent graphicComponent){
         this.controller = controller;
         this.graphicComponent = graphicComponent;
         buttons = new ArrayList<>();
     }
 
-    public void addButton(Button button){
+    void addButton(Button button){
         buttons.add(button);
     }
 
-    public void removeSelection() {
+    void removeSelection() {
         for (Button currentButton : buttons) {
             currentButton.setSelection(false);
         }
     }
 
     // Getters
-    public ArrayList<Button> getButtons(){
+    ArrayList<Button> getButtons(){
         return buttons;
     }
 
-    public GraphicComponent getGraphicComponent(){
+    GraphicComponent getGraphicComponent(){
         return graphicComponent;
     }
 

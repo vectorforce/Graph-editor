@@ -17,7 +17,7 @@ public class GraphicalShell {
 
     public void select(boolean select) {
         this.isSelected = select;
-        if (select == true) {
+        if (select) {
             color = selectColor;
         } else {
             color = deselectColor;
@@ -28,10 +28,6 @@ public class GraphicalShell {
     public void setColor(Color color) {
         this.color = color;
         this.deselectColor = color;
-    }
-
-    public void setSelectColor(Color selectColor){
-        this.selectColor = selectColor;
     }
 
     // Getters

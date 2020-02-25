@@ -71,8 +71,8 @@ public class MainWindow {
     private void run() {
         shell.open();
 
-        while (shell.isDisposed() == false) {
-            if (display.readAndDispatch() == true) {
+        while (!shell.isDisposed()) {
+            if (display.readAndDispatch()) {
                 display.sleep();
             }
         }
@@ -113,7 +113,7 @@ public class MainWindow {
     }
 
     private void changeTheme() {
-        if (ColorSetupComponent.isDarkTheme() == true) {
+        if (ColorSetupComponent.isDarkTheme()) {
             ColorSetupComponent.setLightTheme();
         } else {
             ColorSetupComponent.setDarkTheme();
@@ -368,7 +368,7 @@ public class MainWindow {
                 if (controller.getFiles().size() == 0) {
                     return;
                 }
-                new MatrixDialog<Integer>(display, AdjacencyMatrix.buildMatrix(controller.getCurrentGragh()));
+                new MatrixDialog<>(display, AdjacencyMatrix.buildMatrix(controller.getCurrentGragh()));
             }
         });
 
@@ -388,7 +388,7 @@ public class MainWindow {
                 if (controller.getFiles().size() == 0) {
                     return;
                 }
-                new MatrixDialog<String>(display, IncidenceMatrix.buildMatrix(controller.getCurrentGragh()));
+                new MatrixDialog<>(display, IncidenceMatrix.buildMatrix(controller.getCurrentGragh()));
             }
         });
 

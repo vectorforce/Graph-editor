@@ -34,18 +34,8 @@ public class Controller {
         indexCurrentGraph = graphs.size() - 1;
     }
 
-    public void deleteCurrentGraph() {
-        graphs.remove(indexCurrentGraph);
-        files.remove(indexCurrentGraph);
-        indexCurrentGraph--;
-    }
-
     public void deleteAllNodes() {
         getCurrentGragh().deleteAllNodes();
-    }
-
-    public void deleteAllArcs(){
-        graphs.get(indexCurrentGraph).deleteAllArcs();
     }
 
     public void deleteGraph(Graph graph) {
@@ -62,8 +52,7 @@ public class Controller {
     }
 
     public Node searchNode(String internalID){
-        Node node = getCurrentGragh().searchNode(internalID);
-        return node;
+        return getCurrentGragh().searchNode(internalID);
     }
 
     public void addArc(Arc arc) {
@@ -114,10 +103,6 @@ public class Controller {
         arc.setBinary(binary);
     }
 
-    public void setIndexCurrentGraph(int indexCurrentGraph) {
-        this.indexCurrentGraph = indexCurrentGraph;
-    }
-
     public void setStatus(OperationType.operationType status) {
         operationType.setStatus(status);
     }
@@ -133,10 +118,6 @@ public class Controller {
 
     public Graph getCurrentGragh() {
         return graphs.get(indexCurrentGraph);
-    }
-
-    public int getIndexCurrentGraph() {
-        return indexCurrentGraph;
     }
 
     public OperationType.operationType getStatus() {

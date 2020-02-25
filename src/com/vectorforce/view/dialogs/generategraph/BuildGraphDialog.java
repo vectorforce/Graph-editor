@@ -21,15 +21,14 @@ public class BuildGraphDialog {
     private GraphicComponent graphicComponent;
     private Combo[] combos;
 
-    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
-
     public BuildGraphDialog(Display display, Controller controller, GraphicComponent graphicComponent) {
         this.controller = controller;
         this.graphicComponent = graphicComponent;
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Генерация графа");
-        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
+        String imagePath = "src/resources/";
+        shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
 
@@ -45,8 +44,8 @@ public class BuildGraphDialog {
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 
-        while (shell.isDisposed() == false) {
-            if (display.readAndDispatch() == true) {
+        while (!shell.isDisposed()) {
+            if (display.readAndDispatch()) {
                 display.sleep();
             }
         }
@@ -55,11 +54,11 @@ public class BuildGraphDialog {
     private void initCombos() {
         combos = new Combo[2];
 
-        Composite compositeMatrixCombo = new Group(shell, SWT.NONE);
+        Group compositeMatrixCombo = new Group(shell, SWT.NONE);
         compositeMatrixCombo.setLayout(new GridLayout(1, false));
         compositeMatrixCombo.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
         compositeMatrixCombo.setForeground(ColorSetupComponent.getButtonsForegroundColor());
-        ((Group) compositeMatrixCombo).setText("Задать матрицей");
+        compositeMatrixCombo.setText("Задать матрицей");
         Combo matrixCombo = new Combo(compositeMatrixCombo, SWT.DROP_DOWN | SWT.READ_ONLY);
         combos[0] = matrixCombo;
         matrixCombo.setText("Выберите матрицу");
@@ -67,11 +66,11 @@ public class BuildGraphDialog {
         String itemsMatrix[] = {"Матрица смежности", "Матрица инцидентности"};
         matrixCombo.setItems(itemsMatrix);
 
-        Composite compositeListsCombo = new Group(shell, SWT.NONE);
+        Group compositeListsCombo = new Group(shell, SWT.NONE);
         compositeListsCombo.setLayout(new GridLayout(1, false));
         compositeListsCombo.setBackground(ColorSetupComponent.getWindowsCompositesForegroundColor());
         compositeListsCombo.setForeground(ColorSetupComponent.getButtonsForegroundColor());
-        ((Group) compositeListsCombo).setText("Задать списком");
+        compositeListsCombo.setText("Задать списком");
         GridData gridDataComboList = new GridData(SWT.FILL, SWT.FILL, true, true);
         compositeListsCombo.setLayoutData(gridDataComboList);
         Combo listCombo = new Combo(compositeListsCombo, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -113,8 +112,8 @@ public class BuildGraphDialog {
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                for (int index = 0; index < combos.length; index++) {
-                    String stringComboText = combos[index].getText();
+                for (Combo combo : combos) {
+                    String stringComboText = combo.getText();
                     if (!stringComboText.equals("")) {
                         MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
                         messageBox.setMessage("При продолжении текущий граф будет удален.\nПродолжить?");

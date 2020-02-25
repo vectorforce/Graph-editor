@@ -20,8 +20,6 @@ public class SetIDDialog {
     private GraphicObject graphicObject;
     private SettingForm settingForm;
 
-    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
-
     public SetIDDialog(Display display, Controller controller, GraphicObject graphicObject) {
         this.controller = controller;
         this.graphicObject = graphicObject;
@@ -29,7 +27,8 @@ public class SetIDDialog {
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setLayout(new GridLayout(1, false));
         shell.setText("Установите идентификатор");
-        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
+        String imagePath = "src/resources/";
+        shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         initForm();
 
@@ -45,7 +44,7 @@ public class SetIDDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 String ID;
-                if (settingForm.getText().getText().isEmpty() == true) {
+                if (settingForm.getText().getText().isEmpty()) {
                     ID = null;
                 } else {
                     ID = settingForm.getText().getText();
@@ -66,8 +65,8 @@ public class SetIDDialog {
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 
-        while (shell.isDisposed() == false) {
-            if (display.readAndDispatch() == true) {
+        while (!shell.isDisposed()) {
+            if (display.readAndDispatch()) {
                 display.sleep();
             }
         }

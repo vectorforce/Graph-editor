@@ -8,13 +8,11 @@ public class OperationType {
         status = operationType.CURSOR;
     }
 
-    // Setters
-    public void setStatus(operationType status){
-        this.status = status;
+    public operationType getStatus() {
+        return status;
     }
 
-    // Getters
-    public operationType getStatus(){
-        return status;
+    public void setStatus(operationType status) {
+        this.status = status;
     }
 }
