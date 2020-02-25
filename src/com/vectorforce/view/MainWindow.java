@@ -45,7 +45,7 @@ public class MainWindow {
     private Text textCurrentInformation;
     private HashMap<Pair, CTabItem> tabItemHashMap;
 
-    private String imagePath = System.getProperty("user.dir") + "\\src\\resources\\";
+    private String imagePath = "src/resources/";
 
     private Controller controller;
 
@@ -53,7 +53,7 @@ public class MainWindow {
         display = new Display();
         shell = new Shell(display);
         shell.setText("Графовый редактор");
-        shell.setImage(new Image(display, imagePath + "graphEditor.png"));
+        shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(5, false));
         mainWindowColor = ColorSetupComponent.getMainWindowsColor();
         shell.setBackground(mainWindowColor);
@@ -435,15 +435,15 @@ public class MainWindow {
         ToolBar toolBarFile = new ToolBar(shell, SWT.VERTICAL);
         toolBarFile.setBackground(ColorSetupComponent.getMainWindowsColor());
         ToolItem itemNew = new ToolItem(toolBarFile, SWT.PUSH);
-        itemNew.setImage(new Image(display, imagePath + "addFile.png"));
+        itemNew.setImage(new Image(display, imagePath + "add.png"));
         ToolItem itemOpen = new ToolItem(toolBarFile, SWT.PUSH);
-        itemOpen.setImage(new Image(display, imagePath + "openFile.png"));
+        itemOpen.setImage(new Image(display, imagePath + "open.png"));
         ToolItem itemClose = new ToolItem(toolBarFile, SWT.PUSH);
-        itemClose.setImage(new Image(display, imagePath + "closeFile.png"));
+        itemClose.setImage(new Image(display, imagePath + "close.png"));
         ToolItem itemSave = new ToolItem(toolBarFile, SWT.PUSH);
-        itemSave.setImage(new Image(display, imagePath + "saveFile.png"));
+        itemSave.setImage(new Image(display, imagePath + "save.png"));
         ToolItem itemSaveAs = new ToolItem(toolBarFile, SWT.PUSH);
-        itemSaveAs.setImage(new Image(display, imagePath + "saveAsFile.png"));
+        itemSaveAs.setImage(new Image(display, imagePath + "saveAs.png"));
 
         itemNew.addSelectionListener(new SelectionAdapter() { // A new tabItem and file is created by pressing
             @Override
@@ -496,7 +496,7 @@ public class MainWindow {
         ToolItem itemArc = new ToolItem(toolBarEdit, SWT.PUSH);
         itemArc.setImage(new Image(display, imagePath + "arrow.png"));
         ToolItem itemSetTheme = new ToolItem(toolBarEdit, SWT.PUSH);
-        itemSetTheme.setImage(new Image(display, imagePath + "themeColor.png"));
+        itemSetTheme.setImage(new Image(display, imagePath + "light.png"));
 
         // Item listeners
         itemCursor.addSelectionListener(new SelectionAdapter() {
