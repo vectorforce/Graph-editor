@@ -20,6 +20,7 @@ public class ChooseNodeDialog {
     private Shell shell;
 
     private final Node node;
+    private final String imagePath = "src/resources/";
 
     private CommonPartChooseDialog commonPartChooseDialog;
 
@@ -28,7 +29,6 @@ public class ChooseNodeDialog {
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Выберите тип");
-        final String imagePath = "src/resources/";
         shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
@@ -60,20 +60,20 @@ public class ChooseNodeDialog {
         composite.setLayout(new GridLayout(5, false));
 
         Button buttonEmpty = new Button(composite, SWT.TOGGLE);
-        buttonEmpty.setText("Пустой");
+        buttonEmpty.setImage(new Image(display, imagePath + "circle.png"));
         commonPartChooseDialog.addButton(buttonEmpty);
         Button buttonClass = new Button(composite, SWT.TOGGLE);
-        buttonClass.setText("Класс");
+        buttonClass.setImage(new Image(display, imagePath + "star.png"));
         commonPartChooseDialog.addButton(buttonClass);
         Button buttonNrel = new Button(composite, SWT.TOGGLE);
-        buttonNrel.setText("Нерол. отн.");
+        buttonNrel.setImage(new Image(display, imagePath + "cross.png"));
         commonPartChooseDialog.addButton(buttonNrel);
         Button buttonRrel = new Button(composite, SWT.TOGGLE);
-        buttonRrel.setText("Рол. отн");
+        buttonRrel.setImage(new Image(display, imagePath + "plus.png"));
         commonPartChooseDialog.addButton(buttonRrel);
         Button buttonLink = new Button(composite, SWT.TOGGLE);
-        buttonLink.setText("Связка");
         commonPartChooseDialog.addButton(buttonLink);
+        buttonLink.setImage(new Image(display, imagePath + "minus.png"));
 
         Composite compositeOK = new Composite(shell, SWT.NONE);
         compositeOK.setBackground(ColorSetupComponent.getMainWindowsColor());
