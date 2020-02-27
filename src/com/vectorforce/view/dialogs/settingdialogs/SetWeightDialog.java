@@ -14,8 +14,10 @@ import org.eclipse.swt.widgets.*;
 public class SetWeightDialog {
     private Display display;
     private Shell shell;
-    private Controller controller;
-    private Arc arc;
+
+    private final Controller controller;
+    private final Arc arc;
+
     private SettingForm settingForm;
 
     public SetWeightDialog(Display display, Controller controller, Arc arc) {
@@ -24,7 +26,7 @@ public class SetWeightDialog {
         this.arc = arc;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Установить вес");
-        String imagePath = "src/resources/";
+        final String imagePath = "src/resources/";
         shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
@@ -65,7 +67,7 @@ public class SetWeightDialog {
 
     private void run() {
         shell.pack();
-        Rectangle screenSize = display.getPrimaryMonitor().getBounds();
+        final Rectangle screenSize = display.getPrimaryMonitor().getBounds();
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 

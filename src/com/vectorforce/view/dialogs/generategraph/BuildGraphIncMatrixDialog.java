@@ -24,9 +24,9 @@ class BuildGraphIncMatrixDialog {
     private Display display;
     private Shell shell;
 
-    private Controller controller;
+    private final Controller controller;
     private GraphTable table;
-    private GraphicComponent graphicComponent;
+    private final GraphicComponent graphicComponent;
     private int arcCounter = 0;
 
 
@@ -36,7 +36,7 @@ class BuildGraphIncMatrixDialog {
         this.display = Display.getCurrent();
         shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.MAX | SWT.MIN);
         shell.setText("Задать граф");
-        String imagePath = "src/resources/";
+        final String imagePath = "src/resources/";
         shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setSize(1044, 768);
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
@@ -129,7 +129,7 @@ class BuildGraphIncMatrixDialog {
                 nodesXCounter = 0;
                 nodesYCounter++;
             }
-            Node node = new Node((startX + nodesXCounter++ * stepX), (startY + nodesYCounter * stepY));
+            final Node node = new Node((startX + nodesXCounter++ * stepX), (startY + nodesYCounter * stepY));
             node.setInternalID(currentItem.getText(0));
             controller.addNode(node);
             graphicComponent.drawNode(node);
@@ -153,14 +153,14 @@ class BuildGraphIncMatrixDialog {
 
         // Set editor for table
         table.getTable().addListener(SWT.MouseDown, event -> {
-            Rectangle clientArea = table.getTable().getClientArea();
-            Point point = new Point(event.x, event.y);
+            final Rectangle clientArea = table.getTable().getClientArea();
+            final Point point = new Point(event.x, event.y);
             int index = table.getTable().getTopIndex();
             while (index < table.getTable().getItemCount()) {
                 boolean visible = false;
                 TableItem item = table.getTable().getItem(index);
                 for (int indexNodes = 0; indexNodes < table.getTable().getColumnCount(); indexNodes++) {
-                    Rectangle rect = item.getBounds(indexNodes);
+                    final Rectangle rect = item.getBounds(indexNodes);
                     if (rect.contains(point)) {
                         if (indexNodes != 0) {
                             addCellsEditor(item, editor, indexNodes);
@@ -285,8 +285,8 @@ class BuildGraphIncMatrixDialog {
                             if (string.substring(0, 1).equals("-")) {
                                 fromNode = controller.searchNode(table.getTable().getItem(indexRow).getText(0));
                             } else {
-                                String[] strings = string.split("-");
-                                StringBuilder stringBuilder = new StringBuilder();
+                                final String[] strings = string.split("-");
+                                final StringBuilder stringBuilder = new StringBuilder();
                                 for (String currentString : strings) {
                                     stringBuilder.append(currentString);
                                 }
@@ -297,7 +297,7 @@ class BuildGraphIncMatrixDialog {
                         }
                     }
                     if(fromNode != null && toNode != null){
-                        Arc arc = new Arc(fromNode, toNode);
+                        final Arc arc = new Arc(fromNode, toNode);
                         controller.addArc(arc);
                         arc.setWeight(weight);
                         graphicComponent.drawArc(arc);

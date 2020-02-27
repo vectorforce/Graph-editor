@@ -13,9 +13,10 @@ import java.util.ArrayList;
 public class MatrixDialog<Type> {
     private Display display;
     private Shell shell;
+
     private ArrayList<ArrayList<Type>> matrix;
 
-    public MatrixDialog(Display display, ArrayList<ArrayList<Type>> matrix) {
+    public MatrixDialog(Display display, final ArrayList<ArrayList<Type>> matrix) {
         if (matrix == null) {
             return;
         }
@@ -27,7 +28,7 @@ public class MatrixDialog<Type> {
         } else if(matrix.get(0).get(0) instanceof  String) {
             shell.setText("Матрица инцидентности");
         }
-        String imagePath = "src/resources/";
+        final String imagePath = "src/resources/";
         shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         shell.setLayout(new FillLayout());
@@ -38,7 +39,7 @@ public class MatrixDialog<Type> {
     }
 
     private void run() {
-        Rectangle screenSize = display.getPrimaryMonitor().getBounds();
+        final Rectangle screenSize = display.getPrimaryMonitor().getBounds();
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 
@@ -50,9 +51,9 @@ public class MatrixDialog<Type> {
     }
 
     private void initTable() {
-        GraphTable graphTable = new GraphTable(shell);
+        final GraphTable graphTable = new GraphTable(shell);
         for (int indexLine = 0; indexLine < matrix.size(); indexLine++) {
-            String[] strings = new String[matrix.get(indexLine).size()];
+            final String[] strings = new String[matrix.get(indexLine).size()];
             for (int indexRow = 0; indexRow < matrix.get(indexLine).size(); indexRow++) {
                 if (indexLine == 0) {
                     if (indexRow == 0) {

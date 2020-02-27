@@ -9,9 +9,9 @@ public class IncidenceMatrix {
         if (graph.getArcs().size() == 0) {
             return null;
         }
-        ArrayList<ArrayList<String>> matrix = new ArrayList<>();
+        final ArrayList<ArrayList<String>> matrix = new ArrayList<>();
         // Building first line of matrix
-        ArrayList<String> firstLine = new ArrayList<>();
+        final ArrayList<String> firstLine = new ArrayList<>();
         for (int indexArc = 0; indexArc <= graph.getArcs().size(); indexArc++) {
             if (indexArc == 0) {
                 firstLine.add(indexArc, ""); // matrix[0][0] = -1000
@@ -22,7 +22,7 @@ public class IncidenceMatrix {
         matrix.add(firstLine);
         // Building other lines
         for (int index = 0; index < graph.getNodes().size(); index++) {
-            ArrayList<String> currentLine = new ArrayList<>();
+            final ArrayList<String> currentLine = new ArrayList<>();
             currentLine.add(0, String.valueOf(graph.getNodes().get(index).getInternalID()));
             for (int indexNode = 1; indexNode <= graph.getArcs().size(); indexNode++) {
                 currentLine.add(indexNode, String.valueOf(0));

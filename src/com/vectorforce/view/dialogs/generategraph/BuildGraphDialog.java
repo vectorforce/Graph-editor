@@ -17,8 +17,8 @@ public class BuildGraphDialog {
     private Display display;
     private Shell shell;
 
-    private Controller controller;
-    private GraphicComponent graphicComponent;
+    private final Controller controller;
+    private final GraphicComponent graphicComponent;
     private Combo[] combos;
 
     public BuildGraphDialog(Display display, Controller controller, GraphicComponent graphicComponent) {
@@ -27,7 +27,7 @@ public class BuildGraphDialog {
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Генерация графа");
-        String imagePath = "src/resources/";
+        final String imagePath = "src/resources/";
         shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
@@ -40,7 +40,7 @@ public class BuildGraphDialog {
 
     private void run() {
         shell.pack();
-        Rectangle screenSize = display.getPrimaryMonitor().getBounds();
+        final Rectangle screenSize = display.getPrimaryMonitor().getBounds();
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 

@@ -16,8 +16,10 @@ import org.eclipse.swt.widgets.*;
 public class SetIDDialog {
     private Display display;
     private Shell shell;
-    private Controller controller;
-    private GraphicObject graphicObject;
+
+    private final Controller controller;
+    private final GraphicObject graphicObject;
+
     private SettingForm settingForm;
 
     public SetIDDialog(Display display, Controller controller, GraphicObject graphicObject) {
@@ -27,7 +29,7 @@ public class SetIDDialog {
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setLayout(new GridLayout(1, false));
         shell.setText("Установите идентификатор");
-        String imagePath = "src/resources/";
+        final String imagePath = "src/resources/";
         shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         initForm();
@@ -61,7 +63,7 @@ public class SetIDDialog {
 
     private void run() {
         shell.pack();
-        Rectangle screenSize = display.getPrimaryMonitor().getBounds();
+        final Rectangle screenSize = display.getPrimaryMonitor().getBounds();
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 

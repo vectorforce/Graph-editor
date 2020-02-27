@@ -18,7 +18,9 @@ import org.eclipse.swt.widgets.*;
 public class ChooseNodeDialog {
     private Display display;
     private Shell shell;
-    private Node node;
+
+    private final Node node;
+
     private CommonPartChooseDialog commonPartChooseDialog;
 
 
@@ -26,7 +28,7 @@ public class ChooseNodeDialog {
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Выберите тип");
-        String imagePath = "src/resources/";
+        final String imagePath = "src/resources/";
         shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
@@ -39,7 +41,7 @@ public class ChooseNodeDialog {
 
     private void run(){
         shell.pack();
-        Rectangle screenSize = display.getPrimaryMonitor().getBounds();
+        final Rectangle screenSize = display.getPrimaryMonitor().getBounds();
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 

@@ -9,11 +9,12 @@ import java.util.LinkedList;
 import java.util.Random;
 
 public class Node {
+    private final static int diameter = 25;
+
     private String ID;
     private String internalID;
     private int x;
     private int y;
-    private static int diameter = 25;
     private LinkedList<Arc> ingoingArcs;
     private LinkedList<Arc> outgoingArcs;
     private GraphicalShell graphicalShell;

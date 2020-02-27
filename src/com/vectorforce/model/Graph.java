@@ -6,8 +6,8 @@ import java.util.LinkedList;
 
 public class Graph implements IGraph {
     private String ID;
-    private LinkedList<Node> nodes;
-    private LinkedList<Arc> arcs;
+    private final LinkedList<Node> nodes;
+    private final LinkedList<Arc> arcs;
     private boolean isOriented;
     private boolean isMixed;
     private boolean isFull;
@@ -26,7 +26,7 @@ public class Graph implements IGraph {
             deleteAllArcs();
             for (int indexFrom = 0; indexFrom < nodes.size() - 1; indexFrom++) {
                 for (int indexTo = 1; indexTo < nodes.size(); indexTo++) {
-                    Arc arc = new Arc(nodes.get(indexFrom), nodes.get(indexTo));
+                     final Arc arc = new Arc(nodes.get(indexFrom), nodes.get(indexTo));
                     if (arc.getID() != null) {
                         arc.setOriented(false);
                         arcs.add(arc);
@@ -58,7 +58,7 @@ public class Graph implements IGraph {
     }
 
     public Node searchNode(String internalID) {
-        for (Node currentNode : getNodes()) {
+        for (final Node currentNode : getNodes()) {
             if (currentNode.getInternalID().equals(internalID)) {
                 return currentNode;
             }
@@ -104,10 +104,10 @@ public class Graph implements IGraph {
     }
 
     public void removeSelection() {
-        for (Node currentNode : getNodes()) {
+        for (final Node currentNode : getNodes()) {
             currentNode.getGraphicalShell().select(false);
         }
-        for (Arc currentArc : getArcs()) {
+        for (final Arc currentArc : getArcs()) {
             currentArc.getGraphicalShell().select(false);
         }
     }
@@ -122,7 +122,7 @@ public class Graph implements IGraph {
         }
         int counterOriented = 0;
         int counterNonOriented = 0;
-        for (Arc arc : arcs) {
+        for (final Arc arc : arcs) {
             if (arc.isOriented()) {
                 counterOriented++;
             } else {
@@ -145,7 +145,7 @@ public class Graph implements IGraph {
         }
         // Check on full
         if (!isOriented && !isMixed) {
-            int amountNodes = getNodes().size();
+            final int amountNodes = getNodes().size();
             isFull = (amountNodes * (amountNodes - 1) / 2) == getArcs().size();
         }
     }

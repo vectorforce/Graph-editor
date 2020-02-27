@@ -21,13 +21,13 @@ public class Arc {
         // Check the link
         boolean isLink = false;
         for (int index = 0; index < fromNode.getIngoingArcs().size(); index++) {
-            Arc currentArc = fromNode.getIngoingArcs().get(index);
+            final Arc currentArc = fromNode.getIngoingArcs().get(index);
             if (currentArc.getFromNode().getInternalID().equals(toNode.getInternalID())) {
                 isLink = true;
             }
         }
         for (int index = 0; index < fromNode.getOutgoingArcs().size(); index++) {
-            Arc currentArc = fromNode.getOutgoingArcs().get(index);
+            final Arc currentArc = fromNode.getOutgoingArcs().get(index);
             if (currentArc.getToNode().getInternalID().equals(toNode.getInternalID())) {
                 isLink = true;
             }
@@ -52,8 +52,8 @@ public class Arc {
     // Check for the presence of a point on the arc
     public boolean contains(Point point) {
         int delta = 3; // deviation from arc
-        Point fromPoint = new Point(fromNode.getX(), fromNode.getY());
-        Point toPoint = new Point(toNode.getX(), toNode.getY());
+        final Point fromPoint = new Point(fromNode.getX(), fromNode.getY());
+        final Point toPoint = new Point(toNode.getX(), toNode.getY());
         int lengthSumSegments = distance(fromPoint, point) + distance(point, toPoint);
         int arcLength = distance(fromPoint, toPoint);
         return lengthSumSegments > arcLength - delta && lengthSumSegments < arcLength + delta;

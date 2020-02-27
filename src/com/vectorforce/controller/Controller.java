@@ -9,8 +9,8 @@ import java.io.File;
 import java.util.LinkedList;
 
 public class Controller {
-    private LinkedList<Graph> graphs;
-    private LinkedList<File> files;
+    private final LinkedList<Graph> graphs;
+    private final LinkedList<File> files;
     private int indexCurrentGraph;
     private OperationType operationType;
 
@@ -21,21 +21,21 @@ public class Controller {
         operationType = new OperationType();
     }
 
-    public void buildFullGraph(){
-        getCurrentGragh().buildFullGraph();
+    public void buildFullGraph() {
+        getCurrentGraph().buildFullGraph();
     }
 
     public void createGraph(String path) {
-        Graph graph = new Graph();
+        final Graph graph = new Graph();
         graphs.add(graph);
-        // Creating file for this graph
-        File file = new File(path);
+        // Creating file for the graph
+        final File file = new File(path);
         files.add(file);
         indexCurrentGraph = graphs.size() - 1;
     }
 
     public void deleteAllNodes() {
-        getCurrentGragh().deleteAllNodes();
+        getCurrentGraph().deleteAllNodes();
     }
 
     public void deleteGraph(Graph graph) {
@@ -51,8 +51,8 @@ public class Controller {
         graphs.get(indexCurrentGraph).deleteNode(node);
     }
 
-    public Node searchNode(String internalID){
-        return getCurrentGragh().searchNode(internalID);
+    public Node searchNode(String internalID) {
+        return getCurrentGraph().searchNode(internalID);
     }
 
     public void addArc(Arc arc) {
@@ -116,7 +116,7 @@ public class Controller {
         return files.get(indexCurrentGraph);
     }
 
-    public Graph getCurrentGragh() {
+    public Graph getCurrentGraph() {
         return graphs.get(indexCurrentGraph);
     }
 

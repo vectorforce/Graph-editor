@@ -34,6 +34,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MainWindow {
     private Display display;
@@ -43,11 +44,11 @@ public class MainWindow {
     private GraphicComponent currentGraphicComponent;
     private CTabFolder tabFolder;
     private Text textCurrentInformation;
-    private HashMap<Pair<Graph, GraphicComponent>, CTabItem> tabItemHashMap;
+    private final HashMap<Pair<Graph, GraphicComponent>, CTabItem> tabItemHashMap;
 
-    private String imagePath = "src/resources/";
+    private final String imagePath = "src/resources/";
 
-    private Controller controller;
+    private final Controller controller;
 
     public MainWindow() {
         display = new Display();
@@ -81,7 +82,7 @@ public class MainWindow {
 
     private void createTabItem(String path) {
         if (path != null) {
-            for (File currentFile : controller.getFiles()) {
+            for (final File currentFile : controller.getFiles()) {
                 if (currentFile.getPath().equals(path)) {
                     MessageBox message = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
                     message.setMessage("Файл уже открыт!");
@@ -105,7 +106,7 @@ public class MainWindow {
         tabItem.setFont(FontSetupComponent.getTabItemsFont());
         tabItem.setText(controller.getCurrentFile().getName());
         // Creating Pair that will link graphicComponent and graph
-        Pair<Graph, GraphicComponent> graphGraphicComponentPair = new Pair<>(controller.getCurrentGragh(), currentGraphicComponent);
+        Pair<Graph, GraphicComponent> graphGraphicComponentPair = new Pair<>(controller.getCurrentGraph(), currentGraphicComponent);
         // Creating HashMap that will link previous Pair and appropriate TabItem
         tabItemHashMap.put(graphGraphicComponentPair, tabItem);
 
@@ -161,9 +162,9 @@ public class MainWindow {
         tabFolder.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                for (java.util.Map.Entry<Pair<Graph, GraphicComponent>, CTabItem> entry : tabItemHashMap.entrySet()) {
+                for (final Map.Entry<Pair<Graph, GraphicComponent>, CTabItem> entry : tabItemHashMap.entrySet()) {
                     if (entry.getValue() == tabFolder.getSelection()) {
-                        Pair<Graph, GraphicComponent> currentPair = entry.getKey();
+                        final Pair<Graph, GraphicComponent> currentPair = entry.getKey();
                         currentGraphicComponent = currentPair.getValue();
                         controller.setCurrentGraph(currentPair.getKey());
                         currentGraphicComponent.applyCurrentTheme();
@@ -331,14 +332,14 @@ public class MainWindow {
                 if (controller.getFiles().size() == 0) {
                     return;
                 }
-                if(controller.getCurrentGragh().getNodes().size() > 1){
+                if(controller.getCurrentGraph().getNodes().size() > 1){
                         MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
                         messageBox.setMessage("Приведение к полному графу сделает его неориентированным.\nПродолжить?");
                         int buttonID = messageBox.open();
                         switch (buttonID){
                             case SWT.YES:
                                 controller.buildFullGraph();
-                                for(Arc currentArc : controller.getCurrentGragh().getArcs()){
+                                for(Arc currentArc : controller.getCurrentGraph().getArcs()){
                                     currentGraphicComponent.drawArc(currentArc);
                                 }
                                 currentGraphicComponent.redraw();
@@ -367,7 +368,7 @@ public class MainWindow {
                 if (controller.getFiles().size() == 0) {
                     return;
                 }
-                new MatrixDialog<>(display, AdjacencyMatrix.buildMatrix(controller.getCurrentGragh()));
+                new MatrixDialog<>(display, AdjacencyMatrix.buildMatrix(controller.getCurrentGraph()));
             }
         });
 
@@ -377,7 +378,7 @@ public class MainWindow {
                 if (controller.getFiles().size() == 0) {
                     return;
                 }
-                new ListDialog(display, AdjacencyList.buildList(controller.getCurrentGragh()));
+                new ListDialog(display, AdjacencyList.buildList(controller.getCurrentGraph()));
             }
         });
 
@@ -387,7 +388,7 @@ public class MainWindow {
                 if (controller.getFiles().size() == 0) {
                     return;
                 }
-                new MatrixDialog<>(display, IncidenceMatrix.buildMatrix(controller.getCurrentGragh()));
+                new MatrixDialog<>(display, IncidenceMatrix.buildMatrix(controller.getCurrentGraph()));
             }
         });
 
@@ -534,7 +535,7 @@ public class MainWindow {
     }
 
     private void newFile() {
-        String path = createFileDialog(SWT.SAVE).open();
+        final String path = createFileDialog(SWT.SAVE).open();
         if (path == null) {
             return;
         }
@@ -544,9 +545,9 @@ public class MainWindow {
     }
 
     private void openFile() {
-        String path = createFileDialog(SWT.OPEN).open();
+        final String path = createFileDialog(SWT.OPEN).open();
         if (path != null) {
-            for (File currentFile : controller.getFiles()) {
+            for (final File currentFile : controller.getFiles()) {
                 if (currentFile.getPath().equals(path)) {
                     MessageBox message = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
                     message.setMessage("Файл уже открыт!");
@@ -559,15 +560,15 @@ public class MainWindow {
         }
         createTabItem(path);
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser saxParser = factory.newSAXParser();
-            SAXReader saxReader = new SAXReader(controller);
+            final SAXParserFactory factory = SAXParserFactory.newInstance();
+            final SAXParser saxParser = factory.newSAXParser();
+            final SAXReader saxReader = new SAXReader(controller);
             saxParser.parse(controller.getCurrentFile(), saxReader);
             // Drawing graph
-            for(Node currentNode : controller.getCurrentGragh().getNodes()){
+            for(final Node currentNode : controller.getCurrentGraph().getNodes()){
                 currentGraphicComponent.drawNode(currentNode);
             }
-            for(Arc currentArc : controller.getCurrentGragh().getArcs()){
+            for(final Arc currentArc : controller.getCurrentGraph().getArcs()){
                 currentGraphicComponent.drawArc(currentArc);
             }
         } catch (Exception e) {
@@ -579,7 +580,7 @@ public class MainWindow {
 
     private void saveFile(File file) {
         controller.removeSelection();
-        DOMWriter xmlWriter = new DOMWriter(controller, file);
+        final DOMWriter xmlWriter = new DOMWriter(controller, file);
         xmlWriter.write();
     }
 
@@ -587,17 +588,17 @@ public class MainWindow {
         if (controller.getFiles().size() == 0) {
             return;
         }
-        String path = createFileDialog(SWT.SAVE).open();
+        final String path = createFileDialog(SWT.SAVE).open();
         if (path == null) {
             return;
         }
-        File file = new File(path);
+        final File file = new File(path);
         saveFile(file);
     }
 
     private void closeFile(CTabFolderEvent cTabFolderEvent) {
         Pair<Graph, GraphicComponent> currentPair = null;
-        for (java.util.Map.Entry<Pair<Graph, GraphicComponent>, CTabItem> entry : tabItemHashMap.entrySet()) {
+        for (final Map.Entry<Pair<Graph, GraphicComponent>, CTabItem> entry : tabItemHashMap.entrySet()) {
             if (entry.getValue() == cTabFolderEvent.item) {
                 currentPair = entry.getKey();
             }
@@ -611,7 +612,7 @@ public class MainWindow {
 
     private void closeFile(CTabItem tabItem) {
         Pair<Graph, GraphicComponent> currentPair = null;
-        for (java.util.Map.Entry<Pair<Graph, GraphicComponent>, CTabItem> entry : tabItemHashMap.entrySet()) {
+        for (final Map.Entry<Pair<Graph, GraphicComponent>, CTabItem> entry : tabItemHashMap.entrySet()) {
             if (entry.getValue() == tabItem) {
                 currentPair = entry.getKey();
             }

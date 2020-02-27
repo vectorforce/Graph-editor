@@ -24,16 +24,17 @@ import java.util.Random;
 class BuildGraphAdjMatrixListDialog {
     private Display display;
     private Shell shell;
+
     private GraphTable table;
     private Controller controller;
     private GraphicComponent graphicComponent;
-    private int windowType;
+    private final int windowType;
     // Main buttons
     private Button buttonAddNode;
     private Button buttonDeleteNode;
     private Button buttonBuildGraph;
 
-    BuildGraphAdjMatrixListDialog(Controller controller, GraphicComponent graphicComponent, int windowType) {
+    BuildGraphAdjMatrixListDialog(final Controller controller, final GraphicComponent graphicComponent, final int windowType) {
         this.windowType = windowType;
         if (windowType != 1 && windowType != 2) {
             return;
@@ -43,7 +44,7 @@ class BuildGraphAdjMatrixListDialog {
         display = Display.getCurrent();
         shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.MAX | SWT.MIN);
         shell.setText("Задать граф");
-        String imagePath = "src/resources/";
+        final String imagePath = "src/resources/";
         shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(1, false));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
@@ -63,7 +64,7 @@ class BuildGraphAdjMatrixListDialog {
 
     private void run() {
         shell.open();
-        Rectangle screenSize = display.getPrimaryMonitor().getBounds();
+        final Rectangle screenSize = display.getPrimaryMonitor().getBounds();
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
 
         while (!shell.isDisposed()) {
@@ -75,7 +76,7 @@ class BuildGraphAdjMatrixListDialog {
 
     private void addCellsEditor(TableItem item, TableEditor editor, int indexNodes) {
         // Clean up any previous editor control
-        Control oldEditor = editor.getEditor();
+        final Control oldEditor = editor.getEditor();
         if (oldEditor != null) {
             oldEditor.dispose();
         }
@@ -107,7 +108,7 @@ class BuildGraphAdjMatrixListDialog {
         // Protection against incorrect input
         newEditor.addListener(SWT.Verify, e -> {
             String string = e.text;
-            char[] chars = new char[string.length()];
+            final char[] chars = new char[string.length()];
             string.getChars(0, chars.length, chars, 0);
             for (char aChar : chars) {
                 if (windowType == 1) {
@@ -149,7 +150,7 @@ class BuildGraphAdjMatrixListDialog {
                 nodesXCounter = 0;
                 nodesYCounter++;
             }
-            Node node = new Node((startX + nodesXCounter++ * stepX), (startY + nodesYCounter * stepY));
+            final Node node = new Node((startX + nodesXCounter++ * stepX), (startY + nodesYCounter * stepY));
             node.setInternalID(currentItem.getText(0));
             controller.addNode(node);
             graphicComponent.drawNode(node);
@@ -158,21 +159,21 @@ class BuildGraphAdjMatrixListDialog {
 
     // Initialization methods
     private void initTableEditor() {
-        TableEditor editor = new TableEditor(table.getTable());
+        final TableEditor editor = new TableEditor(table.getTable());
         editor.horizontalAlignment = SWT.CENTER;
         editor.grabHorizontal = true;
         editor.minimumWidth = 50;
 
         // Set editor for table
         table.getTable().addListener(SWT.MouseDown, event -> {
-            Rectangle clientArea = table.getTable().getClientArea();
-            Point point = new Point(event.x, event.y);
+            final Rectangle clientArea = table.getTable().getClientArea();
+            final Point point = new Point(event.x, event.y);
             int index = table.getTable().getTopIndex();
             while (index < table.getTable().getItemCount()) {
                 boolean visible = false;
                 TableItem item = table.getTable().getItem(index);
                 for (int indexNodes = 0; indexNodes < table.getTable().getColumnCount(); indexNodes++) {
-                    Rectangle rect = item.getBounds(indexNodes);
+                    final Rectangle rect = item.getBounds(indexNodes);
                     if (rect.contains(point)) {
                         if (indexNodes != 0) {
                             if (windowType == 1) {
@@ -266,7 +267,7 @@ class BuildGraphAdjMatrixListDialog {
         buttonAddNode.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                String[] strings = new String[2];
+                final String[] strings = new String[2];
                 // Generating random node
                 strings[0] = String.valueOf(new Random().nextInt(1 + 125000));
                 strings[1] = "";
@@ -290,12 +291,12 @@ class BuildGraphAdjMatrixListDialog {
             public void widgetSelected(SelectionEvent e) {
                 addNodes();
                 for (TableItem currentItem : table.getTable().getItems()) {
-                    String[] nodes = currentItem.getText(1).split(" ");
-                    Node fromNode = controller.searchNode(currentItem.getText(0));
-                    for (String node : nodes) {
-                        Node toNode = controller.searchNode(node);
+                    final String[] nodes = currentItem.getText(1).split(" ");
+                    final Node fromNode = controller.searchNode(currentItem.getText(0));
+                    for (final String node : nodes) {
+                        final Node toNode = controller.searchNode(node);
                         if (toNode != null && fromNode != null) {
-                            Arc arc = new Arc(fromNode, toNode);
+                            final Arc arc = new Arc(fromNode, toNode);
                             if (arc.getID() != null) {
                                 controller.addArc(arc);
                                 graphicComponent.drawArc(arc);
@@ -315,7 +316,7 @@ class BuildGraphAdjMatrixListDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 // Generating internal ID of node
-                String stringID = String.valueOf(new Random().nextInt(1 + 125000));
+                final String stringID = String.valueOf(new Random().nextInt(1 + 125000));
                 table.addColumn(stringID);
                 // Filling the cells
                 String[] strings = new String[table.getTable().getColumnCount()];
@@ -356,12 +357,12 @@ class BuildGraphAdjMatrixListDialog {
                 addNodes();
                 for (int indexItem = 0; indexItem < table.getTable().getItemCount(); indexItem++) {
                     for (int indexColumn = 1; indexColumn < table.getTable().getColumnCount(); indexColumn++) {
-                        String weight = table.getTable().getItem(indexItem).getText(indexColumn);
+                        final String weight = table.getTable().getItem(indexItem).getText(indexColumn);
                         if (!weight.equals("0")) {
-                            Node fromNode = controller.searchNode(table.getTable().getItem(indexItem).getText(0));
-                            Node toNode = controller.searchNode(table.getTable().getItem(indexColumn - 1).getText(0));
+                            final Node fromNode = controller.searchNode(table.getTable().getItem(indexItem).getText(0));
+                            final Node toNode = controller.searchNode(table.getTable().getItem(indexColumn - 1).getText(0));
                             if (fromNode != null && toNode != null) {
-                                Arc arc = new Arc(fromNode, toNode);
+                                final Arc arc = new Arc(fromNode, toNode);
                                 controller.addArc(arc);
                                 arc.setWeight(Integer.valueOf(weight));
                                 graphicComponent.drawArc(arc);

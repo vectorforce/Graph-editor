@@ -2,9 +2,10 @@ package com.vectorforce.controller.common;
 
 public class OperationType {
     public enum operationType {CURSOR, ARC}
+
     private operationType status;
 
-    public OperationType(){
+    public OperationType() {
         status = operationType.CURSOR;
     }
 

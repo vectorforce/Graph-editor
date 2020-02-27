@@ -7,9 +7,9 @@ import org.eclipse.swt.widgets.Button;
 import java.util.ArrayList;
 
 public class CommonPartChooseDialog {
-    private Controller controller;
-    private ArrayList<Button> buttons;
-    private GraphicComponent graphicComponent;
+    private final Controller controller;
+    private final ArrayList<Button> buttons;
+    private final GraphicComponent graphicComponent;
 
     CommonPartChooseDialog(Controller controller, GraphicComponent graphicComponent){
         this.controller = controller;

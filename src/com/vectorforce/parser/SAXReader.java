@@ -10,7 +10,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class SAXReader extends DefaultHandler {
-    private Controller controller;
+    private final Controller controller;
     private Node node;
     private Arc arc;
 
@@ -24,7 +24,7 @@ public class SAXReader extends DefaultHandler {
 
     private Color getColor(String string) {
         // Split the string for getting necessary RGB codes
-        String[] colorString = string.split(" ");
+        final String[] colorString = string.split(" ");
         for (int index = 1; index < colorString.length - 1; index++) {
             if (index == 1) {
                 colorString[index] = colorString[index].substring(1, colorString[index].length() - 1);
@@ -42,10 +42,10 @@ public class SAXReader extends DefaultHandler {
 
         switch (qName) {
             case "node": { // Creating node
-                String ID = attributes.getValue("ID");
-                String internalID = attributes.getValue("internalID");
-                int x = Integer.valueOf(attributes.getValue("x"));
-                int y = Integer.valueOf(attributes.getValue("y"));
+                final String ID = attributes.getValue("ID");
+                final String internalID = attributes.getValue("internalID");
+                final int x = Integer.valueOf(attributes.getValue("x"));
+                final int y = Integer.valueOf(attributes.getValue("y"));
 
                 node = new Node(x, y);
                 node.setID(ID);
@@ -65,9 +65,9 @@ public class SAXReader extends DefaultHandler {
             case "arc": { // Creating arc
                 // Temporarily take two random nodes for creating arc
                 arc = new Arc(new Node(30, 20), new Node(70, 50));
-                controller.getCurrentGragh().getNodes().get(0).getOutgoingArcs().remove(arc);
-                controller.getCurrentGragh().getNodes().get(1).getIngoingArcs().remove(arc);
-                String ID = attributes.getValue("ID");
+                controller.getCurrentGraph().getNodes().get(0).getOutgoingArcs().remove(arc);
+                controller.getCurrentGraph().getNodes().get(1).getIngoingArcs().remove(arc);
+                final String ID = attributes.getValue("ID");
                 boolean isBinary = false;
                 boolean isOriented = false;
                 if (attributes.getValue("isBinary").equals("true")) {
@@ -76,12 +76,12 @@ public class SAXReader extends DefaultHandler {
                 if (attributes.getValue("isOriented").equals("true")) {
                     isOriented = true;
                 }
-                int weight = Integer.valueOf(attributes.getValue("weight"));
+                final int weight = Integer.valueOf(attributes.getValue("weight"));
                 arc.setID(ID);
                 arc.setWeight(weight);
                 arc.setBinary(isBinary);
                 arc.setOriented(isOriented);
-                Color color = getColor(attributes.getValue("color"));
+                final Color color = getColor(attributes.getValue("color"));
                 if (!color.equals(ColorSetupComponent.getDefaultArcColorDarkTheme()) &&
                         !color.equals(ColorSetupComponent.getDefaultObjectColorLightTheme())) {
                     arc.getGraphicalShell().setColor(color);
@@ -138,14 +138,14 @@ public class SAXReader extends DefaultHandler {
             }
             bType = false;
         } else if (bToNode) {
-            for (Node currentNode : controller.getCurrentGragh().getNodes()) {
+            for (final Node currentNode : controller.getCurrentGraph().getNodes()) {
                 if (currentNode.getInternalID().equals(new String(ch, start, length))) {
                     arc.setToNode(currentNode);
                 }
             }
             bToNode = false;
         } else if (bFromNode) {
-            for (Node currentNode : controller.getCurrentGragh().getNodes()) {
+            for (final Node currentNode : controller.getCurrentGraph().getNodes()) {
                 if (currentNode.getInternalID().equals(new String(ch, start, length))) {
                     arc.setFromNode(currentNode);
                 }

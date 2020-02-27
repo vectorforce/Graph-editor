@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class ListDialog {
     private Display display;
     private Shell shell;
+
     private ArrayList<ArrayList<Integer>> list;
 
     public ListDialog(Display display, ArrayList<ArrayList<Integer>> list){
@@ -26,7 +27,7 @@ public class ListDialog {
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
         shell.setSize(450, 480);
         shell.setText("Список смежности");
-        String imagePath = "src/resources/";
+        final String imagePath = "src/resources/";
         shell.setImage(new Image(display, imagePath + "graph.png"));
         initTable();
 
@@ -34,7 +35,7 @@ public class ListDialog {
     }
 
     private void run(){
-        Rectangle screenSize = display.getPrimaryMonitor().getBounds();
+        final Rectangle screenSize = display.getPrimaryMonitor().getBounds();
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 
@@ -46,12 +47,12 @@ public class ListDialog {
     }
 
     private void initTable(){
-        GraphTable table = new GraphTable(shell);
+        final GraphTable table = new GraphTable(shell);
         table.addColumn("Узел");
         table.addColumn("Смежные узлы", 350);
 
         for (ArrayList<Integer> aList : list) {
-            String[] strings = new String[2];
+            final String[] strings = new String[2];
             strings[1] = "";
             for (int indexRow = 0; indexRow < aList.size(); indexRow++) {
                 if (indexRow == 0) {

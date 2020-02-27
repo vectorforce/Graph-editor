@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 public class GraphTable {
-    private Table table;
+    private final Table table;
 
     public GraphTable(Composite composite) {
         table = new Table(composite, SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY | SWT.BORDER | SWT.FULL_SELECTION);

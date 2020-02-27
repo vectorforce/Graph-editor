@@ -17,8 +17,10 @@ import org.eclipse.swt.widgets.*;
 public class ChooseArcDialog {
     private Display display;
     private Shell shell;
+
+    private final Arc arc;
+
     private CommonPartChooseDialog commonPartChooseDialog;
-    private Arc arc;
 
     public ChooseArcDialog(Display display, Controller controller,  GraphicComponent graphicComponent, Arc arc) {
         commonPartChooseDialog = new CommonPartChooseDialog(controller, graphicComponent);
@@ -26,7 +28,7 @@ public class ChooseArcDialog {
         this.display = display;
         shell = new Shell(display, SWT.CLOSE | SWT.APPLICATION_MODAL);
         shell.setText("Выберите тип");
-        String imagePath = "src/resources/";
+        final String imagePath = "src/resources/";
         shell.setImage(new Image(display, imagePath + "graph.png"));
         shell.setLayout(new GridLayout(1, true));
         shell.setBackground(ColorSetupComponent.getMainWindowsColor());
@@ -37,7 +39,7 @@ public class ChooseArcDialog {
 
     private void run() {
         shell.pack();
-        Rectangle screenSize = display.getPrimaryMonitor().getBounds();
+        final Rectangle screenSize = display.getPrimaryMonitor().getBounds();
         shell.setLocation((screenSize.width - shell.getBounds().width) / 2, (screenSize.height - shell.getBounds().height) / 2);
         shell.open();
 

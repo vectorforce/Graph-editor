@@ -1,6 +1,7 @@
 package com.vectorforce.parser;
 
 import com.vectorforce.controller.Controller;
+
 import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,8 +18,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class DOMWriter {
-    private Controller controller;
-    private File file;
+    private final Controller controller;
+    private final File file;
 
     public DOMWriter(Controller controller, File file) {
         this.controller = controller;
@@ -28,31 +29,31 @@ public class DOMWriter {
     public void write() {
         try {
 
-            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 
-            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+            final DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
 
-            Document document = documentBuilder.newDocument();
+            final Document document = documentBuilder.newDocument();
 
             // root element
-            Element root = document.createElement("graph");
-            root.setAttribute("ID", controller.getCurrentGragh().getID());
-            root.setAttribute("isOriented", String.valueOf(controller.getCurrentGragh().isOriented()));
-            root.setAttribute("isMixed", String.valueOf(controller.getCurrentGragh().isMixed()));
-            root.setAttribute("isFull", String.valueOf(controller.getCurrentGragh().isFull()));
+            final Element root = document.createElement("graph");
+            root.setAttribute("ID", controller.getCurrentGraph().getID());
+            root.setAttribute("isOriented", String.valueOf(controller.getCurrentGraph().isOriented()));
+            root.setAttribute("isMixed", String.valueOf(controller.getCurrentGraph().isMixed()));
+            root.setAttribute("isFull", String.valueOf(controller.getCurrentGraph().isFull()));
             document.appendChild(root);
 
             // employee element
-            for(Node currentNode : controller.getCurrentGragh().getNodes()){
-                Element node = document.createElement("node");
+            for (final Node currentNode : controller.getCurrentGraph().getNodes()) {
+                final Element node = document.createElement("node");
                 node.setAttribute("ID", currentNode.getID());
                 node.setAttribute("internalID", currentNode.getInternalID());
                 node.setAttribute("x", String.valueOf(currentNode.getX()));
                 node.setAttribute("y", String.valueOf(currentNode.getY()));
                 node.setAttribute("color", String.valueOf(currentNode.getGraphicalShell().getColor()));
-                Element nodeType = document.createElement("nodeType");
+                final Element nodeType = document.createElement("nodeType");
                 String type = "";
-                switch (currentNode.getType()){
+                switch (currentNode.getType()) {
                     case EMPTY:
                         type = "EMPTY";
                         break;
@@ -78,17 +79,17 @@ public class DOMWriter {
                 root.appendChild(node);
             }
 
-            for(Arc currentArc : controller.getCurrentGragh().getArcs()){
-                Element arc = document.createElement("arc");
+            for (final Arc currentArc : controller.getCurrentGraph().getArcs()) {
+                final Element arc = document.createElement("arc");
                 arc.setAttribute("ID", currentArc.getID());
                 arc.setAttribute("color", String.valueOf(currentArc.getGraphicalShell().getColor()));
                 arc.setAttribute("weight", String.valueOf(currentArc.getWeight()));
                 arc.setAttribute("isOriented", String.valueOf(currentArc.isOriented()));
                 arc.setAttribute("isBinary", String.valueOf(currentArc.isBinary()));
-                Element fromNode = document.createElement("fromNode");
+                final Element fromNode = document.createElement("fromNode");
                 fromNode.appendChild(document.createTextNode(currentArc.getFromNode().getInternalID()));
                 arc.appendChild(fromNode);
-                Element toNode = document.createElement("toNode");
+                final Element toNode = document.createElement("toNode");
                 toNode.appendChild(document.createTextNode(currentArc.getToNode().getInternalID()));
                 arc.appendChild(toNode);
                 root.appendChild(arc);
@@ -96,10 +97,10 @@ public class DOMWriter {
 
             // create the xml file
             //transform the DOM Object to an XML File
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource domSource = new DOMSource(document);
-            StreamResult streamResult = new StreamResult(file);
+            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            final Transformer transformer = transformerFactory.newTransformer();
+            final DOMSource domSource = new DOMSource(document);
+            final StreamResult streamResult = new StreamResult(file);
             transformer.transform(domSource, streamResult);
 
         } catch (ParserConfigurationException | TransformerException pce) {

@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.*;
 public class GraphicComponent extends Canvas {
     // Data for graphic component
     private int lineWidth;
-    private Controller controller;
+    private final Controller controller;
     // Data for moving objects
     private int startX;
     private int startY;
@@ -28,13 +28,13 @@ public class GraphicComponent extends Canvas {
     private Menu popupMenuNode;
     private Menu popupMenuArc;
     // Variables for change selected objects
-    private GraphicObject selectedObject;
+    private final GraphicObject selectedObject;
     private Color colorSelectedObject;
     private Text textCurrentInformation;
     // Variables for scrolling
     private final ScrollBar vBar;
     private final ScrollBar hBar;
-    private Point origin = new Point(0, 0); // Point showing the origin and offset by scrolling(using only for drawing objects)
+    private final Point origin = new Point(0, 0); // Point showing the origin and offset by scrolling(using only for drawing objects)
     private Rectangle rectangle;
 
     // Constructor
@@ -105,7 +105,7 @@ public class GraphicComponent extends Canvas {
         // Check the objects in area of mouse click
         controller.removeSelection();
         // Check on node
-        for (Node currentNode : controller.getCurrentGragh().getNodes()) {
+        for (final Node currentNode : controller.getCurrentGraph().getNodes()) {
             if (currentNode.contains(new Point(e.x - origin.x, e.y - origin.y))) {
                 currentNode.getGraphicalShell().select(true);
 //                currentNode.select(true);
@@ -116,7 +116,7 @@ public class GraphicComponent extends Canvas {
         }
         // Cycle for select only one node
         boolean isSelectedVertex = false;
-        for (Node currentNode : controller.getCurrentGragh().getNodes()) {
+        for (final Node currentNode : controller.getCurrentGraph().getNodes()) {
             if (currentNode.getGraphicalShell().isSelected() && !isSelectedVertex) {
                 isSelectedVertex = true;
             } else if (currentNode.getGraphicalShell().isSelected() && isSelectedVertex) {
@@ -128,14 +128,14 @@ public class GraphicComponent extends Canvas {
         if (selectedObject.getObject() != null) {
             return;
         }
-        for (Arc currentArc : controller.getCurrentGragh().getArcs()) {
+        for (final Arc currentArc : controller.getCurrentGraph().getArcs()) {
             if (currentArc.contains(new Point(e.x - origin.x, e.y - origin.y))) {
                 currentArc.getGraphicalShell().select(true);
             }
         }
         // Cycle for select only one arc
         boolean isSelectedArc = false;
-        for (Arc currentArc : controller.getCurrentGragh().getArcs()) {
+        for (final Arc currentArc : controller.getCurrentGraph().getArcs()) {
             if (currentArc.isSelected() && !isSelectedArc) {
                 isSelectedArc = true;
             } else if (currentArc.isSelected() && isSelectedArc) {
@@ -160,7 +160,7 @@ public class GraphicComponent extends Canvas {
     private void scrollRectangleUpdate() {
         int xMax = 0;
         int yMax = 0;
-        for (Node currentNode : controller.getCurrentGragh().getNodes()) {
+        for (final Node currentNode : controller.getCurrentGraph().getNodes()) {
             if (currentNode.getX() > xMax) {
                 xMax = currentNode.getX() + currentNode.getDiameter();
             }
@@ -221,7 +221,7 @@ public class GraphicComponent extends Canvas {
 
         // Call context menu
         this.addListener(SWT.MenuDetect, e -> {
-            Point location = toControl(e.x + origin.x, e.y + origin.y);
+            final Point location = toControl(e.x + origin.x, e.y + origin.y);
             if (location.x > getBounds().width) {
                 e.doit = false;
             }
@@ -242,7 +242,7 @@ public class GraphicComponent extends Canvas {
                 if (e.button == 1) {
                     switch (controller.getStatus()) {
                         case CURSOR:
-                            Node node = new Node(e.x - origin.x, e.y - origin.y);
+                            final Node node = new Node(e.x - origin.x, e.y - origin.y);
                             controller.addNode(node);
                             drawNode(node);
                             redraw();
@@ -274,7 +274,7 @@ public class GraphicComponent extends Canvas {
                                 } else {
                                     startDrawArc = false;
                                     setCursor(SWT.CURSOR_ARROW);
-                                    Arc arc = new Arc(fromNode, ((Node) selectedObject.getObject()));
+                                    final Arc arc = new Arc(fromNode, ((Node) selectedObject.getObject()));
                                     fromNode = null;
                                     if(arc.getID() == null){
                                         return;             // Link is between nodes yet
@@ -329,7 +329,7 @@ public class GraphicComponent extends Canvas {
                             return;
                         } else if (e.x + origin.x != -1 && e.y + origin.y != -1) {
                             Node selectedNode = null;
-                            for (Node currentNode : controller.getCurrentGragh().getNodes()) {
+                            for (final Node currentNode : controller.getCurrentGraph().getNodes()) {
                                 if (currentNode.getGraphicalShell().isSelected()) {
                                     selectedNode = currentNode;
                                 }
@@ -376,7 +376,7 @@ public class GraphicComponent extends Canvas {
 
     public void drawNode(Node node) {
         addPaintListener(e -> {
-            if (!controller.getCurrentGragh().getNodes().contains(node)) { // ???CHECK THIS MOMENT
+            if (!controller.getCurrentGraph().getNodes().contains(node)) { // ???CHECK THIS MOMENT
                 return;
             }
             Display.getDefault().syncExec(() -> {
@@ -417,7 +417,7 @@ public class GraphicComponent extends Canvas {
 
     public void drawArc(Arc arc) {
         addPaintListener(e -> {
-            if (!controller.getCurrentGragh().getArcs().contains(arc)) {
+            if (!controller.getCurrentGraph().getArcs().contains(arc)) {
                 return;
             }
             Display.getDefault().syncExec(() -> {
@@ -497,7 +497,7 @@ public class GraphicComponent extends Canvas {
     }
 
     public void applyCurrentTheme() {
-        for (Node currentNode : controller.getCurrentGragh().getNodes()) {
+        for (final Node currentNode : controller.getCurrentGraph().getNodes()) {
             if (!ColorSetupComponent.isDarkTheme()) {
                 if (currentNode.getGraphicalShell().getColor().equals(ColorSetupComponent.getDefaultNodeColorDarkTheme())) {
                     currentNode.getGraphicalShell().setColor(ColorSetupComponent.getNodeColor());
@@ -508,7 +508,7 @@ public class GraphicComponent extends Canvas {
                 }
             }
         }
-        for (Arc currentArc : controller.getCurrentGragh().getArcs()) {
+        for (final Arc currentArc : controller.getCurrentGraph().getArcs()) {
             if (!ColorSetupComponent.isDarkTheme()) {
                 if (currentArc.getGraphicalShell().getColor().equals(ColorSetupComponent.getDefaultArcColorDarkTheme())) {
                     currentArc.getGraphicalShell().setColor(ColorSetupComponent.getArcColor());
@@ -529,14 +529,14 @@ public class GraphicComponent extends Canvas {
     }
 
     private void setSelectedObject() {
-        for (Node currentNode : controller.getCurrentGragh().getNodes()) {
+        for (final Node currentNode : controller.getCurrentGraph().getNodes()) {
             if (currentNode.getGraphicalShell().isSelected()) {
                 selectedObject.setObject(currentNode);
                 setCurrentInformation();
                 return;
             }
         }
-        for (Arc currentArc : controller.getCurrentGragh().getArcs()) {
+        for (final Arc currentArc : controller.getCurrentGraph().getArcs()) {
             if (currentArc.isSelected()) {
                 selectedObject.setObject(currentArc);
                 setCurrentInformation();
@@ -552,7 +552,7 @@ public class GraphicComponent extends Canvas {
         if (selectedObject.getObject() != null) {
             if (selectedObject.getObject() instanceof Node) {
                 // Out information on textComponent
-                Node currentNode = (Node)selectedObject.getObject();
+                final Node currentNode = (Node)selectedObject.getObject();
                 information += "ID узла: " + currentNode.getID();
                 information += "\nВнутренний ID узла: " + currentNode.getInternalID();
                 information += "\nКоличество входящих дуг: " + currentNode.getIngoingArcs().size();
@@ -580,7 +580,7 @@ public class GraphicComponent extends Canvas {
                         break;
                 }
             } else if (selectedObject.getObject() instanceof Arc) {
-                Arc currentArc = (Arc) selectedObject.getObject();
+                final Arc currentArc = (Arc) selectedObject.getObject();
                 information += "ID дуги: " + currentArc.getID();
                 information += "\nВес дуги: " + currentArc.getWeight();
                 information += "\nОриентированная: ";
@@ -641,7 +641,7 @@ public class GraphicComponent extends Canvas {
                     new ChooseNodeDialog(getDisplay(), controller, graphicComponent, (Node) selectedObject.getObject());
                 }
                 setCurrentInformation();
-                controller.getCurrentGragh().updateGraphData();
+                controller.getCurrentGraph().updateGraphData();
             }
         });
 
